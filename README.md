@@ -1,39 +1,29 @@
-# Quiz matematica – Classe quarta
+# ClasseLab
 
-Sito didattico dedicato esclusivamente alla prova d'ingresso di matematica della classe quarta.
+Piattaforma didattica in evoluzione per la scuola primaria.
 
-## Verifica
-Sono presenti tutti gli 11 esercizi della scheda originale:
-1. numeri in ordine crescente;
-2. numeri in cifre;
-3. numeri in lettere;
-4. maggiore, minore, uguale;
-5. quantità equivalenti con h, da, u;
-6. composizione e scomposizione;
-7. scomposizione dei numeri;
-8. operazioni;
-9. rette parallele, incidenti e perpendicolari;
-10. costruzione interattiva di triangolo, quadrato e rettangolo;
-11. misura dei segmenti.
+## Obiettivo
+Trasformare verifiche ed esercitazioni in attività digitali semplici da svolgere per gli alunni e facili da correggere per i docenti.
 
-## Area docente
-Aprire `docente.html`.
+## Struttura
+- `/alunni/` → accesso alle prove;
+- `/docenti/` → dashboard docenti;
+- `/archivio/` → archivio condiviso;
+- `/classe4/` → attività di classe quarta;
+- `/classe5/` → area predisposta per classe quinta;
+- `/docente.html` → risultati della versione pilota.
 
-La pagina mostra:
-- nome e cognome dell'alunno;
-- data e ora della consegna;
-- punteggio totale e percentuale;
-- tutte le risposte;
-- indicazione corretta/errata;
-- soluzione corretta per gli errori;
-- esportazione dei risultati.
+## Prima prova attiva
+Classe quarta → Matematica → Test d'ingresso.
 
-Password iniziale della versione locale: `classe4`.
+## Evoluzione prevista
+- account personali dei docenti;
+- classi personali;
+- creazione/duplicazione verifiche;
+- archivio condiviso;
+- risultati centralizzati;
+- database online con regole di accesso;
+- ampliamento a più classi e discipline.
 
-## Importante sul salvataggio
-Attualmente i risultati sono salvati nel browser con `localStorage`. Questo consente di collaudare subito quiz, correzione e area docente sullo stesso dispositivo.
-
-Per raccogliere automaticamente in un'unica area docente le verifiche svolte da più PC/tablet occorre collegare un database online. Il progetto è già strutturato per questo passaggio.
-
-## GitHub Pages
-Il sito usa HTML, CSS e JavaScript ed è quindi compatibile con GitHub Pages.
+## Nota tecnica
+La versione attuale usa GitHub Pages per il front-end. Per una piattaforma realmente multi-docente e multi-dispositivo servirà collegare un backend/database esterno con autenticazione e gestione sicura dei dati.
