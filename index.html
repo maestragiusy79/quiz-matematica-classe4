@@ -2,43 +2,49 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quiz di matematica</title>
+<title>ClasseLab - Prove digitali per la scuola primaria</title>
 <link rel="stylesheet" href="css/stile.css">
 <style>
-.area-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.area-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:24px;background:#fff;box-shadow:var(--shadow)}
-.area-card:hover{border-color:#b8c4ef;transform:translateY(-1px)}
-.area-card h2{margin:0 0 8px}
-.area-card.disabled{opacity:.58;pointer-events:none}
-@media(max-width:700px){.area-grid{grid-template-columns:1fr}}
+.portal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.portal-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:24px;background:#fff;box-shadow:var(--shadow)}
+.portal-card:hover{border-color:#b8c4ef;transform:translateY(-1px)}
+.portal-card h2{margin:0 0 8px}
+.hero-badge{display:inline-block;margin-top:12px;padding:7px 10px;border-radius:999px;background:var(--primary-soft);font-weight:700}
+@media(max-width:850px){.portal-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <main class="wrap">
 <section class="hero">
-<h1>🧮 Quiz di matematica</h1>
-<p>Scegli la classe.</p>
-<div class="doodles"><div class="doodle">➕</div><div class="doodle">➗</div><div class="doodle">📐</div><div class="doodle">🔢</div></div>
+<h1>📚 ClasseLab</h1>
+<p>Una piattaforma semplice per creare, svolgere e condividere prove digitali nella scuola primaria.</p>
+<span class="hero-badge">Versione pilota</span>
+<div class="doodles"><div class="doodle">🧮</div><div class="doodle">✏️</div><div class="doodle">🔬</div><div class="doodle">📐</div><div class="doodle">📖</div></div>
 </section>
 
-<section class="area-grid">
-<a class="area-card" href="classe4/">
-<h2>📘 Classe quarta</h2>
-<p>Entra nell'area dedicata alla classe quarta.</p>
-<strong>Apri il menù →</strong>
+<section class="portal-grid">
+<a class="portal-card" href="alunni/">
+<h2>👧👦 Area alunni</h2>
+<p>Accesso alle prove assegnate dal docente.</p>
+<strong>Entra →</strong>
 </a>
 
-<a class="area-card" href="classe5/">
-<h2>📗 Classe quinta</h2>
-<p>Area dedicata alla classe quinta.</p>
-<strong>Apri il menù →</strong>
+<a class="portal-card" href="docenti/">
+<h2>👩‍🏫 Area docenti</h2>
+<p>Classi, verifiche, risultati e materiali condivisi.</p>
+<strong>Entra →</strong>
+</a>
+
+<a class="portal-card" href="archivio/">
+<h2>🗂️ Archivio condiviso</h2>
+<p>Prove organizzate per classe, disciplina e tipologia.</p>
+<strong>Esplora →</strong>
 </a>
 </section>
 
 <section class="card">
-<h2>🔐 Area docente</h2>
-<p>Accesso ai risultati e al dettaglio delle risposte.</p>
-<a href="docente.html"><strong>Vai all'area docente →</strong></a>
+<h2>🚀 Progetto in crescita</h2>
+<p>La prima prova attiva è il <strong>Test d'ingresso di matematica di classe quarta</strong>. La struttura è già predisposta per aggiungere nuove classi, discipline e prove.</p>
 </section>
 </main>
 </body>
