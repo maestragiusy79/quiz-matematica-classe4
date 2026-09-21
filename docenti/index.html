@@ -5,133 +5,178 @@
 <title>Area docenti - ClasseLab</title>
 <link rel="stylesheet" href="../css/stile.css">
 <style>
-.dashboard{display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
-.sidebar{position:sticky;top:18px;background:#fff;border:1px solid var(--border);border-radius:22px;padding:16px;box-shadow:var(--shadow)}
-.brand{font-weight:800;font-size:1.2rem;margin:4px 6px 14px}
-.navbtn{width:100%;border:0;background:transparent;text-align:left;padding:12px 14px;border-radius:14px;font:inherit;cursor:pointer;margin:3px 0}
-.navbtn:hover,.navbtn.active{background:var(--primary-soft);font-weight:700}
-.content{min-width:0}
-.view{display:none}.view.active{display:block}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}
+.teacher-wrap{max-width:1180px;margin:0 auto;padding:22px}
+.teacher-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.teacher-brand{font-size:1.3rem;font-weight:800}
+.teacher-links{display:flex;gap:8px;flex-wrap:wrap}
+.teacher-links a,.teacher-links button{border:1px solid var(--border);background:#fff;padding:9px 12px;border-radius:12px;text-decoration:none;color:inherit;font:inherit;cursor:pointer}
+.teacher-hero{background:linear-gradient(135deg,#eef2ff,#fff);border:1px solid var(--border);border-radius:26px;padding:28px;box-shadow:var(--shadow);margin-bottom:18px}
+.teacher-hero h1{margin:0 0 8px}
+.teacher-hero p{margin:0;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
 .stat{background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
-.stat strong{display:block;font-size:2rem;margin-top:5px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
-.list{display:grid;gap:12px}
-.item{background:#fff;border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
-.item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.item h3{margin:0 0 6px}.muted{color:var(--muted)}
+.stat span{color:var(--muted);font-size:.95rem}
+.stat strong{display:block;font-size:2rem;margin-top:4px}
+.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0}
+.action-card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:var(--shadow);cursor:pointer}
+.action-card:hover{transform:translateY(-2px);border-color:#b8c4ef}
+.action-card h2{margin:0 0 8px;font-size:1.2rem}
+.action-card p{margin:0;color:var(--muted)}
+.section{display:none;margin-top:18px}.section.active{display:block}
+.section-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+.section-head h2{margin:0}
+.panel{background:#fff;border:1px solid var(--border);border-radius:22px;padding:20px;box-shadow:var(--shadow)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid .full{grid-column:1/-1}
+.list{display:grid;gap:12px;margin-top:14px}
+.item{background:#fff;border:1px solid var(--border);border-radius:18px;padding:16px}
+.item-head{display:flex;justify-content:space-between;gap:12px}
+.item h3{margin:0 0 6px}
+.muted{color:var(--muted)}
 .badge{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--primary-soft);font-size:.85rem;font-weight:700}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .btn-small{border:1px solid var(--border);background:#fff;padding:8px 11px;border-radius:10px;cursor:pointer}
 .btn-small.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
 .btn-small.danger{color:var(--red)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-grid .full{grid-column:1/-1}
 .empty{padding:24px;text-align:center;border:2px dashed var(--border);border-radius:18px;color:var(--muted)}
-.login-card{max-width:520px;margin:70px auto}
-.notice{background:var(--yellow);border:1px solid #f0d985;border-radius:16px;padding:12px 14px;margin:14px 0}
-@media(max-width:800px){.dashboard{grid-template-columns:1fr}.sidebar{position:static}.stats{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}}
+.active-test{display:flex;justify-content:space-between;gap:16px;align-items:center}
+.active-test h3{margin:0 0 6px}
+.login-card{max-width:500px;margin:70px auto}
+.login-card h1{margin-top:0}
+.backrow{margin-top:14px}
+@media(max-width:850px){
+  .stats,.action-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}
+  .teacher-top,.active-test,.section-head{align-items:flex-start;flex-direction:column}
+}
 </style>
 </head>
 <body>
-<main class="wrap">
 
+<main class="teacher-wrap">
 <section id="loginPanel" class="card login-card">
 <h1>👩‍🏫 Area docenti</h1>
-<p>Accedi al tuo spazio di lavoro.</p>
+<p>Inserisci la password per accedere.</p>
 <label>Password
-<input id="teacherPassword" type="password" autocomplete="current-password" placeholder="Inserisci la password">
+<input id="teacherPassword" type="password" autocomplete="current-password" placeholder="Password">
 </label>
-<div class="toolbar"><button id="loginBtn" class="primary-btn" type="button">Accedi</button><a href="../">Torna alla home</a></div>
+<div class="toolbar">
+<button id="loginBtn" class="primary-btn" type="button">Accedi</button>
+<a class="btn-small" href="../">Torna alla home</a>
+</div>
 <p id="loginError" class="error" hidden>Password non corretta.</p>
 </section>
 
 <section id="teacherPanel" hidden>
-<div class="dashboard">
-<aside class="sidebar">
-<div class="brand">📚 ClasseLab</div>
-<button class="navbtn active" data-view="home">🏠 Dashboard</button>
-<button class="navbtn" data-view="classes">🏫 Le mie classi</button>
-<button class="navbtn" data-view="tests">📝 Le mie verifiche</button>
-<button class="navbtn" data-view="results">📊 Risultati</button>
-<button class="navbtn" data-view="settings">⚙️ Impostazioni</button>
-<hr>
-<button class="navbtn" id="logoutBtn">↩️ Esci</button>
-</aside>
+<div class="teacher-top">
+<div class="teacher-brand">📚 ClasseLab · Area docenti</div>
+<div class="teacher-links">
+<a href="../">Home</a>
+<button id="logoutBtn" type="button">Esci</button>
+</div>
+</div>
 
-<div class="content">
-<section class="view active" id="view-home">
-<div class="hero"><h1>Area docenti</h1><p>Gestisci classi, verifiche e risultati da un unico spazio.</p></div>
-<div class="stats">
-<div class="stat"><span class="muted">Classi</span><strong id="statClasses">0</strong></div>
-<div class="stat"><span class="muted">Verifiche</span><strong id="statTests">0</strong></div>
-<div class="stat"><span class="muted">Consegne</span><strong id="statResults">0</strong></div>
-</div>
-<div class="card">
-<h2>⚡ Accessi rapidi</h2>
-<div class="toolbar">
-<button class="primary-btn" data-go="classes">+ Nuova classe</button>
-<button class="primary-btn" data-go="tests">+ Nuova verifica</button>
-<a class="primary-btn" href="../classe4/test-ingresso/" target="_blank">Apri il test d'ingresso</a>
-</div>
-</div>
-<div class="notice"><strong>Nota:</strong> questa versione salva classi e verifiche nel browser. Il passaggio successivo sarà collegare un database online per avere account personali e dati sincronizzati tra dispositivi.</div>
+<section class="teacher-hero">
+<h1>Benvenuta nell’area docenti</h1>
+<p>Qui puoi gestire classi, verifiche e risultati senza uscire dalla stessa pagina.</p>
 </section>
 
-<section class="view" id="view-classes">
-<div class="card">
-<h1>🏫 Le mie classi</h1>
+<div class="stats">
+<div class="stat"><span>Classi</span><strong id="statClasses">0</strong></div>
+<div class="stat"><span>Verifiche</span><strong id="statTests">0</strong></div>
+<div class="stat"><span>Consegne</span><strong id="statResults">0</strong></div>
+</div>
+
+<div class="action-grid">
+<div class="action-card" data-go="classes">
+<h2>🏫 Le mie classi</h2>
+<p>Crea e gestisci le classi.</p>
+</div>
+<div class="action-card" data-go="tests">
+<h2>📝 Le mie verifiche</h2>
+<p>Consulta le prove attive e prepara nuove verifiche.</p>
+</div>
+<div class="action-card" data-go="results">
+<h2>📊 Risultati</h2>
+<p>Controlla consegne, punteggi e risposte.</p>
+</div>
+</div>
+
+<section class="panel">
+<div class="active-test">
+<div>
+<span class="badge">Prova attiva</span>
+<h3>Test d’ingresso di matematica · Classe quarta</h3>
+<p class="muted">La prova che abbiamo già preparato è pronta per essere aperta o condivisa.</p>
+</div>
+<div class="toolbar">
+<a class="btn-small primary" href="../classe4/test-ingresso/" target="_blank">Apri test</a>
+<button id="copyActiveLink" class="btn-small" type="button">Copia link</button>
+</div>
+</div>
+</section>
+
+<section class="section" id="section-classes">
+<div class="section-head">
+<div>
+<h2>🏫 Le mie classi</h2>
+<p class="muted">Aggiungi le classi che vuoi gestire.</p>
+</div>
+<button class="btn-small" data-close>Chiudi</button>
+</div>
+<div class="panel">
 <form id="classForm" class="form-grid">
 <label>Nome classe<input id="className" required placeholder="Es. 4ª A"></label>
 <label>Anno scolastico<input id="classYear" placeholder="Es. 2026/27"></label>
 <label class="full">Note<input id="classNotes" placeholder="Facoltativo"></label>
 <div class="full"><button class="primary-btn" type="submit">Aggiungi classe</button></div>
 </form>
-</div>
 <div id="classesList" class="list"></div>
+</div>
 </section>
 
-<section class="view" id="view-tests">
-<div class="card">
-<h1>📝 Le mie verifiche</h1>
+<section class="section" id="section-tests">
+<div class="section-head">
+<div>
+<h2>📝 Le mie verifiche</h2>
+<p class="muted">Consulta le prove e prepara una nuova bozza.</p>
+</div>
+<button class="btn-small" data-close>Chiudi</button>
+</div>
+<div class="panel">
 <form id="testForm" class="form-grid">
 <label>Titolo<input id="testTitle" required placeholder="Es. Verifica frazioni"></label>
 <label>Classe<select id="testClass"></select></label>
 <label>Disciplina<input id="testSubject" value="Matematica"></label>
 <label>Tipologia<select id="testType"><option>Test d'ingresso</option><option>Verifica</option><option>Esercitazione</option><option>Recupero</option><option>Potenziamento</option></select></label>
 <label class="full">Descrizione<input id="testDescription" placeholder="Breve descrizione"></label>
-<div class="full"><button class="primary-btn" type="submit">Crea verifica</button></div>
+<div class="full"><button class="primary-btn" type="submit">Salva bozza</button></div>
 </form>
-</div>
 <div id="testsList" class="list"></div>
+</div>
 </section>
 
-<section class="view" id="view-results">
-<div class="card">
-<h1>📊 Risultati</h1>
-<p>Qui trovi le consegne registrate per il test d'ingresso.</p>
-<div class="toolbar">
-<a class="primary-btn" href="../docente.html">Apri dettaglio risultati</a>
-<button id="exportBtn" class="btn-small" type="button">Esporta dati</button>
+<section class="section" id="section-results">
+<div class="section-head">
+<div>
+<h2>📊 Risultati</h2>
+<p class="muted">Riepilogo delle consegne registrate.</p>
 </div>
+<button class="btn-small" data-close>Chiudi</button>
+</div>
+<div class="panel">
+<div class="toolbar">
+<a class="btn-small primary" href="../docente.html">Apri dettaglio completo</a>
+<button id="exportBtn" class="btn-small" type="button">Esporta risultati</button>
 </div>
 <div id="resultsSummary" class="list"></div>
+</div>
 </section>
 
-<section class="view" id="view-settings">
-<div class="card">
-<h1>⚙️ Impostazioni</h1>
-<p>Gestisci i dati locali dell'area docente.</p>
-<div class="toolbar">
-<button id="exportAllBtn" class="btn-small" type="button">Esporta configurazione</button>
-<button id="resetTeacherBtn" class="btn-small danger" type="button">Azzera classi e verifiche</button>
-</div>
-</div>
-</section>
-</div>
-</div>
+<div class="backrow"><a href="../">← Torna alla home generale</a></div>
 </section>
 </main>
+
 <script src="../js/docenti.js"></script>
 </body>
 </html>
