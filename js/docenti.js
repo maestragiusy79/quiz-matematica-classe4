@@ -12,20 +12,25 @@ async function sha256(s){
 }
 async function login(){
  const ok=(await sha256(q('#teacherPassword').value))===PASS_HASH;
- if(!ok){q('#loginError').hidden=false;return}
- sessionStorage.setItem('classelab_teacher','1');showPanel();
+ q('#loginError').hidden=ok;
+ if(!ok)return;
+ sessionStorage.setItem('classelab_teacher','1');
+ showPanel();
 }
 function showPanel(){
- q('#loginPanel').hidden=true;q('#teacherPanel').hidden=false;renderAll();
+ q('#loginPanel').hidden=true;
+ q('#teacherPanel').hidden=false;
+ renderAll();
 }
 function logout(){sessionStorage.removeItem('classelab_teacher');location.reload()}
-function nav(view){
- qa('.navbtn[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
- qa('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+view));
+function openSection(name){
+ qa('.section').forEach(s=>s.classList.toggle('active',s.id==='section-'+name));
+ const el=q('#section-'+name); if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
 }
-qa('.navbtn[data-view]').forEach(b=>b.onclick=()=>nav(b.dataset.view));
-qa('[data-go]').forEach(b=>b.onclick=()=>nav(b.dataset.go));
-q('#loginBtn').onclick=login;q('#teacherPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+qa('[data-go]').forEach(b=>b.onclick=()=>openSection(b.dataset.go));
+qa('[data-close]').forEach(b=>b.onclick=()=>b.closest('.section').classList.remove('active'));
+q('#loginBtn').onclick=login;
+q('#teacherPassword').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 q('#logoutBtn').onclick=logout;
 
 function seed(){
@@ -46,7 +51,7 @@ function renderClasses(){
  box.innerHTML=data.length?'':"<div class='empty'>Nessuna classe ancora.</div>";
  data.forEach(c=>{
   const el=document.createElement('div');el.className='item';
-  el.innerHTML='<div class="item-head"><div><h3>'+esc(c.name)+'</h3><div class="muted">'+esc(c.year||'')+'</div></div><span class="badge">Classe</span></div><p>'+esc(c.notes||'')+'</p><div class="actions"><button class="btn-small danger" data-del-class="'+c.id+'">Elimina</button></div>';
+  el.innerHTML='<div class="item-head"><div><h3>'+esc(c.name)+'</h3><div class="muted">'+esc(c.year||'')+'</div></div><span class="badge">Classe</span></div><p>'+esc(c.notes||'')+'</p><div class="toolbar"><button class="btn-small danger" data-del-class="'+c.id+'">Elimina</button></div>';
   box.appendChild(el);
  });
  qa('[data-del-class]').forEach(b=>b.onclick=()=>{if(confirm('Eliminare questa classe?')){save(K_CLASSES,load(K_CLASSES).filter(x=>x.id!==b.dataset.delClass));renderAll()}});
@@ -58,17 +63,23 @@ function refreshClassSelect(){
  if(curr)sel.value=curr;
 }
 q('#classForm').onsubmit=e=>{
- e.preventDefault();const a=load(K_CLASSES);a.push({id:uid(),name:q('#className').value.trim(),year:q('#classYear').value.trim(),notes:q('#classNotes').value.trim()});save(K_CLASSES,a);e.target.reset();renderAll();
+ e.preventDefault();
+ const a=load(K_CLASSES);
+ a.push({id:uid(),name:q('#className').value.trim(),year:q('#classYear').value.trim(),notes:q('#classNotes').value.trim()});
+ save(K_CLASSES,a);e.target.reset();renderAll();
 };
 q('#testForm').onsubmit=e=>{
- e.preventDefault();const a=load(K_TESTS);a.push({id:uid(),title:q('#testTitle').value.trim(),classId:q('#testClass').value,subject:q('#testSubject').value.trim(),type:q('#testType').value,description:q('#testDescription').value.trim(),url:'',fixed:false});save(K_TESTS,a);e.target.reset();q('#testSubject').value='Matematica';renderAll();
+ e.preventDefault();
+ const a=load(K_TESTS);
+ a.push({id:uid(),title:q('#testTitle').value.trim(),classId:q('#testClass').value,subject:q('#testSubject').value.trim(),type:q('#testType').value,description:q('#testDescription').value.trim(),url:'',fixed:false});
+ save(K_TESTS,a);e.target.reset();q('#testSubject').value='Matematica';renderAll();
 };
 function renderTests(){
  const tests=load(K_TESTS),classes=load(K_CLASSES),box=q('#testsList');box.innerHTML='';
  tests.forEach(t=>{
   const cn=classes.find(c=>c.id===t.classId)?.name||'Senza classe';
   const el=document.createElement('div');el.className='item';
-  el.innerHTML='<div class="item-head"><div><h3>'+esc(t.title)+'</h3><div class="muted">'+esc(cn)+' · '+esc(t.subject)+' · '+esc(t.type)+'</div></div><span class="badge">'+(t.fixed?'Attiva':'Bozza')+'</span></div><p>'+esc(t.description||'')+'</p><div class="actions">'+(t.url?'<a class="btn-small primary" target="_blank" href="'+esc(t.url)+'">Apri</a><button class="btn-small" data-copy="'+t.id+'">Copia link</button>':'<button class="btn-small" disabled>Editor domande in preparazione</button>')+(t.fixed?'':'<button class="btn-small danger" data-del-test="'+t.id+'">Elimina</button>')+'</div>';
+  el.innerHTML='<div class="item-head"><div><h3>'+esc(t.title)+'</h3><div class="muted">'+esc(cn)+' · '+esc(t.subject)+' · '+esc(t.type)+'</div></div><span class="badge">'+(t.fixed?'Attiva':'Bozza')+'</span></div><p>'+esc(t.description||'')+'</p><div class="toolbar">'+(t.url?'<a class="btn-small primary" target="_blank" href="'+esc(t.url)+'">Apri</a><button class="btn-small" data-copy="'+t.id+'">Copia link</button>':'<span class="muted">Bozza salvata: l’editor delle domande sarà il prossimo passaggio.</span>')+(t.fixed?'':'<button class="btn-small danger" data-del-test="'+t.id+'">Elimina</button>')+'</div>';
   box.appendChild(el);
  });
  qa('[data-copy]').forEach(b=>b.onclick=async()=>{const t=load(K_TESTS).find(x=>x.id===b.dataset.copy);if(t?.url){await navigator.clipboard.writeText(new URL(t.url,location.href).href);b.textContent='Link copiato ✓';setTimeout(()=>b.textContent='Copia link',1400)}});
@@ -78,13 +89,17 @@ function renderResults(){
  const r=load(K_RESULTS),box=q('#resultsSummary');box.innerHTML='';
  if(!r.length){box.innerHTML='<div class="empty">Nessuna consegna registrata su questo dispositivo.</div>';return}
  const avg=Math.round(r.reduce((s,x)=>s+((x.score||0)/(x.total||1))*100,0)/r.length);
- box.innerHTML='<div class="item"><h3>Test d\'ingresso classe quarta</h3><p><strong>'+r.length+'</strong> consegne · media <strong>'+avg+'%</strong></p></div>';
+ box.innerHTML='<div class="item"><h3>Test d\'ingresso di matematica · Classe quarta</h3><p><strong>'+r.length+'</strong> consegne · media <strong>'+avg+'%</strong></p></div>';
 }
 function download(name,obj){
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));a.download=name;a.click();URL.revokeObjectURL(a.href);
 }
 q('#exportBtn').onclick=()=>download('risultati-classelab.json',load(K_RESULTS));
-q('#exportAllBtn').onclick=()=>download('configurazione-classelab.json',{classes:load(K_CLASSES),tests:load(K_TESTS)});
-q('#resetTeacherBtn').onclick=()=>{if(confirm('Azzero classi e verifiche locali?')){localStorage.removeItem(K_CLASSES);localStorage.removeItem(K_TESTS);renderAll()}};
+q('#copyActiveLink').onclick=async()=>{
+ const url=new URL('../classe4/test-ingresso/',location.href).href;
+ await navigator.clipboard.writeText(url);
+ q('#copyActiveLink').textContent='Link copiato ✓';
+ setTimeout(()=>q('#copyActiveLink').textContent='Copia link',1400);
+};
 if(sessionStorage.getItem('classelab_teacher')==='1')showPanel();
 })();
