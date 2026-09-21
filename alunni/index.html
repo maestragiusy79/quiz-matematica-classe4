@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Area alunni - ClasseLab</title>
+<link rel="stylesheet" href="../css/stile.css">
+<style>
+.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.choice-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:24px;background:#fff;box-shadow:var(--shadow)}
+.choice-card:hover{border-color:#b8c4ef}
+@media(max-width:700px){.choice-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero"><h1>👧👦 Area alunni</h1><p>Scegli la classe e poi la prova assegnata dal tuo insegnante.</p></section>
+<section class="choice-grid">
+<a class="choice-card" href="../classe4/"><h2>📘 Classe quarta</h2><p>Accedi alle attività disponibili.</p><strong>Apri →</strong></a>
+<a class="choice-card" href="../classe5/"><h2>📗 Classe quinta</h2><p>Area predisposta per le prossime attività.</p><strong>Apri →</strong></a>
+</section>
+<section class="card"><p><a href="../">← Torna alla pagina iniziale</a></p></section>
+</main>
+</body>
+</html>
