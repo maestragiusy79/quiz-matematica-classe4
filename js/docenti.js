@@ -1,5 +1,5 @@
 (()=>{
-const PASS_HASH='62f78e6ced33b858ee667473acd0ca74b1bdb393452f5e060430754f8bf3017e';
+const PASSWORD='classe4';
 const K_CLASSES='classelab_classes_v1',K_TESTS='classelab_tests_v1',K_RESULTS='quizMathClass4Results_v1';
 const q=s=>document.querySelector(s),qa=s=>Array.from(document.querySelectorAll(s));
 const load=(k,d=[])=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
@@ -7,12 +7,9 @@ const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 const esc=(s='')=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-async function sha256(s){
- const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
- return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
-}
-async function login(){
- const ok=(await sha256(q('#teacherPassword').value))===PASS_HASH;
+function login(){
+ const value=q('#teacherPassword').value.trim();
+ const ok=value===PASSWORD;
  q('#loginError').hidden=ok;
  if(!ok)return;
  sessionStorage.setItem('classelab_teacher','1');
