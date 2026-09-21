@@ -5,29 +5,133 @@
 <title>Area docenti - ClasseLab</title>
 <link rel="stylesheet" href="../css/stile.css">
 <style>
-.teacher-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.teacher-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:22px;background:#fff;box-shadow:var(--shadow)}
-.teacher-card:hover{border-color:#b8c4ef}
-.teacher-card.disabled{opacity:.58;pointer-events:none}
-@media(max-width:720px){.teacher-grid{grid-template-columns:1fr}}
+.dashboard{display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start}
+.sidebar{position:sticky;top:18px;background:#fff;border:1px solid var(--border);border-radius:22px;padding:16px;box-shadow:var(--shadow)}
+.brand{font-weight:800;font-size:1.2rem;margin:4px 6px 14px}
+.navbtn{width:100%;border:0;background:transparent;text-align:left;padding:12px 14px;border-radius:14px;font:inherit;cursor:pointer;margin:3px 0}
+.navbtn:hover,.navbtn.active{background:var(--primary-soft);font-weight:700}
+.content{min-width:0}
+.view{display:none}.view.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:16px 0}
+.stat{background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
+.stat strong{display:block;font-size:2rem;margin-top:5px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.list{display:grid;gap:12px}
+.item{background:#fff;border:1px solid var(--border);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+.item-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.item h3{margin:0 0 6px}.muted{color:var(--muted)}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--primary-soft);font-size:.85rem;font-weight:700}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn-small{border:1px solid var(--border);background:#fff;padding:8px 11px;border-radius:10px;cursor:pointer}
+.btn-small.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-small.danger{color:var(--red)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid .full{grid-column:1/-1}
+.empty{padding:24px;text-align:center;border:2px dashed var(--border);border-radius:18px;color:var(--muted)}
+.login-card{max-width:520px;margin:70px auto}
+.notice{background:var(--yellow);border:1px solid #f0d985;border-radius:16px;padding:12px 14px;margin:14px 0}
+@media(max-width:800px){.dashboard{grid-template-columns:1fr}.sidebar{position:static}.stats{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}}
 </style>
 </head>
 <body>
 <main class="wrap">
-<section class="hero"><h1>👩‍🏫 Area docenti</h1><p>Spazio di lavoro per creare, assegnare e consultare le prove digitali.</p></section>
 
-<section class="teacher-grid">
-<a class="teacher-card" href="../docente.html"><h2>📊 Risultati</h2><p>Visualizza punteggi e risposte delle prove svolte.</p><strong>Apri →</strong></a>
-<a class="teacher-card" href="../archivio/"><h2>🗂️ Archivio condiviso</h2><p>Consulta le prove disponibili per classe e disciplina.</p><strong>Apri →</strong></a>
-<div class="teacher-card disabled"><h2>🏫 Le mie classi</h2><p>Gestione delle classi personali del docente.</p><strong>Prossimamente</strong></div>
-<div class="teacher-card disabled"><h2>📝 Crea nuova prova</h2><p>Editor per creare o duplicare verifiche.</p><strong>Prossimamente</strong></div>
+<section id="loginPanel" class="card login-card">
+<h1>👩‍🏫 Area docenti</h1>
+<p>Accedi al tuo spazio di lavoro.</p>
+<label>Password
+<input id="teacherPassword" type="password" autocomplete="current-password" placeholder="Inserisci la password">
+</label>
+<div class="toolbar"><button id="loginBtn" class="primary-btn" type="button">Accedi</button><a href="../">Torna alla home</a></div>
+<p id="loginError" class="error" hidden>Password non corretta.</p>
 </section>
 
-<section class="card">
-<h2>ℹ️ Stato attuale</h2>
-<p>Questa è la prima versione della piattaforma. I risultati reali multi-dispositivo richiederanno il collegamento a un database online e l'accesso personale dei docenti.</p>
+<section id="teacherPanel" hidden>
+<div class="dashboard">
+<aside class="sidebar">
+<div class="brand">📚 ClasseLab</div>
+<button class="navbtn active" data-view="home">🏠 Dashboard</button>
+<button class="navbtn" data-view="classes">🏫 Le mie classi</button>
+<button class="navbtn" data-view="tests">📝 Le mie verifiche</button>
+<button class="navbtn" data-view="results">📊 Risultati</button>
+<button class="navbtn" data-view="settings">⚙️ Impostazioni</button>
+<hr>
+<button class="navbtn" id="logoutBtn">↩️ Esci</button>
+</aside>
+
+<div class="content">
+<section class="view active" id="view-home">
+<div class="hero"><h1>Area docenti</h1><p>Gestisci classi, verifiche e risultati da un unico spazio.</p></div>
+<div class="stats">
+<div class="stat"><span class="muted">Classi</span><strong id="statClasses">0</strong></div>
+<div class="stat"><span class="muted">Verifiche</span><strong id="statTests">0</strong></div>
+<div class="stat"><span class="muted">Consegne</span><strong id="statResults">0</strong></div>
+</div>
+<div class="card">
+<h2>⚡ Accessi rapidi</h2>
+<div class="toolbar">
+<button class="primary-btn" data-go="classes">+ Nuova classe</button>
+<button class="primary-btn" data-go="tests">+ Nuova verifica</button>
+<a class="primary-btn" href="../classe4/test-ingresso/" target="_blank">Apri il test d'ingresso</a>
+</div>
+</div>
+<div class="notice"><strong>Nota:</strong> questa versione salva classi e verifiche nel browser. Il passaggio successivo sarà collegare un database online per avere account personali e dati sincronizzati tra dispositivi.</div>
 </section>
-<section class="card"><p><a href="../">← Torna alla pagina iniziale</a></p></section>
+
+<section class="view" id="view-classes">
+<div class="card">
+<h1>🏫 Le mie classi</h1>
+<form id="classForm" class="form-grid">
+<label>Nome classe<input id="className" required placeholder="Es. 4ª A"></label>
+<label>Anno scolastico<input id="classYear" placeholder="Es. 2026/27"></label>
+<label class="full">Note<input id="classNotes" placeholder="Facoltativo"></label>
+<div class="full"><button class="primary-btn" type="submit">Aggiungi classe</button></div>
+</form>
+</div>
+<div id="classesList" class="list"></div>
+</section>
+
+<section class="view" id="view-tests">
+<div class="card">
+<h1>📝 Le mie verifiche</h1>
+<form id="testForm" class="form-grid">
+<label>Titolo<input id="testTitle" required placeholder="Es. Verifica frazioni"></label>
+<label>Classe<select id="testClass"></select></label>
+<label>Disciplina<input id="testSubject" value="Matematica"></label>
+<label>Tipologia<select id="testType"><option>Test d'ingresso</option><option>Verifica</option><option>Esercitazione</option><option>Recupero</option><option>Potenziamento</option></select></label>
+<label class="full">Descrizione<input id="testDescription" placeholder="Breve descrizione"></label>
+<div class="full"><button class="primary-btn" type="submit">Crea verifica</button></div>
+</form>
+</div>
+<div id="testsList" class="list"></div>
+</section>
+
+<section class="view" id="view-results">
+<div class="card">
+<h1>📊 Risultati</h1>
+<p>Qui trovi le consegne registrate per il test d'ingresso.</p>
+<div class="toolbar">
+<a class="primary-btn" href="../docente.html">Apri dettaglio risultati</a>
+<button id="exportBtn" class="btn-small" type="button">Esporta dati</button>
+</div>
+</div>
+<div id="resultsSummary" class="list"></div>
+</section>
+
+<section class="view" id="view-settings">
+<div class="card">
+<h1>⚙️ Impostazioni</h1>
+<p>Gestisci i dati locali dell'area docente.</p>
+<div class="toolbar">
+<button id="exportAllBtn" class="btn-small" type="button">Esporta configurazione</button>
+<button id="resetTeacherBtn" class="btn-small danger" type="button">Azzera classi e verifiche</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+</section>
 </main>
+<script src="../js/docenti.js"></script>
 </body>
 </html>
