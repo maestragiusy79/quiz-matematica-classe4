@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Area docenti - ClasseLab</title>
+<link rel="stylesheet" href="../css/stile.css">
+<style>
+.teacher-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.teacher-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:22px;background:#fff;box-shadow:var(--shadow)}
+.teacher-card:hover{border-color:#b8c4ef}
+.teacher-card.disabled{opacity:.58;pointer-events:none}
+@media(max-width:720px){.teacher-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero"><h1>👩‍🏫 Area docenti</h1><p>Spazio di lavoro per creare, assegnare e consultare le prove digitali.</p></section>
+
+<section class="teacher-grid">
+<a class="teacher-card" href="../docente.html"><h2>📊 Risultati</h2><p>Visualizza punteggi e risposte delle prove svolte.</p><strong>Apri →</strong></a>
+<a class="teacher-card" href="../archivio/"><h2>🗂️ Archivio condiviso</h2><p>Consulta le prove disponibili per classe e disciplina.</p><strong>Apri →</strong></a>
+<div class="teacher-card disabled"><h2>🏫 Le mie classi</h2><p>Gestione delle classi personali del docente.</p><strong>Prossimamente</strong></div>
+<div class="teacher-card disabled"><h2>📝 Crea nuova prova</h2><p>Editor per creare o duplicare verifiche.</p><strong>Prossimamente</strong></div>
+</section>
+
+<section class="card">
+<h2>ℹ️ Stato attuale</h2>
+<p>Questa è la prima versione della piattaforma. I risultati reali multi-dispositivo richiederanno il collegamento a un database online e l'accesso personale dei docenti.</p>
+</section>
+<section class="card"><p><a href="../">← Torna alla pagina iniziale</a></p></section>
+</main>
+</body>
+</html>
