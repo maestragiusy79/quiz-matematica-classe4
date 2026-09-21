@@ -5,47 +5,41 @@
 <title>ClasseLab - Prove digitali per la scuola primaria</title>
 <link rel="stylesheet" href="css/stile.css">
 <style>
-.portal-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.portal-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:24px;background:#fff;box-shadow:var(--shadow)}
-.portal-card:hover{border-color:#b8c4ef;transform:translateY(-1px)}
-.portal-card h2{margin:0 0 8px}
-.hero-badge{display:inline-block;margin-top:12px;padding:7px 10px;border-radius:999px;background:var(--primary-soft);font-weight:700}
-@media(max-width:850px){.portal-grid{grid-template-columns:1fr}}
+.portal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:22px}
+.portal-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:22px;padding:30px;background:#fff;box-shadow:var(--shadow);min-height:180px}
+.portal-card:hover{border-color:#b8c4ef;transform:translateY(-2px)}
+.portal-card h2{margin:0 0 12px;font-size:1.55rem}
+.portal-card p{margin:0 0 18px;line-height:1.5}
+.intro{max-width:760px;margin:0 auto;text-align:center}
+.quick-note{margin-top:22px;text-align:center;font-size:.95rem;opacity:.85}
+@media(max-width:760px){.portal-grid{grid-template-columns:1fr}.portal-card{min-height:auto}}
 </style>
 </head>
 <body>
 <main class="wrap">
 <section class="hero">
+<div class="intro">
 <h1>📚 ClasseLab</h1>
-<p>Una piattaforma semplice per creare, svolgere e condividere prove digitali nella scuola primaria.</p>
-<span class="hero-badge">Versione pilota</span>
-<div class="doodles"><div class="doodle">🧮</div><div class="doodle">✏️</div><div class="doodle">🔬</div><div class="doodle">📐</div><div class="doodle">📖</div></div>
+<p>Uno spazio digitale semplice per svolgere prove, esercitazioni e attività nella scuola primaria.</p>
+</div>
+<div class="doodles"><div class="doodle">🧮</div><div class="doodle">✏️</div><div class="doodle">📐</div><div class="doodle">📖</div></div>
 </section>
 
 <section class="portal-grid">
 <a class="portal-card" href="alunni/">
 <h2>👧👦 Area alunni</h2>
-<p>Accesso alle prove assegnate dal docente.</p>
-<strong>Entra →</strong>
+<p>Accedi alle attività e alle prove assegnate dall'insegnante.</p>
+<strong>Entra nell'area alunni →</strong>
 </a>
 
 <a class="portal-card" href="docenti/">
 <h2>👩‍🏫 Area docenti</h2>
-<p>Classi, verifiche, risultati e materiali condivisi.</p>
-<strong>Entra →</strong>
-</a>
-
-<a class="portal-card" href="archivio/">
-<h2>🗂️ Archivio condiviso</h2>
-<p>Prove organizzate per classe, disciplina e tipologia.</p>
-<strong>Esplora →</strong>
+<p>Accedi agli strumenti dedicati agli insegnanti e alla consultazione dei risultati.</p>
+<strong>Entra nell'area docenti →</strong>
 </a>
 </section>
 
-<section class="card">
-<h2>🚀 Progetto in crescita</h2>
-<p>La prima prova attiva è il <strong>Test d'ingresso di matematica di classe quarta</strong>. La struttura è già predisposta per aggiungere nuove classi, discipline e prove.</p>
-</section>
+<p class="quick-note">La piattaforma è organizzata in due spazi distinti, uno per gli alunni e uno per i docenti.</p>
 </main>
 </body>
 </html>
