@@ -2,112 +2,41 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Prova d'ingresso di matematica - Classe quarta</title>
+<title>Quiz di matematica</title>
 <link rel="stylesheet" href="css/stile.css">
+<style>
+.area-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.area-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:22px;background:#fff}
+.area-card:hover{border-color:#b8c4ef}
+.area-card h2{margin:0 0 8px}
+.area-card.disabled{opacity:.6;pointer-events:none}
+@media(max-width:700px){.area-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <main class="wrap">
 <section class="hero">
-  <a class="teacher-link" href="docente.html">🔐 Area docente</a>
-  <h1>🧮 Prova d'ingresso di matematica</h1>
-  <p>Classe quarta • Numeri fino al 1000, calcolo e geometria</p>
-  <div class="doodles"><div class="doodle">➕</div><div class="doodle">➗</div><div class="doodle">📐</div><div class="doodle">🔢</div><div class="doodle">✏️</div></div>
-  <div class="progress-shell"><div id="progress" class="progress-bar"></div></div>
-  <p id="progressText" class="small" style="margin-top:7px">0 risposte completate</p>
+<h1>🧮 Quiz di matematica</h1>
+<p>Scegli la tua classe.</p>
+<div class="doodles"><div class="doodle">➕</div><div class="doodle">➗</div><div class="doodle">📐</div><div class="doodle">🔢</div></div>
 </section>
-
-<section id="success" class="success hidden"><h2 style="margin-top:0">✅ Verifica consegnata</h2><p>Grazie! La prova è stata registrata. Il punteggio non viene mostrato all'alunno.</p></section>
-
-<form id="quizForm" autocomplete="off">
-<section class="card"><h2>👧👦 Dati dell'alunno</h2><div class="grid2"><label>Nome<input name="nome" required></label><label>Cognome<input name="cognome" required></label></div></section>
-
-<section class="card"><h2><span class="section-number">1</span>Numeri in ordine crescente</h2><p>Scrivi i numeri dal più piccolo al più grande, separandoli con una virgola.</p>
-<div class="pills"><span class="pill">876</span><span class="pill">917</span><span class="pill">569</span><span class="pill">768</span><span class="pill">719</span><span class="pill">695</span><span class="pill">678</span><span class="pill">197</span><span class="pill">965</span></div>
-<input name="q1" required placeholder="197, 569, 678, ..."></section>
-
-<section class="card"><h2><span class="section-number">2</span>Scrivi i numeri in cifre</h2><div class="grid2">
-<label>Cinquecentoquaranta<input name="q2_1" inputmode="numeric" required></label>
-<label>Trecentonovantaquattro<input name="q2_4" inputmode="numeric" required></label>
-<label>Settecentoventi<input name="q2_2" inputmode="numeric" required></label>
-<label>Settecentonovantacinque<input name="q2_5" inputmode="numeric" required></label>
-<label>Ottocentotredici<input name="q2_3" inputmode="numeric" required></label>
-<label>Seicentotrentadue<input name="q2_6" inputmode="numeric" required></label>
-</div></section>
-
-<section class="card"><h2><span class="section-number">3</span>Scrivi i numeri in lettere</h2><div class="grid2">
-<label>986<input name="q3_1" required></label><label>888<input name="q3_4" required></label>
-<label>506<input name="q3_2" required></label><label>475<input name="q3_5" required></label>
-<label>187<input name="q3_3" required></label><label>285<input name="q3_6" required></label>
-</div></section>
-
-<section class="card"><h2><span class="section-number">4</span>Maggiore, minore, uguale</h2><p>Completa con &gt;, &lt; oppure =.</p>
-<div class="compare"><span>340</span><select name="q4_1" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>234</span></div>
-<div class="compare"><span>798</span><select name="q4_2" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>897</span></div>
-<div class="compare"><span>298</span><select name="q4_3" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>289</span></div>
-<div class="compare"><span>908</span><select name="q4_4" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>809</span></div>
-<div class="compare"><span>908</span><select name="q4_5" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>1000</span></div>
-<div class="compare"><span>655</span><select name="q4_6" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>556</span></div>
-<div class="compare"><span>498</span><select name="q4_7" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>984</span></div>
-<div class="compare"><span>623</span><select name="q4_8" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>632</span></div>
+<section class="area-grid">
+<a class="area-card" href="classe4/">
+<h2>📘 Classe quarta</h2>
+<p>Prova d'ingresso di matematica.</p>
+<strong>Entra nella verifica →</strong>
+</a>
+<div class="area-card disabled">
+<h2>📗 Classe quinta</h2>
+<p>Area predisposta per le prossime verifiche.</p>
+<strong>In preparazione</strong>
+</div>
 </section>
-
-<section class="card"><h2><span class="section-number">5</span>Uguali quantità</h2><p>Per ogni quantità scegli il numero equivalente.</p>
-<label class="match-row"><span class="math-chip">3 h 8 da 2 u</span><select name="q5_1" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">82 da 3 u</span><select name="q5_2" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">8 h 32 u</span><select name="q5_3" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">23 da</span><select name="q5_4" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">8 h 2 da 3 u</span><select name="q5_5" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">230 u</span><select name="q5_6" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">38 da 2 u</span><select name="q5_7" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">238 u</span><select name="q5_8" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
+<section class="card">
+<h2>🔐 Area docente</h2>
+<p>Accesso ai risultati e al dettaglio delle risposte.</p>
+<a href="docente.html"><strong>Vai all'area docente →</strong></a>
 </section>
-
-<section class="card"><h2><span class="section-number">6</span>Composizione e scomposizione</h2><p>Abbina ogni numero alla sua scomposizione.</p>
-<label class="match-row"><span class="math-chip">739</span><select name="q6_1" required><option value="">Scegli...</option><option>700 + 60 + 6</option><option>900 + 5</option><option>700 + 30 + 9</option><option>500 + 50 + 5</option><option>100 + 90 + 8</option></select></label>
-<label class="match-row"><span class="math-chip">905</span><select name="q6_2" required><option value="">Scegli...</option><option>700 + 60 + 6</option><option>900 + 5</option><option>700 + 30 + 9</option><option>500 + 50 + 5</option><option>100 + 90 + 8</option></select></label>
-<label class="match-row"><span class="math-chip">555</span><select name="q6_3" required><option value="">Scegli...</option><option>700 + 60 + 6</option><option>900 + 5</option><option>700 + 30 + 9</option><option>500 + 50 + 5</option><option>100 + 90 + 8</option></select></label>
-<label class="match-row"><span class="math-chip">198</span><select name="q6_4" required><option value="">Scegli...</option><option>700 + 60 + 6</option><option>900 + 5</option><option>700 + 30 + 9</option><option>500 + 50 + 5</option><option>100 + 90 + 8</option></select></label>
-<label class="match-row"><span class="math-chip">766</span><select name="q6_5" required><option value="">Scegli...</option><option>700 + 60 + 6</option><option>900 + 5</option><option>700 + 30 + 9</option><option>500 + 50 + 5</option><option>100 + 90 + 8</option></select></label>
-</section>
-
-<section class="card"><h2><span class="section-number">7</span>Scomponi i numeri</h2><div class="grid2">
-<label>87 =<input name="q7_1" required placeholder="80 + 7"></label><label>6 =<input name="q7_4" required></label>
-<label>584 =<input name="q7_2" required></label><label>109 =<input name="q7_5" required></label>
-<label>439 =<input name="q7_3" required></label><label>53 =<input name="q7_6" required></label>
-</div></section>
-
-<section class="card"><h2><span class="section-number">8</span>Esegui le operazioni</h2><div class="grid2">
-<label>675 + 76 + 9 =<input name="q8_1" inputmode="numeric" required></label>
-<label>503 − 89 =<input name="q8_2" inputmode="numeric" required></label>
-<label>125 × 4 =<input name="q8_3" inputmode="numeric" required></label>
-<label>125 : 5 =<input name="q8_4" inputmode="numeric" required></label>
-</div></section>
-
-<section class="card"><h2><span class="section-number">9</span>Rette e segmenti</h2><p>Osserva ogni disegno e scegli il nome corretto.</p>
-<div class="geom-grid">
-<div class="geom-box"><svg viewBox="0 0 180 100"><line x1="20" y1="35" x2="160" y2="35"/><line x1="20" y1="70" x2="160" y2="70"/></svg><select name="q9_1" required><option value="">Scegli...</option><option>Rette parallele</option><option>Rette incidenti</option><option>Rette perpendicolari</option></select></div>
-<div class="geom-box"><svg viewBox="0 0 180 100"><line x1="25" y1="85" x2="155" y2="15"/><line x1="75" y1="95" x2="105" y2="5"/></svg><select name="q9_2" required><option value="">Scegli...</option><option>Rette parallele</option><option>Rette incidenti</option><option>Rette perpendicolari</option></select></div>
-<div class="geom-box"><svg viewBox="0 0 180 100"><line x1="90" y1="10" x2="90" y2="90"/><line x1="25" y1="50" x2="155" y2="50"/></svg><select name="q9_3" required><option value="">Scegli...</option><option>Rette parallele</option><option>Rette incidenti</option><option>Rette perpendicolari</option></select></div>
-</div></section>
-
-<section class="card"><h2><span class="section-number">10</span>Costruisci le figure</h2><p>Il segmento nero è già disegnato. Clicca due punti della griglia alla volta per aggiungere un segmento e completare la figura.</p>
-<div class="grid3">
-<div class="figure-task"><strong>Un triangolo</strong><svg class="figure-board" data-board="triangle" viewBox="0 0 292 180" aria-label="Un triangolo"></svg><p class="figure-help" data-fig-status="triangle"></p><div class="figure-actions"><button class="secondary" type="button" data-reset-fig="triangle">Ricomincia</button></div></div>
-<div class="figure-task"><strong>Un quadrato</strong><svg class="figure-board" data-board="square" viewBox="0 0 292 180" aria-label="Un quadrato"></svg><p class="figure-help" data-fig-status="square"></p><div class="figure-actions"><button class="secondary" type="button" data-reset-fig="square">Ricomincia</button></div></div>
-<div class="figure-task"><strong>Un rettangolo</strong><svg class="figure-board" data-board="rectangle" viewBox="0 0 292 180" aria-label="Un rettangolo"></svg><p class="figure-help" data-fig-status="rectangle"></p><div class="figure-actions"><button class="secondary" type="button" data-reset-fig="rectangle">Ricomincia</button></div></div>
-</div></section>
-
-<section class="card"><h2><span class="section-number">11</span>Misura i segmenti</h2><p>Conta i quadretti e rispondi.</p>
-<div class="segment-wrap"><svg class="segment-svg" viewBox="0 0 460 180" aria-label="Segmenti su quadrettatura"><defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0L0 0 0 20" fill="none" stroke="#cfd6e2"/></pattern></defs><rect x="10" y="5" width="430" height="165" fill="url(#g)"/><g stroke="#222" stroke-width="4" stroke-linecap="round"><line x1="40" y1="35" x2="120" y2="35"/><line x1="40" y1="75" x2="160" y2="75"/><line x1="40" y1="115" x2="100" y2="115"/><line x1="40" y1="155" x2="200" y2="155"/></g><g fill="#222" font-size="14"><text x="28" y="28">A</text><text x="118" y="28">B</text><text x="28" y="68">C</text><text x="158" y="68">D</text><text x="28" y="108">E</text><text x="98" y="108">F</text><text x="28" y="148">G</text><text x="198" y="148">H</text></g></svg></div>
-<div class="grid2">
-<label>Qual è il segmento più lungo?<select name="q11_1" required><option value="">Scegli...</option><option>AB</option><option>CD</option><option>EF</option><option>GH</option></select></label>
-<label>Qual è il segmento più corto?<select name="q11_2" required><option value="">Scegli...</option><option>AB</option><option>CD</option><option>EF</option><option>GH</option></select></label>
-<label>Quali segmenti misurano meno di 5 quadretti?<select name="q11_3" required><option value="">Scegli...</option><option>AB e EF</option><option>CD e GH</option><option>AB e CD</option><option>EF e GH</option></select></label>
-<label>Quanti quadretti misura il segmento CD?<input name="q11_4" inputmode="numeric" required></label>
-</div></section>
-
-<div class="actions"><button type="submit">✅ Consegna verifica</button></div>
-</form>
 </main>
-<script src="js/app.js"></script>
-</body></html>
+</body>
+</html>
