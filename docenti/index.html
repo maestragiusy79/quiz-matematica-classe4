@@ -1,84 +1,83 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Area docenti - ClasseLab</title>
 <link rel="stylesheet" href="../css/stile.css">
 <style>
-.teacher-wrap{max-width:1180px;margin:0 auto;padding:22px}
-.teacher-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
-.teacher-brand{font-size:1.3rem;font-weight:800}
-.teacher-links{display:flex;gap:8px;flex-wrap:wrap}
-.teacher-links a,.teacher-links button{border:1px solid var(--border);background:#fff;padding:9px 12px;border-radius:12px;text-decoration:none;color:inherit;font:inherit;cursor:pointer}
-.teacher-hero{background:linear-gradient(135deg,#eef2ff,#fff);border:1px solid var(--border);border-radius:26px;padding:28px;box-shadow:var(--shadow);margin-bottom:18px}
-.teacher-hero h1{margin:0 0 8px}
-.teacher-hero p{margin:0;color:var(--muted)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
-.stat{background:#fff;border:1px solid var(--border);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
-.stat span{color:var(--muted);font-size:.95rem}
-.stat strong{display:block;font-size:2rem;margin-top:4px}
-.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:18px 0}
-.action-card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:var(--shadow);cursor:pointer}
-.action-card:hover{transform:translateY(-2px);border-color:#b8c4ef}
-.action-card h2{margin:0 0 8px;font-size:1.2rem}
-.action-card p{margin:0;color:var(--muted)}
-.section{display:none;margin-top:18px}.section.active{display:block}
-.section-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
-.section-head h2{margin:0}
-.panel{background:#fff;border:1px solid var(--border);border-radius:22px;padding:20px;box-shadow:var(--shadow)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+body{background:#f7f9fc}
+.teacher-wrap{max-width:1100px;margin:0 auto;padding:24px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
+.topbar h1{margin:0;font-size:2rem}
+.top-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-simple{background:#fff;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+.hero-simple h2{margin:0 0 8px;font-size:1.5rem}
+.hero-simple p{margin:0;color:var(--muted);font-size:1.05rem}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0}
+.stat{background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.stat span{display:block;color:var(--muted);font-size:1rem;margin-bottom:4px}
+.stat strong{font-size:2.2rem}
+.section-card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:var(--shadow);margin:18px 0}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.section-title h2{margin:0;font-size:1.45rem}
+.primary-link,.primary-btn{display:inline-block;background:var(--primary);color:#fff;text-decoration:none;border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+.secondary-btn{background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;text-decoration:none;color:inherit}
+.danger-btn{background:#fff;border:1px solid #efc7c7;color:var(--red);border-radius:12px;padding:10px 14px;cursor:pointer}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
 .form-grid .full{grid-column:1/-1}
-.list{display:grid;gap:12px;margin-top:14px}
-.item{background:#fff;border:1px solid var(--border);border-radius:18px;padding:16px}
-.item-head{display:flex;justify-content:space-between;gap:12px}
-.item h3{margin:0 0 6px}
-.muted{color:var(--muted)}
-.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:var(--primary-soft);font-size:.85rem;font-weight:700}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.btn-small{border:1px solid var(--border);background:#fff;padding:8px 11px;border-radius:10px;cursor:pointer}
-.btn-small.primary{background:var(--primary);color:#fff;border-color:var(--primary)}
-.btn-small.danger{color:var(--red)}
-.empty{padding:24px;text-align:center;border:2px dashed var(--border);border-radius:18px;color:var(--muted)}
-.active-test{display:flex;justify-content:space-between;gap:16px;align-items:center}
-.active-test h3{margin:0 0 6px}
-.login-card{max-width:500px;margin:70px auto}
+.item{border-top:1px solid var(--border);padding:16px 0}
+.item:first-child{border-top:none}
+.item h3{margin:0 0 6px;font-size:1.15rem}
+.meta{color:var(--muted);margin-bottom:8px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.empty{padding:18px;background:#fafbfe;border:1px dashed var(--border);border-radius:14px;color:var(--muted);text-align:center}
+.login-card{max-width:480px;margin:70px auto}
 .login-card h1{margin-top:0}
-.backrow{margin-top:14px}
-@media(max-width:850px){
-  .stats,.action-grid{grid-template-columns:1fr}
-  .form-grid{grid-template-columns:1fr}.form-grid .full{grid-column:auto}
-  .teacher-top,.active-test,.section-head{align-items:flex-start;flex-direction:column}
+.test-highlight{display:flex;justify-content:space-between;align-items:center;gap:14px;background:#f8faff;border:1px solid #dfe6ff;border-radius:16px;padding:16px}
+.test-highlight h3{margin:0 0 5px}
+.helper{font-size:.95rem;color:var(--muted);margin-top:8px}
+@media(max-width:780px){
+ .teacher-wrap{padding:14px}
+ .topbar,.section-title,.test-highlight{flex-direction:column;align-items:flex-start}
+ .stats,.form-grid{grid-template-columns:1fr}
+ .form-grid .full{grid-column:auto}
+ .topbar h1{font-size:1.7rem}
 }
 </style>
 </head>
 <body>
-
 <main class="teacher-wrap">
+
 <section id="loginPanel" class="card login-card">
 <h1>👩‍🏫 Area docenti</h1>
 <p>Inserisci la password per accedere.</p>
 <label>Password
 <input id="teacherPassword" type="password" autocomplete="current-password" placeholder="Password">
 </label>
-<div class="toolbar">
+<div class="actions">
 <button id="loginBtn" class="primary-btn" type="button">Accedi</button>
-<a class="btn-small" href="../">Torna alla home</a>
+<a class="secondary-btn" href="../">Torna alla home</a>
 </div>
 <p id="loginError" class="error" hidden>Password non corretta.</p>
 </section>
 
 <section id="teacherPanel" hidden>
-<div class="teacher-top">
-<div class="teacher-brand">📚 ClasseLab · Area docenti</div>
-<div class="teacher-links">
-<a href="../">Home</a>
-<button id="logoutBtn" type="button">Esci</button>
+<div class="topbar">
+<div>
+<h1>Area docenti</h1>
+<div class="helper">Gestione semplice di classi, verifiche e risultati.</div>
+</div>
+<div class="top-actions">
+<a class="primary-link" href="../classe4/test-ingresso/" target="_blank">Apri test d'ingresso</a>
+<button id="copyActiveLink" class="secondary-btn" type="button">Copia link del test</button>
+<button id="logoutBtn" class="secondary-btn" type="button">Esci</button>
 </div>
 </div>
 
-<section class="teacher-hero">
-<h1>Benvenuta nell’area docenti</h1>
-<p>Qui puoi gestire classi, verifiche e risultati senza uscire dalla stessa pagina.</p>
+<section class="hero-simple">
+<h2>Benvenuta</h2>
+<p>Qui trovi tutto ciò che serve per gestire le prove senza passaggi complicati.</p>
 </section>
 
 <div class="stats">
@@ -87,96 +86,67 @@
 <div class="stat"><span>Consegne</span><strong id="statResults">0</strong></div>
 </div>
 
-<div class="action-grid">
-<div class="action-card" data-go="classes">
+<section class="section-card">
+<div class="section-title">
 <h2>🏫 Le mie classi</h2>
-<p>Crea e gestisci le classi.</p>
+<button id="toggleClassForm" class="primary-btn" type="button">+ Aggiungi classe</button>
 </div>
-<div class="action-card" data-go="tests">
-<h2>📝 Le mie verifiche</h2>
-<p>Consulta le prove attive e prepara nuove verifiche.</p>
-</div>
-<div class="action-card" data-go="results">
-<h2>📊 Risultati</h2>
-<p>Controlla consegne, punteggi e risposte.</p>
-</div>
-</div>
-
-<section class="panel">
-<div class="active-test">
-<div>
-<span class="badge">Prova attiva</span>
-<h3>Test d’ingresso di matematica · Classe quarta</h3>
-<p class="muted">La prova che abbiamo già preparato è pronta per essere aperta o condivisa.</p>
-</div>
-<div class="toolbar">
-<a class="btn-small primary" href="../classe4/test-ingresso/" target="_blank">Apri test</a>
-<button id="copyActiveLink" class="btn-small" type="button">Copia link</button>
-</div>
-</div>
-</section>
-
-<section class="section" id="section-classes">
-<div class="section-head">
-<div>
-<h2>🏫 Le mie classi</h2>
-<p class="muted">Aggiungi le classi che vuoi gestire.</p>
-</div>
-<button class="btn-small" data-close>Chiudi</button>
-</div>
-<div class="panel">
-<form id="classForm" class="form-grid">
+<form id="classForm" class="form-grid" hidden>
 <label>Nome classe<input id="className" required placeholder="Es. 4ª A"></label>
 <label>Anno scolastico<input id="classYear" placeholder="Es. 2026/27"></label>
 <label class="full">Note<input id="classNotes" placeholder="Facoltativo"></label>
-<div class="full"><button class="primary-btn" type="submit">Aggiungi classe</button></div>
-</form>
-<div id="classesList" class="list"></div>
+<div class="full actions">
+<button class="primary-btn" type="submit">Salva classe</button>
+<button id="cancelClassForm" class="secondary-btn" type="button">Annulla</button>
 </div>
+</form>
+<div id="classesList"></div>
 </section>
 
-<section class="section" id="section-tests">
-<div class="section-head">
-<div>
+<section class="section-card">
+<div class="section-title">
 <h2>📝 Le mie verifiche</h2>
-<p class="muted">Consulta le prove e prepara una nuova bozza.</p>
+<button id="toggleTestForm" class="primary-btn" type="button">+ Crea verifica</button>
 </div>
-<button class="btn-small" data-close>Chiudi</button>
+
+<div class="test-highlight">
+<div>
+<h3>Test d'ingresso di matematica · Classe quarta</h3>
+<div class="meta">Prova attiva</div>
 </div>
-<div class="panel">
-<form id="testForm" class="form-grid">
+<div class="actions">
+<a class="primary-link" href="../classe4/test-ingresso/" target="_blank">Apri</a>
+<button id="copyActiveLink2" class="secondary-btn" type="button">Copia link</button>
+</div>
+</div>
+
+<form id="testForm" class="form-grid" hidden style="margin-top:16px">
 <label>Titolo<input id="testTitle" required placeholder="Es. Verifica frazioni"></label>
 <label>Classe<select id="testClass"></select></label>
 <label>Disciplina<input id="testSubject" value="Matematica"></label>
 <label>Tipologia<select id="testType"><option>Test d'ingresso</option><option>Verifica</option><option>Esercitazione</option><option>Recupero</option><option>Potenziamento</option></select></label>
 <label class="full">Descrizione<input id="testDescription" placeholder="Breve descrizione"></label>
-<div class="full"><button class="primary-btn" type="submit">Salva bozza</button></div>
+<div class="full actions">
+<button class="primary-btn" type="submit">Salva bozza</button>
+<button id="cancelTestForm" class="secondary-btn" type="button">Annulla</button>
+</div>
 </form>
-<div id="testsList" class="list"></div>
-</div>
+<div id="testsList" style="margin-top:14px"></div>
 </section>
 
-<section class="section" id="section-results">
-<div class="section-head">
-<div>
+<section class="section-card">
+<div class="section-title">
 <h2>📊 Risultati</h2>
-<p class="muted">Riepilogo delle consegne registrate.</p>
+<div class="actions">
+<a class="primary-link" href="../docente.html">Apri risultati completi</a>
+<button id="exportBtn" class="secondary-btn" type="button">Esporta</button>
 </div>
-<button class="btn-small" data-close>Chiudi</button>
 </div>
-<div class="panel">
-<div class="toolbar">
-<a class="btn-small primary" href="../docente.html">Apri dettaglio completo</a>
-<button id="exportBtn" class="btn-small" type="button">Esporta risultati</button>
-</div>
-<div id="resultsSummary" class="list"></div>
-</div>
+<div id="resultsSummary"></div>
 </section>
 
-<div class="backrow"><a href="../">← Torna alla home generale</a></div>
 </section>
 </main>
-
 <script src="../js/docenti.js"></script>
 </body>
 </html>
