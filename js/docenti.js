@@ -113,7 +113,7 @@ function renderResults(){
  const r=load(K_RESULTS),box=q('#resultsSummary');
  if(!r.length){box.innerHTML='<div class="empty">Nessuna consegna registrata su questo dispositivo.</div>';return}
  const avg=Math.round(r.reduce((s,x)=>s+((x.score||0)/(x.total||1))*100,0)/r.length);
- box.innerHTML='<div class="item"><h3>Test d\\'ingresso di matematica · Classe quarta</h3><div class="meta">'+r.length+' consegne</div><div>Media risultati: <strong>'+avg+'%</strong></div></div>';
+ box.innerHTML="<div class=\"item\"><h3>Test d'ingresso di matematica · Classe quarta</h3><div class=\"meta\">"+r.length+" consegne</div><div>Media risultati: <strong>"+avg+"%</strong></div></div>";
 }
 function download(name,obj){
  const a=document.createElement('a');
