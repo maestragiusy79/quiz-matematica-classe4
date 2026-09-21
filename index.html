@@ -6,10 +6,10 @@
 <link rel="stylesheet" href="css/stile.css">
 <style>
 .area-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.area-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:22px;background:#fff}
-.area-card:hover{border-color:#b8c4ef}
+.area-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:24px;background:#fff;box-shadow:var(--shadow)}
+.area-card:hover{border-color:#b8c4ef;transform:translateY(-1px)}
 .area-card h2{margin:0 0 8px}
-.area-card.disabled{opacity:.6;pointer-events:none}
+.area-card.disabled{opacity:.58;pointer-events:none}
 @media(max-width:700px){.area-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -17,21 +17,24 @@
 <main class="wrap">
 <section class="hero">
 <h1>🧮 Quiz di matematica</h1>
-<p>Scegli la tua classe.</p>
+<p>Scegli la classe.</p>
 <div class="doodles"><div class="doodle">➕</div><div class="doodle">➗</div><div class="doodle">📐</div><div class="doodle">🔢</div></div>
 </section>
+
 <section class="area-grid">
 <a class="area-card" href="classe4/">
 <h2>📘 Classe quarta</h2>
-<p>Prova d'ingresso di matematica.</p>
-<strong>Entra nella verifica →</strong>
+<p>Entra nell'area dedicata alla classe quarta.</p>
+<strong>Apri il menù →</strong>
 </a>
-<div class="area-card disabled">
+
+<a class="area-card" href="classe5/">
 <h2>📗 Classe quinta</h2>
-<p>Area predisposta per le prossime verifiche.</p>
-<strong>In preparazione</strong>
-</div>
+<p>Area dedicata alla classe quinta.</p>
+<strong>Apri il menù →</strong>
+</a>
 </section>
+
 <section class="card">
 <h2>🔐 Area docente</h2>
 <p>Accesso ai risultati e al dettaglio delle risposte.</p>
