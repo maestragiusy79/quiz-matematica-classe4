@@ -58,10 +58,11 @@ body{background:#f7f9fc}
 <div class="row" style="margin-top:14px">
 <button id="loginBtn" class="btn primary" type="button">Accedi</button>
 <button id="signupBtn" class="btn" type="button">Crea account docente</button>
+<button id="resendBtn" class="btn" type="button">Reinvia email di conferma</button>
 <a class="btn" href="../">Torna alla home</a>
 </div>
 <p id="authStatus" class="status"></p>
-<p class="note">Per un nuovo account Supabase potrebbe chiedere la conferma dell'email prima del primo accesso.</p>
+<p class="note">Per un nuovo account è richiesta la conferma dell'email. L'invio può richiedere alcuni minuti: controlla anche Spam/Posta indesiderata. Se non arriva, usa “Reinvia email di conferma”.</p>
 </section>
 
 <section id="dashboard" style="display:none">
@@ -206,7 +207,10 @@ async function signup(){
   const {data,error}=await sb.auth.signUp({
     email,
     password,
-    options:{data:{display_name:displayName}}
+    options:{
+      data:{display_name:displayName},
+      emailRedirectTo: window.location.href.split('#')[0].split('?')[0]
+    }
   });
   if(error){setAuthStatus('Account non creato: '+error.message);return}
   if(data.session){
@@ -214,8 +218,20 @@ async function signup(){
     setAuthStatus('');
     await openDashboard();
   }else{
-    setAuthStatus('Account creato. Controlla la tua email e conferma l\'indirizzo, poi torna qui e premi Accedi.',true);
+    setAuthStatus('Account creato. La mail di conferma può impiegare alcuni minuti. Controlla anche Spam/Posta indesiderata; se non arriva premi “Reinvia email di conferma”.',true);
   }
+}
+async function resendConfirmation(){
+  const email=el('email').value.trim();
+  if(!email){setAuthStatus('Inserisci prima l\'email del docente.');return}
+  setAuthStatus('Invio della mail di conferma in corso...',true);
+  const {error}=await sb.auth.resend({
+    type:'signup',
+    email,
+    options:{emailRedirectTo: window.location.href.split('#')[0].split('?')[0]}
+  });
+  if(error){setAuthStatus('Non sono riuscito a reinviare la mail: '+error.message);return}
+  setAuthStatus('Mail di conferma reinviata. Attendi qualche minuto e controlla anche Spam/Posta indesiderata.',true);
 }
 async function logout(){
   await sb.auth.signOut();
@@ -324,6 +340,7 @@ function copyTestLink(){
 
 el('loginBtn').onclick=login;
 el('signupBtn').onclick=signup;
+el('resendBtn').onclick=resendConfirmation;
 el('logoutBtn').onclick=logout;
 el('refreshBtn').onclick=renderAll;
 el('copyTestLink').onclick=copyTestLink;
