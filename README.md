@@ -42,11 +42,15 @@ Esempio:
 - creazione e duplicazione di verifiche.
 
 ## Stato attuale
-La versione pubblicata su GitHub Pages è ancora una demo.
+Il front-end è pubblicato su GitHub Pages.
 
-La password unica dell'Area docenti serve solamente per la dimostrazione e non rappresenta il sistema definitivo di autenticazione.
+L'Area docenti è ora collegata a Supabase e supporta:
+- account docente con email e password;
+- classi salvate nel database;
+- verifiche salvate nel database;
+- risultati filtrati tramite Row Level Security.
 
-In futuro il front-end resterà su GitHub Pages mentre autenticazione, utenti, verifiche e risultati saranno gestiti da un database esterno con regole di accesso.
+Il test d'ingresso di matematica di classe quarta è ancora una prova statica pubblicata su GitHub Pages. Il prossimo passaggio è salvare anche le consegne degli alunni direttamente su Supabase, così i risultati saranno centralizzati e visibili solo al docente autorizzato.
 
 Vedi anche:
 - `docs/ARCHITETTURA.md`
