@@ -7,146 +7,304 @@
 <link rel="stylesheet" href="../css/stile.css">
 <style>
 body{background:#f7f9fc}
-.teacher-wrap{max-width:1100px;margin:0 auto;padding:24px}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}
-.topbar h1{margin:0;font-size:2rem}
-.top-actions{display:flex;gap:10px;flex-wrap:wrap}
-.hero-simple{background:#fff;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
-.hero-simple h2{margin:0 0 8px;font-size:1.5rem}
-.hero-simple p{margin:0;color:var(--muted);font-size:1.05rem}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0}
-.stat{background:#fff;border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
-.stat span{display:block;color:var(--muted);font-size:1rem;margin-bottom:4px}
-.stat strong{font-size:2.2rem}
-.section-card{background:#fff;border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:var(--shadow);margin:18px 0}
-.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
-.section-title h2{margin:0;font-size:1.45rem}
-.primary-link,.primary-btn{display:inline-block;background:var(--primary);color:#fff;text-decoration:none;border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
-.secondary-btn{background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;text-decoration:none;color:inherit}
-.danger-btn{background:#fff;border:1px solid #efc7c7;color:var(--red);border-radius:12px;padding:10px 14px;cursor:pointer}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-.form-grid .full{grid-column:1/-1}
-.item{border-top:1px solid var(--border);padding:16px 0}
-.item:first-child{border-top:none}
-.item h3{margin:0 0 6px;font-size:1.15rem}
-.meta{color:var(--muted);margin-bottom:8px}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.empty{padding:18px;background:#fafbfe;border:1px dashed var(--border);border-radius:14px;color:var(--muted);text-align:center}
-.login-card{max-width:480px;margin:70px auto}
-.login-card h1{margin-top:0}
-.test-highlight{display:flex;justify-content:space-between;align-items:center;gap:14px;background:#f8faff;border:1px solid #dfe6ff;border-radius:16px;padding:16px}
-.test-highlight h3{margin:0 0 5px}
-.helper{font-size:.95rem;color:var(--muted);margin-top:8px}
-@media(max-width:780px){
- .teacher-wrap{padding:14px}
- .topbar,.section-title,.test-highlight{flex-direction:column;align-items:flex-start}
- .stats,.form-grid{grid-template-columns:1fr}
- .form-grid .full{grid-column:auto}
- .topbar h1{font-size:1.7rem}
-}
+.wrap-teacher{max-width:1080px;margin:0 auto;padding:20px}
+.login{max-width:480px;margin:60px auto;background:#fff;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+.login h1{margin-top:0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-block;border:1px solid var(--border);background:#fff;color:inherit;text-decoration:none;padding:10px 14px;border-radius:12px;font:inherit;cursor:pointer}
+.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
+.btn.danger{color:var(--red)}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
+.top h1{margin:0}
+.sub{color:var(--muted);margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+.stat,.box{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+.stat strong{display:block;font-size:2rem;margin-top:4px}
+.stat span{color:var(--muted)}
+.box{margin:16px 0}
+.box h2{margin:0 0 14px}
+.boxhead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+.item{padding:14px 0;border-top:1px solid var(--border)}
+.item:first-child{border-top:0}
+.item h3{margin:0 0 5px}
+.meta{color:var(--muted);font-size:.95rem}
+.form{display:none;margin:14px 0;padding:16px;background:#fafbfe;border-radius:14px}
+.form.show{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid .full{grid-column:1/-1}
+.active-test{background:#f7f9ff;border:1px solid #dfe5ff;border-radius:16px;padding:16px}
+.note{font-size:.92rem;color:var(--muted)}
+@media(max-width:760px){.top,.boxhead{align-items:flex-start;flex-direction:column}.stats,.grid{grid-template-columns:1fr}.grid .full{grid-column:auto}}
 </style>
 </head>
 <body>
-<main class="teacher-wrap">
-
-<section id="loginPanel" class="card login-card">
+<main class="wrap-teacher">
+<section id="loginBox" class="login">
 <h1>👩‍🏫 Area docenti</h1>
 <p>Inserisci la password per accedere.</p>
 <label>Password
-<input id="teacherPassword" type="password" autocomplete="current-password" placeholder="Password">
+<input id="password" type="password" placeholder="Password">
 </label>
-<div class="actions">
-<button id="loginBtn" class="primary-btn" type="button">Accedi</button>
-<a class="secondary-btn" href="../">Torna alla home</a>
+<div class="row" style="margin-top:14px">
+<button id="loginBtn" class="btn primary" type="button">Accedi</button>
+<a class="btn" href="../">Torna alla home</a>
 </div>
-<p id="loginError" class="error" hidden>Password non corretta.</p>
+<p id="loginError" style="color:#b42318;display:none">Password non corretta.</p>
 </section>
 
-<section id="teacherPanel" hidden>
-<div class="topbar">
+<section id="dashboard" style="display:none">
+<div class="top">
 <div>
 <h1>Area docenti</h1>
-<div class="helper">Gestione semplice di classi, verifiche e risultati.</div>
+<div class="sub">Classi, verifiche e risultati in un'unica pagina.</div>
 </div>
-<div class="top-actions">
-<a class="primary-link" href="../classe4/test-ingresso/" target="_blank">Apri test d'ingresso</a>
-<button id="copyActiveLink" class="secondary-btn" type="button">Copia link del test</button>
-<button id="logoutBtn" class="secondary-btn" type="button">Esci</button>
+<div class="row">
+<a class="btn primary" href="../classe4/test-ingresso/" target="_blank">Apri test d'ingresso</a>
+<button id="copyMain" class="btn" type="button">Copia link</button>
+<button id="logoutBtn" class="btn" type="button">Esci</button>
 </div>
 </div>
-
-<section class="hero-simple">
-<h2>Benvenuta</h2>
-<p>Qui trovi tutto ciò che serve per gestire le prove senza passaggi complicati.</p>
-</section>
 
 <div class="stats">
-<div class="stat"><span>Classi</span><strong id="statClasses">0</strong></div>
-<div class="stat"><span>Verifiche</span><strong id="statTests">0</strong></div>
-<div class="stat"><span>Consegne</span><strong id="statResults">0</strong></div>
+<div class="stat"><span>Classi</span><strong id="nClassi">0</strong></div>
+<div class="stat"><span>Verifiche</span><strong id="nVerifiche">0</strong></div>
+<div class="stat"><span>Consegne</span><strong id="nConsegne">0</strong></div>
 </div>
 
-<section class="section-card">
-<div class="section-title">
+<section class="box">
+<div class="boxhead">
 <h2>🏫 Le mie classi</h2>
-<button id="toggleClassForm" class="primary-btn" type="button">+ Aggiungi classe</button>
+<button id="showClassForm" class="btn primary" type="button">+ Aggiungi classe</button>
 </div>
-<form id="classForm" class="form-grid" hidden>
-<label>Nome classe<input id="className" required placeholder="Es. 4ª A"></label>
+<div id="classForm" class="form">
+<div class="grid">
+<label>Nome classe<input id="className" placeholder="Es. 4ª A"></label>
 <label>Anno scolastico<input id="classYear" placeholder="Es. 2026/27"></label>
 <label class="full">Note<input id="classNotes" placeholder="Facoltativo"></label>
-<div class="full actions">
-<button class="primary-btn" type="submit">Salva classe</button>
-<button id="cancelClassForm" class="secondary-btn" type="button">Annulla</button>
 </div>
-</form>
-<div id="classesList"></div>
+<div class="row" style="margin-top:12px">
+<button id="saveClass" class="btn primary" type="button">Salva classe</button>
+<button id="cancelClass" class="btn" type="button">Annulla</button>
+</div>
+</div>
+<div id="classList"></div>
 </section>
 
-<section class="section-card">
-<div class="section-title">
+<section class="box">
+<div class="boxhead">
 <h2>📝 Le mie verifiche</h2>
-<button id="toggleTestForm" class="primary-btn" type="button">+ Crea verifica</button>
+<button id="showTestForm" class="btn primary" type="button">+ Crea verifica</button>
 </div>
 
-<div class="test-highlight">
-<div>
-<h3>Test d'ingresso di matematica · Classe quarta</h3>
+<div class="active-test">
+<h3 style="margin:0 0 6px">Test d'ingresso di matematica · Classe quarta</h3>
 <div class="meta">Prova attiva</div>
-</div>
-<div class="actions">
-<a class="primary-link" href="../classe4/test-ingresso/" target="_blank">Apri</a>
-<button id="copyActiveLink2" class="secondary-btn" type="button">Copia link</button>
+<div class="row" style="margin-top:12px">
+<a class="btn primary" href="../classe4/test-ingresso/" target="_blank">Apri</a>
+<button id="copyTest" class="btn" type="button">Copia link</button>
 </div>
 </div>
 
-<form id="testForm" class="form-grid" hidden style="margin-top:16px">
-<label>Titolo<input id="testTitle" required placeholder="Es. Verifica frazioni"></label>
+<div id="testForm" class="form">
+<div class="grid">
+<label>Titolo<input id="testTitle" placeholder="Es. Verifica frazioni"></label>
 <label>Classe<select id="testClass"></select></label>
 <label>Disciplina<input id="testSubject" value="Matematica"></label>
 <label>Tipologia<select id="testType"><option>Test d'ingresso</option><option>Verifica</option><option>Esercitazione</option><option>Recupero</option><option>Potenziamento</option></select></label>
 <label class="full">Descrizione<input id="testDescription" placeholder="Breve descrizione"></label>
-<div class="full actions">
-<button class="primary-btn" type="submit">Salva bozza</button>
-<button id="cancelTestForm" class="secondary-btn" type="button">Annulla</button>
 </div>
-</form>
-<div id="testsList" style="margin-top:14px"></div>
+<div class="row" style="margin-top:12px">
+<button id="saveTest" class="btn primary" type="button">Salva bozza</button>
+<button id="cancelTest" class="btn" type="button">Annulla</button>
+</div>
+</div>
+<div id="testList"></div>
 </section>
 
-<section class="section-card">
-<div class="section-title">
+<section class="box">
+<div class="boxhead">
 <h2>📊 Risultati</h2>
-<div class="actions">
-<a class="primary-link" href="../docente.html">Apri risultati completi</a>
-<button id="exportBtn" class="secondary-btn" type="button">Esporta</button>
+<div class="row">
+<a class="btn primary" href="../docente.html">Apri risultati completi</a>
+<button id="exportBtn" class="btn" type="button">Esporta</button>
 </div>
 </div>
-<div id="resultsSummary"></div>
+<div id="resultBox"></div>
 </section>
 
+<p class="note">Versione dimostrativa: classi e bozze create in questa pagina sono salvate nel browser del dispositivo.</p>
 </section>
 </main>
-<script src="../js/docenti.js?v=2"></script>
+
+<script>
+(function(){
+var PASSWORD='classe4';
+var K_CLASSES='classelab_classes_demo_v2';
+var K_TESTS='classelab_tests_demo_v2';
+var K_RESULTS='quizMathClass4Results_v1';
+
+function el(id){return document.getElementById(id)}
+function read(key){try{return JSON.parse(localStorage.getItem(key))||[]}catch(e){return []}}
+function write(key,value){localStorage.setItem(key,JSON.stringify(value))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function safe(text){
+ return String(text||'').replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+ });
+}
+function seed(){
+ var classes=read(K_CLASSES);
+ if(!classes.length){
+  classes=[{id:'c4',name:'Classe quarta',year:'2026/27',notes:''}];
+  write(K_CLASSES,classes);
+ }
+}
+function login(){
+ var ok=el('password').value.trim()===PASSWORD;
+ el('loginError').style.display=ok?'none':'block';
+ if(!ok)return;
+ sessionStorage.setItem('classelab_demo_login','1');
+ el('loginBox').style.display='none';
+ el('dashboard').style.display='block';
+ render();
+}
+function logout(){
+ sessionStorage.removeItem('classelab_demo_login');
+ el('dashboard').style.display='none';
+ el('loginBox').style.display='block';
+ el('password').value='';
+}
+function render(){
+ seed();
+ renderClasses();
+ renderTests();
+ renderResults();
+ el('nClassi').textContent=read(K_CLASSES).length;
+ el('nVerifiche').textContent=1+read(K_TESTS).length;
+ el('nConsegne').textContent=read(K_RESULTS).length;
+}
+function renderClasses(){
+ var data=read(K_CLASSES);
+ var html='';
+ data.forEach(function(c){
+  html+='<div class="item"><h3>'+safe(c.name)+'</h3><div class="meta">'+safe(c.year)+'</div>';
+  if(c.notes)html+='<div>'+safe(c.notes)+'</div>';
+  if(c.id!=='c4')html+='<div class="row" style="margin-top:10px"><button class="btn danger" data-del-class="'+c.id+'">Elimina</button></div>';
+  html+='</div>';
+ });
+ el('classList').innerHTML=html;
+ var sel=el('testClass');
+ sel.innerHTML='';
+ data.forEach(function(c){
+  var o=document.createElement('option');
+  o.value=c.id;o.textContent=c.name;sel.appendChild(o);
+ });
+ Array.prototype.forEach.call(document.querySelectorAll('[data-del-class]'),function(b){
+  b.onclick=function(){
+   var id=b.getAttribute('data-del-class');
+   write(K_CLASSES,read(K_CLASSES).filter(function(x){return x.id!==id}));
+   render();
+  };
+ });
+}
+function renderTests(){
+ var classes=read(K_CLASSES);
+ var tests=read(K_TESTS);
+ if(!tests.length){
+  el('testList').innerHTML='<div class="item meta">Nessun’altra verifica creata.</div>';
+  return;
+ }
+ var html='';
+ tests.forEach(function(t){
+  var className='Senza classe';
+  classes.forEach(function(c){if(c.id===t.classId)className=c.name});
+  html+='<div class="item"><h3>'+safe(t.title)+'</h3><div class="meta">'+safe(className)+' · '+safe(t.subject)+' · '+safe(t.type)+'</div>';
+  if(t.description)html+='<div>'+safe(t.description)+'</div>';
+  html+='<div class="row" style="margin-top:10px"><button class="btn danger" data-del-test="'+t.id+'">Elimina</button></div></div>';
+ });
+ el('testList').innerHTML=html;
+ Array.prototype.forEach.call(document.querySelectorAll('[data-del-test]'),function(b){
+  b.onclick=function(){
+   var id=b.getAttribute('data-del-test');
+   write(K_TESTS,read(K_TESTS).filter(function(x){return x.id!==id}));
+   render();
+  };
+ });
+}
+function renderResults(){
+ var results=read(K_RESULTS);
+ if(!results.length){
+  el('resultBox').innerHTML='<div class="meta">Nessuna consegna registrata su questo dispositivo.</div>';
+  return;
+ }
+ var total=0;
+ results.forEach(function(r){total+=((r.score||0)/(r.total||1))*100});
+ var avg=Math.round(total/results.length);
+ el('resultBox').innerHTML='<div class="item"><h3>Test d\'ingresso di matematica · Classe quarta</h3><div class="meta">'+results.length+' consegne</div><div>Media risultati: <strong>'+avg+'%</strong></div></div>';
+}
+function copyLink(button){
+ var url=new URL('../classe4/test-ingresso/',location.href).href;
+ navigator.clipboard.writeText(url).then(function(){
+  var old=button.textContent;
+  button.textContent='Link copiato ✓';
+  setTimeout(function(){button.textContent=old},1200);
+ });
+}
+function downloadResults(){
+ var blob=new Blob([JSON.stringify(read(K_RESULTS),null,2)],{type:'application/json'});
+ var a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download='risultati-classelab.json';
+ a.click();
+ setTimeout(function(){URL.revokeObjectURL(a.href)},500);
+}
+
+el('loginBtn').onclick=login;
+el('password').onkeydown=function(e){if(e.key==='Enter')login()};
+el('logoutBtn').onclick=logout;
+el('copyMain').onclick=function(){copyLink(el('copyMain'))};
+el('copyTest').onclick=function(){copyLink(el('copyTest'))};
+el('exportBtn').onclick=downloadResults;
+
+el('showClassForm').onclick=function(){el('classForm').classList.add('show')};
+el('cancelClass').onclick=function(){el('classForm').classList.remove('show')};
+el('saveClass').onclick=function(){
+ var name=el('className').value.trim();
+ if(!name){alert('Inserisci il nome della classe.');return}
+ var data=read(K_CLASSES);
+ data.push({id:uid(),name:name,year:el('classYear').value.trim(),notes:el('classNotes').value.trim()});
+ write(K_CLASSES,data);
+ el('className').value='';el('classYear').value='';el('classNotes').value='';
+ el('classForm').classList.remove('show');
+ render();
+};
+
+el('showTestForm').onclick=function(){el('testForm').classList.add('show')};
+el('cancelTest').onclick=function(){el('testForm').classList.remove('show')};
+el('saveTest').onclick=function(){
+ var title=el('testTitle').value.trim();
+ if(!title){alert('Inserisci il titolo della verifica.');return}
+ var data=read(K_TESTS);
+ data.push({
+  id:uid(),
+  title:title,
+  classId:el('testClass').value,
+  subject:el('testSubject').value.trim()||'Matematica',
+  type:el('testType').value,
+  description:el('testDescription').value.trim()
+ });
+ write(K_TESTS,data);
+ el('testTitle').value='';el('testDescription').value='';
+ el('testForm').classList.remove('show');
+ render();
+};
+
+if(sessionStorage.getItem('classelab_demo_login')==='1'){
+ el('loginBox').style.display='none';
+ el('dashboard').style.display='block';
+ render();
+}
+})();
+</script>
 </body>
 </html>
