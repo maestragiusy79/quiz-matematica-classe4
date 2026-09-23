@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prova iniziale - Misure, geometria, relazioni - Classe quinta</title>
+<link rel="stylesheet" href="../../css/stile.css">
+<style>
+body{background:#f7f9fc}.wrap{max-width:980px}.q{margin:18px 0;padding:20px;background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+.q h2{font-size:1.15rem;margin:0 0 14px}.opts{display:grid;gap:9px}.opts label{display:block;padding:10px 12px;border:1px solid var(--border);border-radius:12px;cursor:pointer}
+.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.angles{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.anglebox{text-align:center}
+.scarves{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.scarf{border:1px solid var(--border);border-radius:14px;padding:10px;text-align:center}.scarf svg{width:100%;height:100px}
+.graph{width:100%;max-width:620px;height:auto}.bag{width:220px;max-width:100%}.note{color:var(--muted);font-size:.95rem}
+.submitbox{position:sticky;bottom:10px;background:#fff;border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;justify-content:space-between}
+@media(max-width:700px){.answer-grid,.angles,.scarves{grid-template-columns:1fr}.submitbox{position:static;flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero"><h1>📐 Prova comune iniziale di matematica · Classe quinta</h1><p><strong>Misure, geometria, relazioni</strong></p></section>
+<section class="card"><div class="answer-grid"><label>Nome<input id="nome" required></label><label>Cognome<input id="cognome" required></label></div></section>
+<form id="quiz">
+
+<section class="q"><h2>1. Indica il nome corretto di questo angolo.</h2>
+<svg viewBox="0 0 300 100" style="max-width:420px"><line x1="40" y1="60" x2="260" y2="60" stroke="currentColor" stroke-width="5"/><path d="M100 60 A50 50 0 0 1 200 60" fill="#d9d9d9"/><circle cx="150" cy="60" r="6"/></svg>
+<div class="opts"><label><input type="radio" name="q1" value="retto"> angolo retto</label><label><input type="radio" name="q1" value="piatto"> angolo piatto</label><label><input type="radio" name="q1" value="acuto"> angolo acuto</label><label><input type="radio" name="q1" value="ottuso"> angolo ottuso</label></div></section>
+
+<section class="q"><h2>2. Indica il nome corretto di questo angolo.</h2>
+<svg viewBox="0 0 300 120" style="max-width:420px"><line x1="80" y1="90" x2="240" y2="90" stroke="currentColor" stroke-width="5"/><line x1="80" y1="90" x2="155" y2="18" stroke="currentColor" stroke-width="5"/><path d="M80 90 L135 90 A55 55 0 0 0 118 51 Z" fill="#d9d9d9"/><circle cx="80" cy="90" r="6"/></svg>
+<div class="opts"><label><input type="radio" name="q2" value="retto"> angolo retto</label><label><input type="radio" name="q2" value="piatto"> angolo piatto</label><label><input type="radio" name="q2" value="acuto"> angolo acuto</label><label><input type="radio" name="q2" value="ottuso"> angolo ottuso</label></div></section>
+
+<section class="q"><h2>3. Indica il nome corretto di questo angolo.</h2>
+<svg viewBox="0 0 300 120" style="max-width:420px"><line x1="80" y1="90" x2="230" y2="90" stroke="currentColor" stroke-width="5"/><line x1="80" y1="90" x2="80" y2="15" stroke="currentColor" stroke-width="5"/><path d="M80 90 L135 90 A55 55 0 0 0 80 35 Z" fill="#d9d9d9"/><circle cx="80" cy="90" r="6"/></svg>
+<div class="opts"><label><input type="radio" name="q3" value="retto"> angolo retto</label><label><input type="radio" name="q3" value="piatto"> angolo piatto</label><label><input type="radio" name="q3" value="acuto"> angolo acuto</label><label><input type="radio" name="q3" value="ottuso"> angolo ottuso</label></div></section>
+
+<section class="q"><h2>4. Marco esce di casa alle 7:30 e ritorna alle 11:00. Quanto tempo è stato via?</h2>
+<div class="opts"><label><input type="radio" name="q4" value="a"> 18 ore e mezza</label><label><input type="radio" name="q4" value="b"> 3 ore e mezza</label><label><input type="radio" name="q4" value="c"> 4 ore e mezza</label></div></section>
+
+<section class="q"><h2>5. Indovina il numero.</h2><p>È pari; è maggiore di 158; ha la cifra 6 alle decine; è minore di 164 e maggiore di 161.</p>
+<div class="opts"><label><input type="radio" name="q5" value="160"> Elena: 160</label><label><input type="radio" name="q5" value="161"> Ada: 161</label><label><input type="radio" name="q5" value="162"> Teresa: 162</label><label><input type="radio" name="q5" value="163"> Ivana: 163</label></div></section>
+
+<section class="q"><h2>6. La sciarpa di Marco è a strisce, molto lunga e senza frange. Qual è?</h2>
+<div class="scarves">
+<div class="scarf"><strong>A</strong><svg viewBox="0 0 160 100"><path d="M15 25 C55 15 80 75 145 55" fill="none" stroke="#bbb" stroke-width="28"/><path d="M20 20L35 40M45 20L60 45M80 45L95 65M115 45L130 65" stroke="#666" stroke-width="4"/><path d="M10 12l-8 10M18 10l-6 12M140 65l10 8M145 60l12 6" stroke="#666"/></svg></div>
+<div class="scarf"><strong>B</strong><svg viewBox="0 0 160 100"><path d="M15 25 C60 5 90 95 150 65" fill="none" stroke="#ddd" stroke-width="28"/><path d="M8 12l-8 10M16 10l-6 12M145 75l10 8M150 70l10 6" stroke="#666"/></svg></div>
+<div class="scarf"><strong>C</strong><svg viewBox="0 0 160 100"><path d="M5 25 C45 5 75 95 155 55" fill="none" stroke="#bbb" stroke-width="28"/><path d="M10 18L28 40M38 18L55 45M68 40L86 65M98 45L116 65M126 40L145 60" stroke="#666" stroke-width="4"/></svg></div>
+<div class="scarf"><strong>D</strong><svg viewBox="0 0 160 100"><path d="M25 30 C55 20 85 75 130 55" fill="none" stroke="#bbb" stroke-width="28"/><path d="M30 25L45 42M55 30L70 48M90 45L105 63" stroke="#666" stroke-width="4"/></svg></div>
+<div class="scarf"><strong>E</strong><svg viewBox="0 0 160 100"><path d="M5 25 C45 5 75 95 155 55" fill="none" stroke="#ddd" stroke-width="28"/><g fill="#888"><circle cx="25" cy="27" r="5"/><circle cx="55" cy="35" r="5"/><circle cx="85" cy="62" r="5"/><circle cx="120" cy="55" r="5"/></g><path d="M145 70l10 8M150 65l10 6" stroke="#666"/></svg></div>
+<div class="scarf"><strong>F</strong><svg viewBox="0 0 160 100"><path d="M5 25 C45 5 75 95 155 55" fill="none" stroke="#bbb" stroke-width="28"/><path d="M10 18L28 40M38 18L55 45M68 40L86 65M98 45L116 65M126 40L145 60" stroke="#666" stroke-width="4"/><path d="M145 70l10 8M150 65l10 6" stroke="#666"/></svg></div>
+</div>
+<div class="opts" style="margin-top:12px"><label><input type="radio" name="q6" value="A"> A</label><label><input type="radio" name="q6" value="B"> B</label><label><input type="radio" name="q6" value="C"> C</label><label><input type="radio" name="q6" value="D"> D</label><label><input type="radio" name="q6" value="E"> E</label><label><input type="radio" name="q6" value="F"> F</label></div>
+</section>
+
+<section class="q"><h2>7. Osserva il grafico relativo all’animale preferito dagli alunni della 4ª A e della 4ª B. Poi rispondi.</h2>
+<svg class="graph" viewBox="0 0 620 360" aria-label="grafico della prova originale">
+<text x="20" y="25" font-size="16">□ = 2 preferenze</text>
+<g transform="translate(75,45)" stroke="#999" fill="none"><line x1="0" y1="0" x2="500" y2="0"/><line x1="0" y1="35" x2="500" y2="35"/><line x1="0" y1="70" x2="500" y2="70"/><line x1="0" y1="105" x2="500" y2="105"/><line x1="0" y1="140" x2="500" y2="140"/><line x1="0" y1="175" x2="500" y2="175"/><line x1="0" y1="210" x2="500" y2="210"/><line x1="0" y1="245" x2="500" y2="245"/><line x1="0" y1="0" x2="0" y2="245"/><line x1="100" y1="0" x2="100" y2="245"/><line x1="200" y1="0" x2="200" y2="245"/><line x1="300" y1="0" x2="300" y2="245"/><line x1="400" y1="0" x2="400" y2="245"/><line x1="500" y1="0" x2="500" y2="245"/></g>
+<g font-size="15" fill="currentColor"><text x="45" y="55">14</text><text x="45" y="90">12</text><text x="45" y="125">10</text><text x="45" y="160">8</text><text x="45" y="195">6</text><text x="45" y="230">4</text><text x="45" y="265">2</text><text x="90" y="315">Cane</text><text x="190" y="315">Gatto</text><text x="285" y="315">Pesce</text><text x="375" y="315">Uccellino</text><text x="475" y="315">Tartaruga</text></g>
+</svg>
+<div class="answer-grid"><label>a. Quanti bambini preferiscono il gatto?<input id="q7a"></label><label>b. Quali animali hanno ottenuto lo stesso numero di preferenze?<input id="q7b"></label><label>c. Quanti sono in tutto i bambini delle due classi?<input id="q7c"></label></div>
+<p class="note">Le risposte di questo esercizio saranno controllate dall’insegnante.</p></section>
+
+<section class="q"><h2>8. Osserva i gettoni nel sacchetto e indica se le affermazioni sono vere (V) o false (F).</h2>
+<svg class="bag" viewBox="0 0 220 230"><path d="M65 35 Q110 5 155 35 L170 190 Q110 220 50 190 Z" fill="#fafafa" stroke="#777" stroke-width="3"/><path d="M65 35 Q110 55 155 35" fill="none" stroke="#777" stroke-width="3"/>
+<circle cx="85" cy="75" r="12" fill="#fff" stroke="#666" stroke-width="3"/><circle cx="120" cy="70" r="12" fill="#333" stroke="#666" stroke-width="3"/><circle cx="150" cy="85" r="12" fill="#fff" stroke="#666" stroke-width="3"/><circle cx="70" cy="115" r="12" fill="#333" stroke="#666" stroke-width="3"/><circle cx="115" cy="110" r="12" fill="#fff" stroke="#666" stroke-width="3"/><circle cx="150" cy="125" r="12" fill="#333" stroke="#666" stroke-width="3"/><circle cx="95" cy="155" r="12" fill="#333" stroke="#666" stroke-width="3"/><circle cx="135" cy="165" r="12" fill="#333" stroke="#666" stroke-width="3"/></svg>
+<div class="answer-grid">
+<label>a. È impossibile pescare un gettone bianco. <select id="q8a"><option></option><option>V</option><option>F</option></select></label>
+<label>b. I gettoni neri sono di più di quelli bianchi. <select id="q8b"><option></option><option>V</option><option>F</option></select></label>
+<label>c. Non è probabile pescare un gettone nero. <select id="q8c"><option></option><option>V</option><option>F</option></select></label>
+<label>d. La probabilità di pescare un gettone bianco è 3 su 8. <select id="q8d"><option></option><option>V</option><option>F</option></select></label>
+</div></section>
+
+<div class="submitbox"><span id="msg">Controlla di aver inserito nome e cognome.</span><button class="primary-btn" type="submit">Consegna la prova</button></div>
+</form>
+<p><a href="../">← Torna a matematica classe quinta</a></p>
+</main>
+
+<script>
+(function(){
+const K='quizMathClass5Geometria_v1'; const radio=n=>document.querySelector('input[name="'+n+'"]:checked')?.value||'';
+function save(rec){const a=JSON.parse(localStorage.getItem(K)||'[]');a.push(rec);localStorage.setItem(K,JSON.stringify(a))}
+document.getElementById('quiz').addEventListener('submit',function(e){
+e.preventDefault();const nome=document.getElementById('nome').value.trim(),cognome=document.getElementById('cognome').value.trim();
+if(!nome||!cognome){document.getElementById('msg').textContent='Inserisci nome e cognome.';return}
+let score=0,total=10,details={};function add(k,ok){details[k]=ok;if(ok)score++}
+add('q1',radio('q1')==='piatto');add('q2',radio('q2')==='acuto');add('q3',radio('q3')==='retto');add('q4',radio('q4')==='b');add('q5',radio('q5')==='162');add('q6',radio('q6')==='C');
+add('q8a',document.getElementById('q8a').value==='F');add('q8b',document.getElementById('q8b').value==='V');add('q8c',document.getElementById('q8c').value==='F');add('q8d',document.getElementById('q8d').value==='V');
+details.q7={manual:true,a:document.getElementById('q7a').value,b:document.getElementById('q7b').value,c:document.getElementById('q7c').value};
+save({id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total,details});
+document.getElementById('msg').textContent='Verifica consegnata ✓';
+this.querySelectorAll('input,select,button').forEach(x=>x.disabled=true);
+});
+})();
+</script>
+</body></html>
