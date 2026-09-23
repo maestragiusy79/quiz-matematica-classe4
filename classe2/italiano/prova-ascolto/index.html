@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prova d'ascolto - Italiano classe seconda</title>
+<link rel="stylesheet" href="../../../css/stile.css">
+<style>
+body{background:#f7f9fc}.wrap{max-width:980px}.q{background:#fff;border:1px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--shadow);margin:18px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.choice{border:2px solid var(--border);border-radius:16px;padding:14px;text-align:center;cursor:pointer;background:#fff}.choice input{display:none}.choice:has(input:checked){border-color:var(--primary);background:#f0f4ff}.icon{font-size:3rem;display:block;margin-bottom:8px}
+.submit{display:flex;justify-content:space-between;gap:12px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)}.submit{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body><main class="wrap">
+<section class="hero"><h1>👂 Prova comune iniziale · Ascolto</h1><p>Italiano · Classe seconda</p></section>
+<section class="card"><label>Nome<input id="nome"></label><label>Cognome<input id="cognome"></label></section>
+<section class="q">
+<h2>Ascolta la lettura dell'insegnante</h2>
+<p>L'insegnante leggerà il racconto due volte. Alla seconda lettura osserva le figure e seleziona solamente i personaggi e le cose che hai incontrato nel racconto.</p>
+<div class="grid">
+<label class="choice"><input type="checkbox" value="topolino"><span class="icon">🐭</span>Topolino</label>
+<label class="choice"><input type="checkbox" value="mamma_papa"><span class="icon">🐭🐭</span>Mamma e papà topo</label>
+<label class="choice"><input type="checkbox" value="marmellata"><span class="icon">🍞🍓</span>Crostini e marmellata</label>
+<label class="choice"><input type="checkbox" value="letto"><span class="icon">🛏️</span>Letto</label>
+<label class="choice"><input type="checkbox" value="flauto"><span class="icon">🎶</span>Flauto</label>
+<label class="choice"><input type="checkbox" value="gatto"><span class="icon">🐱</span>Gatto</label>
+<label class="choice"><input type="checkbox" value="vicino"><span class="icon">🐭</span>Signor Pomelli</label>
+<label class="choice"><input type="checkbox" value="corno"><span class="icon">📯</span>Corno</label>
+<label class="choice"><input type="checkbox" value="regalo"><span class="icon">🎁</span>Pacco regalo</label>
+<label class="choice"><input type="checkbox" value="torta"><span class="icon">🎂</span>Torta</label>
+</div>
+</section>
+<div class="submit"><span id="msg">Seleziona le figure che ricordi.</span><button id="send" class="primary-btn" type="button">Consegna</button></div>
+<p><a href="../">← Torna alle prove di italiano</a></p>
+</main>
+<script>
+(function(){
+const correct=new Set(['topolino','mamma_papa','marmellata','letto','flauto','vicino','regalo']);
+document.getElementById('send').onclick=function(){
+ const nome=document.getElementById('nome').value.trim(),cognome=document.getElementById('cognome').value.trim();
+ if(!nome||!cognome){document.getElementById('msg').textContent='Inserisci nome e cognome.';return}
+ const chosen=[...document.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);
+ const all=[...document.querySelectorAll('input[type=checkbox]')].map(x=>x.value);
+ let score=0; all.forEach(v=>{if(correct.has(v)===chosen.includes(v))score++});
+ const key='italiano2_ascolto_v1',a=JSON.parse(localStorage.getItem(key)||'[]');
+ a.push({id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total:all.length,chosen});localStorage.setItem(key,JSON.stringify(a));
+ document.getElementById('msg').textContent='Prova consegnata ✓';
+ document.querySelectorAll('input,button').forEach(x=>x.disabled=true);
+};
+})();
+</script></body></html>
