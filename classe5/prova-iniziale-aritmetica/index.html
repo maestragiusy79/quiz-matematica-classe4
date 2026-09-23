@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prova iniziale - Problemi e numeri - Classe quinta</title>
+<link rel="stylesheet" href="../../css/stile.css">
+<style>
+body{background:#f7f9fc}.wrap{max-width:980px}.q{margin:18px 0;padding:20px;background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow)}
+.q h2{font-size:1.15rem;margin:0 0 14px}.opts{display:grid;gap:9px}.opts label{display:block;padding:10px 12px;border:1px solid var(--border);border-radius:12px;cursor:pointer}
+.inline-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.inline-grid label{display:block}.mini{max-width:260px}
+.figure{display:inline-block;vertical-align:middle;margin:8px 4px}.svgbox{width:190px;height:95px}
+.answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.note{color:var(--muted);font-size:.95rem}
+.submitbox{position:sticky;bottom:10px;background:#fff;border:1px solid var(--border);border-radius:18px;padding:14px;box-shadow:var(--shadow);display:flex;gap:12px;align-items:center;justify-content:space-between}
+@media(max-width:700px){.inline-grid,.answer-grid{grid-template-columns:1fr}.submitbox{position:static;flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero">
+<h1>📘 Prova comune iniziale di matematica · Classe quinta</h1>
+<p><strong>Problemi e numeri</strong></p>
+</section>
+
+<section class="card">
+<div class="answer-grid">
+<label>Nome<input id="nome" required></label>
+<label>Cognome<input id="cognome" required></label>
+</div>
+</section>
+
+<form id="quiz">
+<section class="q">
+<h2>1. Quale addizione dà come risultato 826?</h2>
+<div class="opts">
+<label><input type="radio" name="q1" value="a"> 800 + 60 + 2</label>
+<label><input type="radio" name="q1" value="b"> 800 + 20 + 6</label>
+<label><input type="radio" name="q1" value="c"> 800 + 20 + 2</label>
+<label><input type="radio" name="q1" value="d"> 800 + 80 + 2</label>
+</div>
+</section>
+
+<section class="q">
+<h2>2. Andrea ha incollato 168 figurine nel suo album, mettendone 8 in ogni pagina. Quale operazione permette di scoprire quante pagine ha usato?</h2>
+<div class="opts">
+<label><input type="radio" name="q2" value="a"> 168 + 8</label>
+<label><input type="radio" name="q2" value="b"> 168 − 8</label>
+<label><input type="radio" name="q2" value="c"> 168 × 8</label>
+<label><input type="radio" name="q2" value="d"> 168 : 8</label>
+</div>
+</section>
+
+<section class="q">
+<h2>3. Quale figura rappresenta la frazione 4/6?</h2>
+<div class="opts">
+<label><input type="radio" name="q3" value="a"> Nessuna delle figure</label>
+<label><input type="radio" name="q3" value="b">
+<svg class="svgbox" viewBox="0 0 180 80" aria-label="figura b">
+<rect x="10" y="10" width="150" height="60" fill="none" stroke="currentColor"/>
+<rect x="10" y="10" width="100" height="60" fill="#d9d9d9"/>
+<line x1="60" y1="10" x2="60" y2="70" stroke="currentColor"/><line x1="110" y1="10" x2="110" y2="70" stroke="currentColor"/>
+<line x1="10" y1="10" x2="60" y2="70" stroke="currentColor"/><line x1="60" y1="10" x2="110" y2="70" stroke="currentColor"/><line x1="110" y1="10" x2="160" y2="70" stroke="currentColor"/>
+</svg>
+</label>
+<label><input type="radio" name="q3" value="c">
+<svg class="svgbox" viewBox="0 0 180 80"><rect x="10" y="10" width="160" height="60" fill="none" stroke="currentColor"/><rect x="10" y="10" width="80" height="60" fill="#d9d9d9"/>
+<line x1="30" y1="10" x2="30" y2="70" stroke="currentColor"/><line x1="50" y1="10" x2="50" y2="70" stroke="currentColor"/><line x1="70" y1="10" x2="70" y2="70" stroke="currentColor"/><line x1="90" y1="10" x2="90" y2="70" stroke="currentColor"/><line x1="110" y1="10" x2="110" y2="70" stroke="currentColor"/><line x1="130" y1="10" x2="130" y2="70" stroke="currentColor"/><line x1="150" y1="10" x2="150" y2="70" stroke="currentColor"/></svg>
+</label>
+<label><input type="radio" name="q3" value="d">
+<svg class="svgbox" viewBox="0 0 180 80"><circle cx="80" cy="40" r="31" fill="none" stroke="currentColor"/><path d="M80 40 L80 9 A31 31 0 0 1 108 54 Z" fill="#d9d9d9" stroke="currentColor"/></svg>
+</label>
+</div>
+</section>
+
+<section class="q">
+<h2>4. Quale figura rappresenta la frazione 3/4 o una equivalente?</h2>
+<div class="opts">
+<label><input type="radio" name="q4" value="a"><svg class="svgbox" viewBox="0 0 180 80"><circle cx="80" cy="40" r="31" fill="none" stroke="currentColor"/><path d="M80 40 L80 9 A31 31 0 0 1 108 54 Z" fill="#d9d9d9" stroke="currentColor"/></svg></label>
+<label><input type="radio" name="q4" value="b">
+<svg class="svgbox" viewBox="0 0 180 80"><rect x="10" y="10" width="150" height="60" fill="none" stroke="currentColor"/><line x1="85" y1="10" x2="85" y2="70" stroke="currentColor"/><line x1="10" y1="10" x2="85" y2="70" stroke="currentColor"/><line x1="85" y1="10" x2="160" y2="70" stroke="currentColor"/><polygon points="10,10 85,10 85,70" fill="#d9d9d9"/><polygon points="10,10 10,70 85,70" fill="#d9d9d9"/><polygon points="85,10 85,70 160,70" fill="#d9d9d9"/></svg>
+</label>
+<label><input type="radio" name="q4" value="c"> Nessuna delle figure</label>
+<label><input type="radio" name="q4" value="d">
+<svg class="svgbox" viewBox="0 0 180 80"><rect x="10" y="10" width="160" height="60" fill="none" stroke="currentColor"/><rect x="10" y="10" width="120" height="60" fill="#d9d9d9"/><line x1="30" y1="10" x2="30" y2="70" stroke="currentColor"/><line x1="50" y1="10" x2="50" y2="70" stroke="currentColor"/><line x1="70" y1="10" x2="70" y2="70" stroke="currentColor"/><line x1="90" y1="10" x2="90" y2="70" stroke="currentColor"/><line x1="110" y1="10" x2="110" y2="70" stroke="currentColor"/><line x1="130" y1="10" x2="130" y2="70" stroke="currentColor"/><line x1="150" y1="10" x2="150" y2="70" stroke="currentColor"/></svg>
+</label>
+</div>
+</section>
+
+<section class="q">
+<h2>5. Indica la successione di numeri decimali in ordine crescente.</h2>
+<div class="opts">
+<label><input type="radio" name="q5" value="a"> 1,3 · 2,3 · 2,9 · 2,3 · 2,7 · 3,1</label>
+<label><input type="radio" name="q5" value="b"> 1,3 · 2,1 · 2,7 · 2,3 · 2,9 · 3,1</label>
+<label><input type="radio" name="q5" value="c"> 2,9 · 2,7 · 2,3 · 2,1 · 2,9 · 3,1</label>
+<label><input type="radio" name="q5" value="d"> 1,3 · 2,1 · 2,3 · 2,7 · 2,9 · 3,1</label>
+</div>
+</section>
+
+<section class="q">
+<h2>6. Scrivi il simbolo corretto. Scegli tra &lt;, &gt;, =.</h2>
+<div class="inline-grid">
+<label>4 h 7 u <select id="q6a"><option></option><option>&lt;</option><option>&gt;</option><option>=</option></select> 470</label>
+<label>666 <select id="q6b"><option></option><option>&lt;</option><option>&gt;</option><option>=</option></select> 6 h 6 da 6 u</label>
+<label>3 k 4 h 21 u <select id="q6c"><option></option><option>&lt;</option><option>&gt;</option><option>=</option></select> 1 412</label>
+</div>
+</section>
+
+<section class="q">
+<h2>7. Esegui le operazioni a mente scegliendo tra i risultati: 2 113 · 159 · 3 689 · 909</h2>
+<div class="inline-grid">
+<label>1 534 + 2 155 = <input id="q7a" inputmode="numeric"></label>
+<label>3 815 − 1 702 = <input id="q7b" inputmode="numeric"></label>
+<label>101 × 9 = <input id="q7c" inputmode="numeric"></label>
+<label>795 : 5 = <input id="q7d" inputmode="numeric"></label>
+</div>
+</section>
+
+<section class="q">
+<h2>8. Esegui le operazioni in colonna su un foglio e riporta qui i risultati.</h2>
+<div class="inline-grid">
+<label>5 093 + 4 117 = <input id="q8a" inputmode="numeric"></label>
+<label>6 071 − 4 263 = <input id="q8b" inputmode="numeric"></label>
+<label>152 × 38 = <input id="q8c" inputmode="numeric"></label>
+<label>372 : 7 = <input id="q8d" placeholder="Quoziente e resto"></label>
+</div>
+</section>
+
+<section class="q">
+<h2>9. Scrivi i numeri decimali rappresentati dalle frazioni.</h2>
+<div class="inline-grid">
+<label>14/10 = <input id="q9a"></label>
+<label>256/100 = <input id="q9b"></label>
+<label>9/1000 = <input id="q9c"></label>
+</div>
+</section>
+
+<section class="q">
+<h2>10. Marco ha nel salvadanaio 20 euro. La nonna gli regala 5 euro. Quanti soldi ha in tutto? Marco compra un aereo giocattolo a 21 euro. Quanti soldi gli restano?</h2>
+<div class="answer-grid">
+<label>Risposta 1 <input id="q10a"></label>
+<label>Risposta 2 <input id="q10b"></label>
+</div>
+</section>
+
+<section class="q">
+<h2>11. Lisa ha regalato a Marta 13 pacchetti di figurine. In ogni pacchetto c’è una dozzina di figurine. Quante figurine ha regalato in tutto Lisa?</h2>
+<div class="answer-grid">
+<label>Dato nascosto <input id="q11a" placeholder="Che cosa significa una dozzina?"></label>
+<label>Operazione <input id="q11b"></label>
+<label>Risposta <input id="q11c"></label>
+</div>
+</section>
+
+<div class="submitbox">
+<span id="msg">Controlla di aver inserito nome e cognome.</span>
+<button class="primary-btn" type="submit">Consegna la prova</button>
+</div>
+</form>
+<p><a href="../">← Torna a matematica classe quinta</a></p>
+</main>
+
+<script>
+(function(){
+const K='quizMathClass5Aritmetica_v1';
+const norm=s=>String(s??'').toLowerCase().trim().replace(/\s+/g,' ').replace(',', '.');
+const digits=s=>norm(s).replace(/\s/g,'');
+const radio=n=>document.querySelector('input[name="'+n+'"]:checked')?.value||'';
+const eq=(id,ans)=>ans.includes(norm(document.getElementById(id).value));
+function save(rec){const a=JSON.parse(localStorage.getItem(K)||'[]');a.push(rec);localStorage.setItem(K,JSON.stringify(a))}
+document.getElementById('quiz').addEventListener('submit',function(e){
+e.preventDefault();
+const nome=document.getElementById('nome').value.trim(),cognome=document.getElementById('cognome').value.trim();
+if(!nome||!cognome){document.getElementById('msg').textContent='Inserisci nome e cognome.';return}
+let score=0,total=31,details={};
+function add(k,ok){details[k]=ok;if(ok)score++}
+add('q1',radio('q1')==='b'); add('q2',radio('q2')==='d'); add('q3',radio('q3')==='b'); add('q4',radio('q4')==='b'); add('q5',radio('q5')==='d');
+add('q6a',document.getElementById('q6a').value==='<'); add('q6b',document.getElementById('q6b').value==='='); add('q6c',document.getElementById('q6c').value==='>');
+add('q7a',digits(document.getElementById('q7a').value)==='3689'); add('q7b',digits(document.getElementById('q7b').value)==='2113'); add('q7c',digits(document.getElementById('q7c').value)==='909'); add('q7d',digits(document.getElementById('q7d').value)==='159');
+add('q8a',digits(document.getElementById('q8a').value)==='9210'); add('q8b',digits(document.getElementById('q8b').value)==='1808'); add('q8c',digits(document.getElementById('q8c').value)==='5776');
+const d8=norm(document.getElementById('q8d').value).replace(/[^0-9a-z]/g,''); add('q8d',d8==='53r1'||d8==='53resto1'||d8==='531');
+add('q9a',['1.4','1,4'].includes(document.getElementById('q9a').value.trim().replace(',','.'))); add('q9b',norm(document.getElementById('q9b').value)==='2.56'); add('q9c',norm(document.getElementById('q9c').value)==='0.009');
+add('q10a',/25/.test(document.getElementById('q10a').value)); add('q10b',/4/.test(document.getElementById('q10b').value));
+add('q11a',/12|dodici/.test(norm(document.getElementById('q11a').value))); add('q11b',/13\s*[x×*]\s*12|12\s*[x×*]\s*13/.test(norm(document.getElementById('q11b').value))); add('q11c',/156/.test(document.getElementById('q11c').value));
+save({id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total,details});
+document.getElementById('msg').textContent='Verifica consegnata ✓';
+this.querySelectorAll('input,select,button').forEach(x=>x.disabled=true);
+});
+})();
+</script>
+</body></html>
