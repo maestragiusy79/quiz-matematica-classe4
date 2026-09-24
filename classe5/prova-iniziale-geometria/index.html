@@ -87,6 +87,8 @@ let score=0,total=10,details={};function add(k,ok){details[k]=ok;if(ok)score++}
 add('q1',radio('q1')==='piatto');add('q2',radio('q2')==='acuto');add('q3',radio('q3')==='retto');add('q4',radio('q4')==='b');add('q5',radio('q5')==='162');add('q6',radio('q6')==='C');
 add('q8a',document.getElementById('q8a').value==='F');add('q8b',document.getElementById('q8b').value==='V');add('q8c',document.getElementById('q8c').value==='F');add('q8d',document.getElementById('q8d').value==='V');
 details.q7={manual:true,a:document.getElementById('q7a').value,b:document.getElementById('q7b').value,c:document.getElementById('q7c').value};
+details.manualRequired=true;
+details.responses={q1:radio('q1'),q2:radio('q2'),q3:radio('q3'),q4:radio('q4'),q5:radio('q5'),q6:radio('q6'),q8a:document.getElementById('q8a').value,q8b:document.getElementById('q8b').value,q8c:document.getElementById('q8c').value,q8d:document.getElementById('q8d').value};
 try{await save({id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total,details})}catch(error){document.getElementById('msg').textContent='Consegna non registrata: '+error.message;return}
 document.getElementById('msg').textContent='Verifica consegnata ✓';
 this.querySelectorAll('input,select,button').forEach(x=>x.disabled=true);
