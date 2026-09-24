@@ -3,87 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Area docenti - ClasseLab</title>
+<title>ClasseLab · Area docenti</title>
 <link rel="stylesheet" href="../css/stile.css">
 <style>
-body{background:#f7f9fc}
-.wrap-teacher{max-width:1080px;margin:0 auto;padding:20px}
-.login{max-width:520px;margin:55px auto;background:#fff;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
-.login h1{margin-top:0}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.btn{display:inline-block;border:1px solid var(--border);background:#fff;color:inherit;text-decoration:none;padding:10px 14px;border-radius:12px;font:inherit;cursor:pointer}
-.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
-.btn.danger{color:var(--red)}
-.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:18px}
-.top h1{margin:0}
-.sub,.meta,.note{color:var(--muted)}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
-.stat,.box{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
-.stat strong{display:block;font-size:2rem;margin-top:4px}
-.box{margin:16px 0}
-.box h2{margin:0 0 14px}
-.boxhead{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
-.item{padding:14px 0;border-top:1px solid var(--border)}
-.item:first-child{border-top:0}
-.item h3{margin:0 0 5px}
-.form{display:none;margin:14px 0;padding:16px;background:#fafbfe;border-radius:14px}
-.form.show{display:block}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid .full{grid-column:1/-1}
-.active-test{background:#f7f9ff;border:1px solid #dfe5ff;border-radius:16px;padding:16px}
-.ok{color:#067647}.err{color:#b42318}.status{margin-top:12px;min-height:22px}
-.user-pill{background:#eef2ff;border-radius:999px;padding:8px 12px;font-size:.92rem}
-@media(max-width:760px){.top,.boxhead{align-items:flex-start;flex-direction:column}.stats,.grid{grid-template-columns:1fr}.grid .full{grid-column:auto}}
+:root{--blue:#3456d1;--green:#1f8a5b;--red:#b42318;--amber:#a15c00}
+body{background:#f5f7fb}.wrap{max-width:1180px}
+.topbar,.boxhead,.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.box{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin:18px 0}
+.auth{max-width:720px;margin:24px auto}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.full{grid-column:1/-1}
+.btn,.primary-btn{border:1px solid var(--border);background:#fff;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:700;text-decoration:none;color:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{background:#f6f7fb}.btn.primary,.primary-btn{background:var(--blue);border-color:var(--blue);color:#fff}.btn.danger{color:var(--red)}.btn.small{padding:7px 10px;font-size:.9rem}.btn:disabled{opacity:.55;cursor:not-allowed}
+.status{min-height:1.3em;margin-top:10px}.status.ok{color:var(--green)}.status.err{color:var(--red)}
+.user-pill,.badge{display:inline-flex;border-radius:999px;padding:7px 10px;background:#eef2ff;font-weight:700}.badge{padding:4px 8px;font-size:.82rem;background:#eef6f1}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat{background:#fff;border:1px solid var(--border);border-radius:16px;padding:15px}.stat span{display:block;color:var(--muted);font-size:.9rem}.stat strong{font-size:1.8rem}
+.form{display:none;margin:14px 0;padding:16px;border:1px dashed #cbd3e6;border-radius:14px;background:#fafbff}.form.show{display:block}
+.item{border:1px solid var(--border);border-radius:16px;padding:14px;margin:10px 0;background:#fff}.item h3{margin:0 0 6px}.meta{color:var(--muted);font-size:.92rem}
+.catalog{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.catalog .item{margin:0}
+code.code{font-size:1rem;background:#f1f3f7;padding:4px 7px;border-radius:8px;letter-spacing:.04em}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f7fb;border-radius:12px;padding:12px;font-size:.84rem;max-height:340px;overflow:auto}
+details{margin-top:10px}summary{cursor:pointer;font-weight:700}
+.warn{color:var(--amber)}.hidden{display:none!important}
+select,input{width:100%}
+@media(max-width:780px){.grid,.catalog,.stats{grid-template-columns:1fr}.full{grid-column:auto}.topbar{align-items:flex-start}}
 </style>
 </head>
 <body>
-<main class="wrap-teacher">
-
-<section id="loginBox" class="login">
-<h1>👩‍🏫 Area docenti</h1>
-<p>Ogni docente accede con il proprio account. Vedrà solo classi, prove e risultati autorizzati.</p>
-
-<label>Nome docente
-<input id="displayName" type="text" placeholder="Serve solo quando crei un nuovo account">
-</label>
-
-<label>Email
-<input id="email" type="email" autocomplete="username" placeholder="nome@scuola.it">
-</label>
-
-<label>Password
-<input id="password" type="password" autocomplete="current-password" placeholder="Almeno 6 caratteri">
-</label>
-
-<div class="row" style="margin-top:14px">
-<button id="loginBtn" class="btn primary" type="button">Accedi</button>
-<button id="signupBtn" class="btn" type="button">Crea account docente</button>
-<button id="resendBtn" class="btn" type="button">Reinvia email di conferma</button>
-<button id="resetBtn" class="btn" type="button">Password dimenticata?</button>
-<a class="btn" href="../">Torna alla home</a>
-</div>
-<p id="authStatus" class="status"></p>
-<p class="note">Per un nuovo account è richiesta la conferma dell'email. L'invio può richiedere alcuni minuti: controlla anche Spam/Posta indesiderata. Se non arriva, usa “Reinvia email di conferma”. Se il problema continua, va configurato il servizio email (SMTP) del progetto.</p>
+<main class="wrap">
+<section class="hero">
+<h1>👩‍🏫 ClasseLab · Area docenti</h1>
+<p>Classi, alunni, prove assegnate e risultati in un unico posto.</p>
 </section>
 
-<section id="recoveryBox" class="login" style="display:none">
-<h1>🔑 Nuova password</h1>
-<p>Inserisci una nuova password per il tuo account docente.</p>
-<label>Nuova password
-<input id="newPassword" type="password" autocomplete="new-password" placeholder="Almeno 6 caratteri">
-</label>
-<div class="row" style="margin-top:14px">
+<section id="loginBox" class="box auth">
+<h2>Accesso docenti</h2>
+<div class="grid">
+<label>Nome docente <input id="displayName" autocomplete="name" placeholder="Serve solo alla prima registrazione"></label>
+<label>Email <input id="email" type="email" autocomplete="email"></label>
+<label class="full">Password <input id="password" type="password" autocomplete="current-password"></label>
+</div>
+<div class="row" style="margin-top:14px;justify-content:flex-start">
+<button id="loginBtn" class="btn primary" type="button">Accedi</button>
+<button id="signupBtn" class="btn" type="button">Crea account docente</button>
+<button id="resetBtn" class="btn" type="button">Password dimenticata?</button>
+<button id="resendBtn" class="btn" type="button">Reinvia conferma</button>
+</div>
+<p class="meta">La prima registrazione richiede la conferma dell'indirizzo email.</p>
+<p id="authStatus" class="status"></p>
+</section>
+
+<section id="recoveryBox" class="box auth hidden">
+<h2>Nuova password</h2>
+<label>Nuova password <input id="newPassword" type="password" autocomplete="new-password"></label>
+<div class="row" style="margin-top:14px;justify-content:flex-start">
 <button id="updatePasswordBtn" class="btn primary" type="button">Salva nuova password</button>
-<a class="btn" href="./">Annulla</a>
 </div>
 <p id="recoveryStatus" class="status"></p>
 </section>
 
-<section id="dashboard" style="display:none">
-<div class="top">
+<section id="dashboard" class="hidden">
+<div class="topbar">
 <div>
-<h1>Area docenti</h1>
-<div class="sub">I dati mostrati dipendono dall'account con cui hai effettuato l'accesso.</div>
+<h2 style="margin:0">Dashboard</h2>
+<p class="meta" style="margin:4px 0 0">I dati mostrati sono limitati alle classi e alle prove autorizzate per il tuo account.</p>
 </div>
 <div class="row">
 <span id="userLabel" class="user-pill"></span>
@@ -92,380 +73,363 @@ body{background:#f7f9fc}
 </div>
 
 <div class="stats">
-<div class="stat"><span>Le mie classi</span><strong id="nClassi">0</strong></div>
-<div class="stat"><span>Le mie verifiche</span><strong id="nVerifiche">0</strong></div>
-<div class="stat"><span>Consegne visibili</span><strong id="nConsegne">0</strong></div>
+<div class="stat"><span>Classi visibili</span><strong id="nClassi">0</strong></div>
+<div class="stat"><span>Alunni</span><strong id="nAlunni">0</strong></div>
+<div class="stat"><span>Prove attive</span><strong id="nVerifiche">0</strong></div>
+<div class="stat"><span>Consegne</span><strong id="nConsegne">0</strong></div>
 </div>
 
 <section class="box">
 <div class="boxhead">
-<h2>🏫 Le mie classi</h2>
+<div><h2>🏫 Classi</h2><p class="meta">Crea una classe prima di aggiungere alunni o assegnare prove.</p></div>
 <button id="showClassForm" class="btn primary" type="button">+ Aggiungi classe</button>
 </div>
-
 <div id="classForm" class="form">
 <div class="grid">
-<label>Nome classe<input id="className" placeholder="Es. Classe quarta"></label>
-<label>Anno scolastico<input id="classYear" value="2026/27"></label>
-<label class="full">Plesso<input id="classCampus" placeholder="Es. Maclodio"></label>
+<label>Nome classe <input id="className" placeholder="Es. Classe quarta"></label>
+<label>Anno scolastico <input id="classYear" value="2026/27"></label>
+<label class="full">Plesso <input id="classCampus" value="Maclodio"></label>
 </div>
-<div class="row" style="margin-top:12px">
+<div class="row" style="margin-top:12px;justify-content:flex-start">
 <button id="saveClass" class="btn primary" type="button">Salva classe</button>
 <button id="cancelClass" class="btn" type="button">Annulla</button>
 </div>
 </div>
-
 <div id="classList"></div>
 </section>
 
 <section class="box">
 <div class="boxhead">
-<h2>📝 Le mie verifiche</h2>
-<button id="showTestForm" class="btn primary" type="button">+ Crea verifica</button>
+<div><h2>👧👦 Alunni e codici</h2><p class="meta">Ogni alunno usa il proprio codice per consegnare una prova.</p></div>
+<button id="showStudentForm" class="btn primary" type="button">+ Aggiungi alunno</button>
 </div>
-
-<div id="testForm" class="form">
+<div id="studentForm" class="form">
 <div class="grid">
-<label>Titolo<input id="testTitle" placeholder="Es. Test d'ingresso"></label>
-<label>Classe<select id="testClass"></select></label>
-<label>Disciplina<input id="testSubject" value="Matematica"></label>
-<label>Tipologia
-<select id="testType">
-<option>Test d'ingresso</option>
-<option>Verifica</option>
-<option>Esercitazione</option>
-<option>Recupero</option>
-<option>Potenziamento</option>
-</select>
-</label>
-<label class="full">Descrizione<input id="testDescription" placeholder="Breve descrizione"></label>
+<label>Classe <select id="studentClass"></select></label>
+<label>Nome e cognome <input id="studentName" placeholder="Es. Mario Rossi"></label>
+<label class="full">Codice alunno <input id="studentCode" placeholder="Lascia vuoto per generarlo automaticamente"></label>
 </div>
-<div class="row" style="margin-top:12px">
-<button id="saveTest" class="btn primary" type="button">Salva verifica</button>
-<button id="cancelTest" class="btn" type="button">Annulla</button>
+<div class="row" style="margin-top:12px;justify-content:flex-start">
+<button id="saveStudent" class="btn primary" type="button">Salva alunno</button>
+<button id="cancelStudent" class="btn" type="button">Annulla</button>
 </div>
 </div>
+<label style="max-width:360px">Mostra alunni della classe <select id="studentFilter"></select></label>
+<div id="studentList"></div>
+</section>
 
+<section class="box">
+<div class="boxhead">
+<div><h2>📝 Prove pubblicate</h2><p class="meta">Scegli la classe, attiva una prova e usa il link generato per gli alunni.</p></div>
+</div>
+<label style="max-width:420px">Classe a cui assegnare la prova <select id="catalogClass"></select></label>
+<div id="catalogList" class="catalog" style="margin-top:14px"></div>
+</section>
+
+<section class="box">
+<div class="boxhead">
+<div><h2>🔗 Le mie prove attivate</h2><p class="meta">Qui trovi i link che registrano davvero le consegne nel database.</p></div>
+<button id="refreshBtn" class="btn" type="button">Aggiorna</button>
+</div>
 <div id="testList"></div>
 </section>
 
 <section class="box">
 <div class="boxhead">
-<h2>📊 Risultati</h2>
-<button id="refreshBtn" class="btn" type="button">Aggiorna</button>
+<div><h2>📊 Risultati</h2><p class="meta">Punteggi e dettaglio delle risposte delle sole prove che puoi vedere.</p></div>
+<button id="csvBtn" class="btn" type="button">Scarica CSV</button>
 </div>
 <div id="resultBox"></div>
-</section>
-
-<section class="box">
-<h2>🔗 Prove già pubblicate</h2>
-<p>Puoi aprire direttamente le prove già disponibili sul sito.</p>
-<div class="item">
-<h3>Classe quarta · Matematica</h3>
-<div class="row"><a class="btn primary" href="../classe4/test-ingresso/" target="_blank">Test d'ingresso</a><button id="copyTestLink" class="btn" type="button">Copia link</button></div>
-</div>
-<div class="item">
-<h3>Classe quinta · Matematica</h3>
-<div class="row">
-<a class="btn primary" href="../classe5/prova-iniziale-aritmetica/" target="_blank">Problemi e numeri</a>
-<a class="btn primary" href="../classe5/prova-iniziale-geometria/" target="_blank">Misure, geometria, relazioni</a>
-</div>
-</div>
-<p class="note">Le nuove prove di classe quinta sono pubblicate. Il collegamento delle consegne al database Supabase verrà completato nel passaggio successivo.</p>
 </section>
 
 <p id="appStatus" class="status"></p>
 </section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0/dist/umd/supabase.min.js"></script>
 <script>
-(function(){
+(() => {
 const SUPABASE_URL='https://mfaiskfwdscbpjizehxl.supabase.co';
 const SUPABASE_KEY='sb_publishable_DQC8x1bRXI_CYUJj_KDY0Q_29gSBgXh';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
 const el=id=>document.getElementById(id);
-const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let currentUser=null;
-let classes=[];
+const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const CATALOG=[
+ {key:'classe4-matematica-ingresso',title:"Test d'ingresso",classLabel:'Classe quarta',subject:'Matematica',type:"Test d'ingresso",path:'../classe4/test-ingresso/'},
+ {key:'classe5-matematica-aritmetica-iniziale',title:'Problemi e numeri',classLabel:'Classe quinta',subject:'Matematica',type:"Test d'ingresso",path:'../classe5/prova-iniziale-aritmetica/'},
+ {key:'classe5-matematica-geometria-iniziale',title:'Misure, geometria, relazioni',classLabel:'Classe quinta',subject:'Matematica',type:"Test d'ingresso",path:'../classe5/prova-iniziale-geometria/'},
+ {key:'classe2-italiano-ascolto',title:"Prova d'ascolto",classLabel:'Classe seconda',subject:'Italiano',type:"Test d'ingresso",path:'../classe2/italiano/prova-ascolto/'},
+ {key:'classe2-italiano-scheda1',title:'Scheda 1 · Parole',classLabel:'Classe seconda',subject:'Italiano',type:"Test d'ingresso",path:'../classe2/italiano/scheda1/'},
+ {key:'classe2-italiano-scheda2',title:'Scheda 2 · Frasi',classLabel:'Classe seconda',subject:'Italiano',type:"Test d'ingresso",path:'../classe2/italiano/scheda2/'},
+ {key:'classe2-italiano-scheda3',title:'Scheda 3 · Suoni simili',classLabel:'Classe seconda',subject:'Italiano',type:"Test d'ingresso",path:'../classe2/italiano/scheda3/'}
+];
+
+let currentUser=null, profile=null, classes=[], students=[], tests=[], assignments=[], results=[];
 let recovering=location.hash.includes('type=recovery');
 
-function canonicalRedirect(){
-  return window.location.href.split('#')[0].split('?')[0];
+function canonicalRedirect(){return location.href.split('#')[0].split('?')[0]}
+function authError(message){
+ const m=String(message||'');
+ if(/invalid login credentials/i.test(m)) return 'Email o password non corretti.';
+ if(/email not confirmed/i.test(m)) return "Devi prima confermare l'indirizzo email.";
+ if(/user already registered/i.test(m)) return 'Esiste già un account con questa email.';
+ if(/email rate limit/i.test(m)) return 'Sono state inviate troppe email in poco tempo. Riprova più tardi.';
+ if(/password should be at least/i.test(m)) return 'La password è troppo corta.';
+ return m || 'Operazione non riuscita.';
 }
-function friendlyAuthError(message){
-  const m=String(message||'');
-  if(/invalid login credentials/i.test(m)) return 'Email o password non corretti.';
-  if(/email not confirmed/i.test(m)) return 'Devi prima confermare l\'indirizzo email.';
-  if(/user already registered/i.test(m)) return 'Esiste già un account con questa email.';
-  if(/email rate limit/i.test(m)) return 'Sono state inviate troppe email in poco tempo. Riprova più tardi.';
-  if(/password should be at least/i.test(m)) return 'La password deve avere almeno 6 caratteri.';
-  return m;
+function setAuthStatus(msg,ok=false){el('authStatus').textContent=msg||'';el('authStatus').className='status '+(msg?(ok?'ok':'err'):'')}
+function setAppStatus(msg,ok=true){el('appStatus').textContent=msg||'';el('appStatus').className='status '+(msg?(ok?'ok':'err'):'')}
+function showLogin(){el('loginBox').classList.remove('hidden');el('recoveryBox').classList.add('hidden');el('dashboard').classList.add('hidden')}
+function showRecovery(){el('loginBox').classList.add('hidden');el('recoveryBox').classList.remove('hidden');el('dashboard').classList.add('hidden')}
+function showDashboard(){el('loginBox').classList.add('hidden');el('recoveryBox').classList.add('hidden');el('dashboard').classList.remove('hidden')}
+function normalizeCode(v){return String(v||'').toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,32)}
+function randomCode(prefix='A'){
+ const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+ const bytes=new Uint8Array(7);crypto.getRandomValues(bytes);
+ return prefix+'-'+[...bytes].map(b=>alphabet[b%alphabet.length]).join('');
 }
-function setAuthStatus(message,ok=false){
-  el('authStatus').textContent=message||'';
-  el('authStatus').className='status '+(message?(ok?'ok':'err'):'');
+function formatDate(v){if(!v)return '';try{return new Intl.DateTimeFormat('it-IT',{dateStyle:'short',timeStyle:'short'}).format(new Date(v))}catch{return v}}
+function assignmentFor(testId){return assignments.find(a=>a.test_id===testId&&a.active)||assignments.find(a=>a.test_id===testId)}
+function testLink(t){
+ const a=assignmentFor(t.id); if(!a?.access_code||!t.public_path)return '';
+ const u=new URL(t.public_path,location.href);u.searchParams.set('a',a.access_code);return u.href;
 }
-function setAppStatus(message,ok=true){
-  el('appStatus').textContent=message||'';
-  el('appStatus').className='status '+(message?(ok?'ok':'err'):'');
+async function copyText(value){
+ try{await navigator.clipboard.writeText(value)}catch{
+  const ta=document.createElement('textarea');ta.value=value;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();
+ }
+ setAppStatus('Link copiato negli appunti.',true);
 }
-function showLogin(){
-  el('loginBox').style.display='block';
-  el('recoveryBox').style.display='none';
-  el('dashboard').style.display='none';
+async function busy(button,fn){
+ if(button)button.disabled=true;
+ try{return await fn()}finally{if(button)button.disabled=false}
 }
-function showRecovery(){
-  el('loginBox').style.display='none';
-  el('recoveryBox').style.display='block';
-  el('dashboard').style.display='none';
-}
-function showDashboard(){
-  el('loginBox').style.display='none';
-  el('recoveryBox').style.display='none';
-  el('dashboard').style.display='block';
-}
+
 async function login(){
-  const email=el('email').value.trim();
-  const password=el('password').value;
-  if(!email||!password){setAuthStatus('Inserisci email e password.');return}
-  setAuthStatus('Accesso in corso...',true);
-  const {data,error}=await sb.auth.signInWithPassword({email,password});
-  if(error){setAuthStatus('Accesso non riuscito: '+friendlyAuthError(error.message));return}
-  currentUser=data.user;
-  setAuthStatus('');
-  await openDashboard();
+ const email=el('email').value.trim(),password=el('password').value;
+ if(!email||!password){setAuthStatus('Inserisci email e password.');return}
+ setAuthStatus('Accesso in corso...',true);
+ const {data,error}=await sb.auth.signInWithPassword({email,password});
+ if(error){setAuthStatus('Accesso non riuscito: '+authError(error.message));return}
+ currentUser=data.user;setAuthStatus('');await openDashboard();
 }
 async function signup(){
-  const displayName=el('displayName').value.trim();
-  const email=el('email').value.trim();
-  const password=el('password').value;
-  if(!displayName){setAuthStatus('Inserisci il nome del docente.');return}
-  if(!email||!password){setAuthStatus('Inserisci email e password.');return}
-  if(password.length<6){setAuthStatus('La password deve avere almeno 6 caratteri.');return}
-  setAuthStatus('Creazione account in corso...',true);
-  const {data,error}=await sb.auth.signUp({
-    email,
-    password,
-    options:{
-      data:{display_name:displayName},
-      emailRedirectTo: canonicalRedirect()
-    }
-  });
-  if(error){setAuthStatus('Account non creato: '+friendlyAuthError(error.message));return}
-  if(data.session){
-    currentUser=data.user;
-    setAuthStatus('');
-    await openDashboard();
-  }else{
-    setAuthStatus('Account creato. La mail di conferma può impiegare alcuni minuti. Controlla anche Spam/Posta indesiderata; se non arriva premi “Reinvia email di conferma”.',true);
-  }
+ const displayName=el('displayName').value.trim(),email=el('email').value.trim(),password=el('password').value;
+ if(!displayName){setAuthStatus('Inserisci il nome del docente.');return}
+ if(!email||!password){setAuthStatus('Inserisci email e password.');return}
+ if(password.length<6){setAuthStatus('La password deve avere almeno 6 caratteri.');return}
+ setAuthStatus('Creazione account...',true);
+ const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:displayName},emailRedirectTo:canonicalRedirect()}});
+ if(error){setAuthStatus('Account non creato: '+authError(error.message));return}
+ if(data.session){currentUser=data.user;setAuthStatus('');await openDashboard()}
+ else setAuthStatus('Account creato. Conferma l’email ricevuta prima di accedere.',true);
 }
 async function resendConfirmation(){
-  const email=el('email').value.trim();
-  if(!email){setAuthStatus('Inserisci prima l\'email del docente.');return}
-  setAuthStatus('Invio della mail di conferma in corso...',true);
-  const {error}=await sb.auth.resend({
-    type:'signup',
-    email,
-    options:{emailRedirectTo: canonicalRedirect()}
-  });
-  if(error){setAuthStatus('Non sono riuscito a reinviare la mail: '+friendlyAuthError(error.message));return}
-  setAuthStatus('Mail di conferma reinviata. Attendi qualche minuto e controlla anche Spam/Posta indesiderata.',true);
+ const email=el('email').value.trim();if(!email){setAuthStatus("Inserisci prima l'email.");return}
+ const {error}=await sb.auth.resend({type:'signup',email,options:{emailRedirectTo:canonicalRedirect()}});
+ if(error){setAuthStatus('Invio non riuscito: '+authError(error.message));return}
+ setAuthStatus('Email di conferma reinviata. Controlla anche Spam.',true);
 }
 async function requestPasswordReset(){
-  const email=el('email').value.trim();
-  if(!email){setAuthStatus('Inserisci prima l\'email del docente.');return}
-  setAuthStatus('Invio del link per reimpostare la password...',true);
-  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:canonicalRedirect()});
-  if(error){setAuthStatus('Non sono riuscito a inviare il link: '+friendlyAuthError(error.message));return}
-  setAuthStatus('Link inviato. Controlla la posta e anche Spam/Posta indesiderata.',true);
+ const email=el('email').value.trim();if(!email){setAuthStatus("Inserisci prima l'email.");return}
+ const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:canonicalRedirect()});
+ if(error){setAuthStatus('Invio non riuscito: '+authError(error.message));return}
+ setAuthStatus('Link per reimpostare la password inviato.',true);
 }
 async function updatePassword(){
-  const password=el('newPassword').value;
-  const status=el('recoveryStatus');
-  if(password.length<6){
-    status.textContent='La password deve avere almeno 6 caratteri.';
-    status.className='status err';
-    return;
-  }
-  status.textContent='Aggiornamento password...';
-  status.className='status ok';
-  const {error}=await sb.auth.updateUser({password});
-  if(error){
-    status.textContent='Password non aggiornata: '+friendlyAuthError(error.message);
-    status.className='status err';
-    return;
-  }
-  recovering=false;
-  history.replaceState(null,'',canonicalRedirect());
-  status.textContent='Password aggiornata.';
-  status.className='status ok';
-  await openDashboard();
+ const password=el('newPassword').value,status=el('recoveryStatus');
+ if(password.length<6){status.textContent='La password deve avere almeno 6 caratteri.';status.className='status err';return}
+ const {error}=await sb.auth.updateUser({password});
+ if(error){status.textContent='Password non aggiornata: '+authError(error.message);status.className='status err';return}
+ recovering=false;history.replaceState(null,'',canonicalRedirect());status.textContent='Password aggiornata.';status.className='status ok';await openDashboard();
 }
-async function logout(){
-  await sb.auth.signOut();
-  currentUser=null;
-  showLogin();
-  setAuthStatus('Sei uscita dall\'area docenti.',true);
-}
+async function logout(){await sb.auth.signOut();currentUser=null;profile=null;showLogin();setAuthStatus("Sei uscita dall'area docenti.",true)}
+
 async function openDashboard(){
-  if(!currentUser){
-    const {data}=await sb.auth.getUser();
-    currentUser=data.user;
-  }
-  if(!currentUser){showLogin();return}
-  showDashboard();
-  const fallbackName=currentUser.user_metadata?.display_name||currentUser.email||'Docente';
-  const {data:profile,error:profileError}=await sb.from('profiles')
-    .select('display_name,role,active')
-    .eq('id',currentUser.id)
-    .maybeSingle();
-  if(profileError){
-    setAppStatus('Profilo docente non disponibile: '+profileError.message,false);
-  }
-  if(profile && profile.active===false){
-    await sb.auth.signOut();
-    currentUser=null;
-    showLogin();
-    setAuthStatus('Questo account docente non è attivo.');
-    return;
-  }
-  const name=profile?.display_name||fallbackName;
-  const role=profile?.role==='admin'?'Amministratore':'Docente';
-  el('userLabel').textContent=name+' · '+role;
-  await renderAll();
+ const {data:userData,error:userError}=await sb.auth.getUser();
+ if(userError||!userData.user){currentUser=null;showLogin();return}
+ currentUser=userData.user;
+ const {data:p,error}=await sb.from('profiles').select('display_name,role,active').eq('id',currentUser.id).maybeSingle();
+ if(error||!p){showDashboard();setAppStatus('Profilo docente non disponibile. Riprova tra pochi secondi.',false);return}
+ if(p.active===false){await sb.auth.signOut();currentUser=null;showLogin();setAuthStatus('Questo account docente non è attivo.');return}
+ profile=p;showDashboard();
+ el('userLabel').textContent=(p.display_name||currentUser.email||'Docente')+' · '+(p.role==='admin'?'Amministratore':'Docente');
+ await renderAll();
 }
 async function renderAll(){
-  setAppStatus('');
+ setAppStatus('Aggiornamento dati...',true);
+ try{
   await loadClasses();
+  await loadStudents();
   await loadTests();
+  await loadAssignments();
   await loadResults();
+  renderCatalog();renderTests();renderStudents();renderResults();
+  setAppStatus('Dati aggiornati.',true);
+ }catch(error){
+  console.error(error);setAppStatus('Errore: '+(error.message||error),false);
+ }
 }
 async function loadClasses(){
-  const {data,error}=await sb.from('classes').select('id,name,school_year,campus,created_at').order('created_at',{ascending:true});
-  if(error){setAppStatus('Errore nel caricamento delle classi: '+error.message,false);return}
-  classes=data||[];
-  el('nClassi').textContent=classes.length;
-  el('classList').innerHTML=classes.length?classes.map(c=>
-    '<div class="item"><h3>'+safe(c.name)+'</h3><div class="meta">'+safe(c.school_year||'')+(c.campus?' · '+safe(c.campus):'')+'</div></div>'
-  ).join(''):'<div class="meta">Nessuna classe ancora. Usa “Aggiungi classe”.</div>';
-
-  el('testClass').innerHTML=classes.map(c=>'<option value="'+safe(c.id)+'">'+safe(c.name)+'</option>').join('');
+ const {data,error}=await sb.from('classes').select('id,name,school_year,campus,active,created_at').order('created_at');
+ if(error)throw error;classes=data||[];el('nClassi').textContent=classes.length;
+ el('classList').innerHTML=classes.length?classes.map(c=>'<div class="item"><h3>'+safe(c.name)+'</h3><div class="meta">'+safe(c.school_year||'')+(c.campus?' · '+safe(c.campus):'')+'</div></div>').join(''):'<div class="meta">Nessuna classe. Inizia da “Aggiungi classe”.</div>';
+ const opts=classes.map(c=>'<option value="'+safe(c.id)+'">'+safe(c.name)+'</option>').join('');
+ for(const id of ['studentClass','catalogClass'])el(id).innerHTML=opts;
+ el('studentFilter').innerHTML='<option value="">Tutte le classi</option>'+opts;
 }
 async function saveClass(){
-  const name=el('className').value.trim();
-  if(!name){setAppStatus('Inserisci il nome della classe.',false);return}
-  const payload={
-    name,
-    school_year:el('classYear').value.trim(),
-    campus:el('classCampus').value.trim(),
-    created_by:currentUser.id
-  };
-  const {error}=await sb.from('classes').insert(payload);
-  if(error){setAppStatus('Classe non salvata: '+error.message,false);return}
-  el('className').value='';el('classCampus').value='';
-  el('classForm').classList.remove('show');
-  setAppStatus('Classe salvata.',true);
-  await renderAll();
-}
-async function loadTests(){
-  const {data,error}=await sb.from('tests')
-    .select('id,title,subject,test_type,description,status,class_id,classes(name)')
-    .order('created_at',{ascending:true});
-  if(error){setAppStatus('Errore nel caricamento delle verifiche: '+error.message,false);return}
-  const tests=data||[];
-  el('nVerifiche').textContent=tests.length;
-  el('testList').innerHTML=tests.length?tests.map(t=>
-    '<div class="item"><h3>'+safe(t.title)+'</h3><div class="meta">'+safe(t.classes?.name||'Classe')+' · '+safe(t.subject)+' · '+safe(t.test_type)+' · '+safe(t.status)+'</div>'+(t.description?'<div>'+safe(t.description)+'</div>':'')+'</div>'
-  ).join(''):'<div class="meta">Nessuna verifica ancora. Usa “Crea verifica”.</div>';
-}
-async function saveTest(){
-  const title=el('testTitle').value.trim();
-  const classId=el('testClass').value;
-  if(!classes.length){setAppStatus('Prima crea almeno una classe.',false);return}
-  if(!title){setAppStatus('Inserisci il titolo della verifica.',false);return}
-  const payload={
-    title,
-    class_id:classId,
-    subject:el('testSubject').value.trim()||'Matematica',
-    owner_id:currentUser.id,
-    test_type:el('testType').value,
-    description:el('testDescription').value.trim(),
-    status:'draft'
-  };
-  const {error}=await sb.from('tests').insert(payload);
-  if(error){setAppStatus('Verifica non salvata: '+error.message,false);return}
-  el('testTitle').value='';el('testDescription').value='';
-  el('testForm').classList.remove('show');
-  setAppStatus('Verifica salvata nel database.',true);
-  await renderAll();
-}
-async function loadResults(){
-  const {data,error}=await sb.from('submissions').select('id,score,total,status,submitted_at,test_id,tests(title)').order('created_at',{ascending:false});
-  if(error){setAppStatus('Errore nel caricamento dei risultati: '+error.message,false);return}
-  const results=data||[];
-  el('nConsegne').textContent=results.length;
-  if(!results.length){
-    el('resultBox').innerHTML='<div class="meta">Nessuna consegna nel database per le tue verifiche.</div>';
-    return;
-  }
-  el('resultBox').innerHTML=results.map(r=>{
-    const score=(r.score==null||r.total==null)?'Da correggere':safe(r.score)+' / '+safe(r.total);
-    return '<div class="item"><h3>'+safe(r.tests?.title||'Verifica')+'</h3><div class="meta">'+score+' · '+safe(r.status)+'</div></div>';
-  }).join('');
-}
-function copyTestLink(){
-  const url=new URL('../classe4/test-ingresso/',location.href).href;
-  navigator.clipboard.writeText(url).then(()=>{
-    const b=el('copyTestLink'),old=b.textContent;
-    b.textContent='Link copiato ✓';
-    setTimeout(()=>b.textContent=old,1200);
-  });
+ const name=el('className').value.trim();if(!name){setAppStatus('Inserisci il nome della classe.',false);return}
+ const payload={name,school_year:el('classYear').value.trim(),campus:el('classCampus').value.trim(),created_by:currentUser.id};
+ const {error}=await sb.from('classes').insert(payload);if(error){setAppStatus('Classe non salvata: '+error.message,false);return}
+ el('className').value='';el('classForm').classList.remove('show');await renderAll();
 }
 
-el('loginBtn').onclick=login;
-el('signupBtn').onclick=signup;
-el('resendBtn').onclick=resendConfirmation;
-el('resetBtn').onclick=requestPasswordReset;
-el('updatePasswordBtn').onclick=updatePassword;
-el('logoutBtn').onclick=logout;
-el('refreshBtn').onclick=renderAll;
-el('copyTestLink').onclick=copyTestLink;
-el('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+async function loadStudents(){
+ if(!classes.length){students=[];el('nAlunni').textContent='0';return}
+ const {data,error}=await sb.from('students').select('id,student_code,class_id,display_name,active,created_at').in('class_id',classes.map(c=>c.id)).order('display_name');
+ if(error)throw error;students=data||[];el('nAlunni').textContent=students.filter(s=>s.active).length;
+}
+function renderStudents(){
+ const filter=el('studentFilter').value;
+ const list=students.filter(s=>!filter||s.class_id===filter);
+ el('studentList').innerHTML=list.length?list.map(s=>{
+  const c=classes.find(x=>x.id===s.class_id);
+  return '<div class="item"><div class="row"><div><h3>'+safe(s.display_name||'Alunno')+'</h3><div class="meta">'+safe(c?.name||'Classe')+' · <code class="code">'+safe(s.student_code)+'</code> · '+(s.active?'attivo':'non attivo')+'</div></div><div class="row"><button class="btn small" data-copy-code="'+safe(s.student_code)+'">Copia codice</button><button class="btn small '+(s.active?'danger':'')+'" data-toggle-student="'+safe(s.id)+'">'+(s.active?'Disattiva':'Riattiva')+'</button></div></div></div>';
+ }).join(''):'<div class="meta">Nessun alunno da mostrare.</div>';
+}
+async function saveStudent(){
+ const classId=el('studentClass').value,name=el('studentName').value.trim();
+ if(!classId){setAppStatus('Prima crea una classe.',false);return}
+ if(!name){setAppStatus("Inserisci nome e cognome dell'alunno.",false);return}
+ let code=normalizeCode(el('studentCode').value);if(!code)code=randomCode('AL');
+ const {error}=await sb.from('students').insert({class_id:classId,display_name:name,student_code:code,active:true});
+ if(error){setAppStatus('Alunno non salvato: '+(/duplicate/i.test(error.message)?'codice già usato nella classe.':error.message),false);return}
+ el('studentName').value='';el('studentCode').value='';el('studentForm').classList.remove('show');await renderAll();setAppStatus('Alunno salvato. Codice: '+code,true);
+}
+async function toggleStudent(id){
+ const s=students.find(x=>x.id===id);if(!s)return;
+ const {error}=await sb.from('students').update({active:!s.active}).eq('id',id);
+ if(error){setAppStatus('Modifica non riuscita: '+error.message,false);return}
+ await renderAll();
+}
+
+async function loadTests(){
+ const {data,error}=await sb.from('tests').select('id,title,subject,test_type,description,status,class_id,external_key,public_path,classes(name)').order('created_at');
+ if(error)throw error;tests=data||[];el('nVerifiche').textContent=tests.filter(t=>t.status==='active').length;
+}
+async function loadAssignments(){
+ if(!tests.length){assignments=[];return}
+ const {data,error}=await sb.from('assignments').select('id,test_id,class_id,access_code,active,opens_at,closes_at,created_at').in('test_id',tests.map(t=>t.id)).order('created_at');
+ if(error)throw error;assignments=data||[];
+}
+function renderCatalog(){
+ const classId=el('catalogClass').value;
+ el('catalogList').innerHTML=CATALOG.map(q=>{
+  const t=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
+  const link=t?testLink(t):'';
+  return '<div class="item"><h3>'+safe(q.classLabel)+' · '+safe(q.title)+'</h3><div class="meta">'+safe(q.subject)+'</div><div class="row" style="margin-top:10px;justify-content:flex-start">'+
+   (link?'<button class="btn primary" data-copy-link="'+safe(t.id)+'">Copia link alunni</button><a class="btn" target="_blank" rel="noopener" href="'+safe(link)+'">Apri</a><span class="badge">Attiva</span>':'<button class="btn primary" data-activate="'+safe(q.key)+'">Attiva per questa classe</button>')+
+   '</div></div>';
+ }).join('');
+}
+async function activateQuiz(key,button){
+ const classId=el('catalogClass').value;if(!classId){setAppStatus('Prima crea e seleziona una classe.',false);return}
+ const q=CATALOG.find(x=>x.key===key);if(!q)return;
+ await busy(button,async()=>{
+  let t=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
+  if(!t){
+   const {data,error}=await sb.from('tests').insert({
+    title:q.title,class_id:classId,subject:q.subject,owner_id:currentUser.id,test_type:q.type,
+    description:q.classLabel,status:'active',external_key:q.key,public_path:q.path
+   }).select('id,title,subject,test_type,description,status,class_id,external_key,public_path').single();
+   if(error)throw error;t=data;
+  }else if(t.status!=='active'){
+   const {error}=await sb.from('tests').update({status:'active',public_path:q.path}).eq('id',t.id);if(error)throw error;
+  }
+  let a=assignments.find(x=>x.test_id===t.id&&x.active);
+  if(!a){
+   const {error}=await sb.from('assignments').insert({test_id:t.id,class_id:classId,access_code:randomCode('PROVA'),active:true});
+   if(error)throw error;
+  }
+  await renderAll();
+  const fresh=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
+  const link=fresh?testLink(fresh):'';
+  if(link)await copyText(link);
+ });
+}
+function renderTests(){
+ const active=tests.filter(t=>t.external_key);
+ el('testList').innerHTML=active.length?active.map(t=>{
+  const link=testLink(t),a=assignmentFor(t.id);
+  return '<div class="item"><div class="row"><div><h3>'+safe(t.title)+'</h3><div class="meta">'+safe(t.classes?.name||'Classe')+' · '+safe(t.subject)+' · '+safe(t.status)+(a?.access_code?' · codice prova '+safe(a.access_code):'')+'</div></div><div class="row">'+
+   (link?'<button class="btn primary small" data-copy-link="'+safe(t.id)+'">Copia link</button><a class="btn small" target="_blank" rel="noopener" href="'+safe(link)+'">Apri prova</a>':'<span class="warn">Nessun link attivo</span>')+
+   '</div></div></div>';
+ }).join(''):'<div class="meta">Non hai ancora attivato prove per le tue classi.</div>';
+}
+
+async function loadResults(){
+ const {data,error}=await sb.from('submissions')
+  .select('id,score,total,status,submitted_at,test_id,assignment_id,student_name_snapshot,details,tests(title,subject,class_id,classes(name)),students(display_name,student_code)')
+  .order('submitted_at',{ascending:false});
+ if(error)throw error;results=data||[];el('nConsegne').textContent=results.length;
+}
+function renderResults(){
+ if(!results.length){el('resultBox').innerHTML='<div class="meta">Nessuna consegna ancora.</div>';return}
+ el('resultBox').innerHTML=results.map(r=>{
+  const name=r.students?.display_name||r.student_name_snapshot||'Alunno';
+  const code=r.students?.student_code||'';
+  const score=(r.score==null||r.total==null)?'Da correggere':safe(r.score)+' / '+safe(r.total);
+  const details=JSON.stringify(r.details||{},null,2);
+  return '<div class="item"><div class="row"><div><h3>'+safe(name)+'</h3><div class="meta">'+safe(r.tests?.classes?.name||'Classe')+' · '+safe(r.tests?.title||'Verifica')+(code?' · '+safe(code):'')+' · '+safe(formatDate(r.submitted_at))+'</div></div><strong>'+score+'</strong></div>'+
+   '<details><summary>Dettaglio risposte</summary><pre>'+safe(details)+'</pre></details></div>';
+ }).join('');
+}
+function downloadCsv(){
+ if(!results.length){setAppStatus('Non ci sono risultati da esportare.',false);return}
+ const rows=[['Data','Classe','Prova','Disciplina','Alunno','Codice','Punteggio','Totale','Stato']];
+ results.forEach(r=>rows.push([r.submitted_at||'',r.tests?.classes?.name||'',r.tests?.title||'',r.tests?.subject||'',r.students?.display_name||r.student_name_snapshot||'',r.students?.student_code||'',r.score??'',r.total??'',r.status||'']));
+ const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');
+ const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='classelab-risultati.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+
+el('loginBtn').onclick=()=>busy(el('loginBtn'),login);
+el('signupBtn').onclick=()=>busy(el('signupBtn'),signup);
+el('resendBtn').onclick=()=>busy(el('resendBtn'),resendConfirmation);
+el('resetBtn').onclick=()=>busy(el('resetBtn'),requestPasswordReset);
+el('updatePasswordBtn').onclick=()=>busy(el('updatePasswordBtn'),updatePassword);
+el('logoutBtn').onclick=()=>busy(el('logoutBtn'),logout);
+el('refreshBtn').onclick=()=>busy(el('refreshBtn'),renderAll);
+el('csvBtn').onclick=downloadCsv;
+el('password').addEventListener('keydown',e=>{if(e.key==='Enter')el('loginBtn').click()});
 
 el('showClassForm').onclick=()=>el('classForm').classList.add('show');
 el('cancelClass').onclick=()=>el('classForm').classList.remove('show');
-el('saveClass').onclick=saveClass;
+el('saveClass').onclick=()=>busy(el('saveClass'),saveClass);
+el('showStudentForm').onclick=()=>{if(!classes.length){setAppStatus('Prima crea una classe.',false);return}el('studentForm').classList.add('show')};
+el('cancelStudent').onclick=()=>el('studentForm').classList.remove('show');
+el('saveStudent').onclick=()=>busy(el('saveStudent'),saveStudent);
+el('studentFilter').onchange=renderStudents;
+el('catalogClass').onchange=renderCatalog;
 
-el('showTestForm').onclick=()=>el('testForm').classList.add('show');
-el('cancelTest').onclick=()=>el('testForm').classList.remove('show');
-el('saveTest').onclick=saveTest;
-
-sb.auth.onAuthStateChange((event,session)=>{
-  if(event==='PASSWORD_RECOVERY'){
-    recovering=true;
-    if(session?.user) currentUser=session.user;
-    showRecovery();
-    return;
-  }
-  if(event==='SIGNED_OUT' && !recovering) showLogin();
-  if(session?.user){currentUser=session.user}
+document.addEventListener('click',async e=>{
+ const copyCode=e.target.closest('[data-copy-code]');if(copyCode){await copyText(copyCode.dataset.copyCode);return}
+ const toggle=e.target.closest('[data-toggle-student]');if(toggle){await busy(toggle,()=>toggleStudent(toggle.dataset.toggleStudent));return}
+ const activate=e.target.closest('[data-activate]');if(activate){try{await activateQuiz(activate.dataset.activate,activate)}catch(err){setAppStatus('Attivazione non riuscita: '+err.message,false)}return}
+ const copy=e.target.closest('[data-copy-link]');if(copy){const t=tests.find(x=>x.id===copy.dataset.copyLink);const link=t?testLink(t):'';if(link)await copyText(link);else setAppStatus('Link non disponibile.',false)}
 });
 
-(async function init(){
-  if(recovering){
-    showRecovery();
-    return;
-  }
-  const {data}=await sb.auth.getSession();
-  if(data.session?.user){
-    currentUser=data.session.user;
-    await openDashboard();
-  }else{
-    showLogin();
-  }
+sb.auth.onAuthStateChange((event,session)=>{
+ if(event==='PASSWORD_RECOVERY'){recovering=true;if(session?.user)currentUser=session.user;showRecovery();return}
+ if(event==='SIGNED_OUT'&&!recovering){currentUser=null;showLogin();return}
+ if(session?.user)currentUser=session.user;
+});
+
+(async()=>{
+ if(recovering){showRecovery();return}
+ const {data}=await sb.auth.getSession();
+ if(data.session?.user){currentUser=data.session.user;await openDashboard()}else showLogin();
 })();
 })();
 </script>
