@@ -1,116 +1,105 @@
 # Architettura funzionale di ClasseLab
 
-## 1. Due aree separate
+## 1. Aree separate
 
 ### Area alunni
-Gli alunni entrano nella piattaforma per svolgere una prova assegnata.
+L'alunno svolge esclusivamente una prova assegnata dal docente.
 
-Non devono poter accedere:
-- all'Area docenti;
-- ai risultati degli altri alunni;
-- alle soluzioni;
-- alle verifiche non assegnate.
+Per consegnare servono:
+- il link della prova contenente il codice di assegnazione;
+- il codice personale dell'alunno.
+
+L'alunno non accede direttamente alle tabelle Supabase e non può leggere risultati, soluzioni o dati di altri alunni.
 
 ### Area docenti
-Ogni docente avrà un account personale.
+Ogni docente usa un account personale Supabase Auth.
 
-Dopo l'accesso il sistema dovrà mostrare solamente ciò che quel docente è autorizzato a vedere.
+Dopo l'accesso, la dashboard carica esclusivamente classi, prove e risultati consentiti dalle policy Row Level Security.
 
----
+## 2. Modello di autorizzazione
 
-## 2. Principio di proprietà
+Una classe ha un proprietario e può essere condivisa tramite `teacher_classes`.
 
-Ogni verifica deve avere un docente proprietario.
+Una verifica ha un proprietario e può essere condivisa tramite `test_permissions`.
 
-Esempio iniziale:
+La lettura dei risultati è consentita soltanto al proprietario, a un amministratore attivo o a un docente con il permesso specifico di visualizzare i risultati.
 
-### Giusy
-Può visualizzare e gestire:
-- Classe quarta → Matematica → Test d'ingresso;
-- Classe quinta → Matematica → future prove comuni.
+Il ruolo amministratore non è modificabile dal normale account docente.
 
-Può visualizzare:
-- consegne;
-- risposte degli alunni;
-- punteggi;
-- dettaglio degli esercizi;
+## 3. Flusso docente
 
-ma esclusivamente per le proprie verifiche.
+1. Login con email e password.
+2. Creazione o selezione della classe.
+3. Inserimento degli alunni e generazione dei codici personali.
+4. Selezione di una prova dal catalogo delle prove pubblicate.
+5. Attivazione della prova per una classe.
+6. Creazione di un'assegnazione con codice casuale.
+7. Copia del link generato e distribuzione agli alunni.
+8. Consultazione delle consegne nell'Area docenti.
+9. Apertura del dettaglio delle risposte ed eventuale correzione manuale.
+10. Esportazione dei risultati in CSV.
 
-### Docente di Italiano di classe seconda
-Può visualizzare e gestire:
-- Classe seconda → Italiano → prove assegnate.
+## 4. Flusso alunno
 
-Può visualizzare esclusivamente i risultati di quelle prove.
+1. L'alunno apre il link ricevuto.
+2. Il link contiene il parametro di assegnazione.
+3. L'alunno inserisce nome, cognome e codice personale.
+4. Svolge la prova.
+5. Il browser calcola il punteggio automatico previsto dalla prova.
+6. Il browser invia il risultato alla Edge Function `submit-quiz`.
+7. La funzione verifica assegnazione, prova, classe e codice alunno.
+8. Solo dopo le verifiche la consegna viene scritta in Supabase.
+9. Se la stessa assegnazione risulta già consegnata dallo stesso alunno, non viene creato un duplicato.
 
----
+## 5. Componenti dati
 
-## 3. Regola sui risultati
+Le tabelle principali sono:
+- `profiles`;
+- `classes`;
+- `teacher_classes`;
+- `tests`;
+- `test_permissions`;
+- `questions`;
+- `question_keys`;
+- `assignments`;
+- `students`;
+- `submissions`;
+- `answers`.
 
-Il permesso di leggere una verifica e il permesso di leggere i suoi risultati devono essere collegati.
+Le prove statiche attuali salvano il dettaglio della consegna anche nel campo JSON `submissions.details`.
 
-Un docente NON autorizzato:
-- non vede la verifica nella propria dashboard;
-- non vede l'elenco delle consegne;
-- non vede i nomi degli alunni;
-- non vede le risposte;
-- non vede i punteggi;
-- non può raggiungere i dati nemmeno conoscendo direttamente un URL.
+## 6. Sicurezza
 
-La separazione dovrà quindi essere applicata nel database, non soltanto nell'interfaccia grafica.
+- RLS è attiva sulle tabelle esposte.
+- Le classi sono filtrate per proprietario/assegnazione.
+- Le prove sono filtrate per proprietario/permesso.
+- Le consegne sono leggibili soltanto da chi può vedere i risultati della relativa prova.
+- La modifica delle consegne è più restrittiva della sola lettura.
+- Un docente può aggiornare del proprio profilo soltanto il nome visualizzato; non può promuoversi ad amministratore né riattivare autonomamente un account.
+- Le chiavi Supabase segrete non sono presenti nel front-end.
+- Le consegne alunno passano da una Edge Function con controlli server-side.
+- Il codice di assegnazione e il codice alunno devono entrambi corrispondere alla stessa classe.
+- Per ciascuna assegnazione è ammessa una sola consegna per alunno.
 
----
+## 7. Prove attualmente collegate
 
-## 4. Oggetti principali
+Sono collegate al flusso centralizzato:
+- Matematica classe quarta · Test d'ingresso;
+- Matematica classe quinta · Problemi e numeri;
+- Matematica classe quinta · Misure, geometria, relazioni;
+- Italiano classe seconda · Prova d'ascolto;
+- Italiano classe seconda · Schede 1, 2 e 3.
 
-La piattaforma dovrà gestire:
+Alcune attività includono risposte aperte: in questi casi la dashboard segnala che il punteggio mostrato è quello automatico e che è richiesta anche una correzione manuale.
 
-1. Docenti
-2. Classi
-3. Discipline
-4. Verifiche
-5. Domande/esercizi
-6. Assegnazioni
-7. Alunni o codici alunno
-8. Consegne
-9. Risposte
-10. Permessi
+## 8. Autenticazione
 
----
+L'Area docenti supporta:
+- registrazione;
+- conferma email;
+- accesso;
+- reinvio email di conferma;
+- recupero password;
+- uscita dall'account.
 
-## 5. Flusso docente
-
-1. Il docente accede con il proprio account.
-2. Il sistema identifica il docente.
-3. Vengono caricate solo le sue classi/verifiche autorizzate.
-4. Il docente apre una verifica.
-5. Visualizza solo le consegne collegate a quella verifica.
-6. Può consultare risultati, risposte e statistiche della propria prova.
-
----
-
-## 6. Flusso alunno
-
-1. L'alunno riceve un link o un codice prova.
-2. Apre esclusivamente la prova assegnata.
-3. Inserisce il proprio identificativo richiesto.
-4. Svolge gli esercizi.
-5. Consegna.
-6. La consegna viene collegata alla verifica corretta.
-7. Il risultato diventa visibile soltanto al docente autorizzato.
-
----
-
-## 7. Stato attuale
-
-GitHub Pages ospita il front-end e Supabase gestisce autenticazione e database dell'Area docenti.
-
-L'Area docenti usa:
-- account personali con email e password;
-- profili docente separati;
-- classi e verifiche nel database;
-- Row Level Security per separare dati, prove e risultati tra docenti.
-
-Le vecchie pagine con password unica sono state dismesse e rimandano all'Area docenti principale.
-
-Resta da completare il collegamento delle prove svolte dagli alunni al database centrale e, per un uso esteso a più docenti, la configurazione affidabile dell'invio email di autenticazione.
+Per un utilizzo esteso a molti docenti, l'invio email va configurato con un servizio SMTP affidabile e la futura gestione amministrativa degli inviti potrà essere aggiunta senza modificare il modello di isolamento già presente.

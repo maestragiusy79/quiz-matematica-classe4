@@ -1,57 +1,69 @@
 # ClasseLab
 
-Piattaforma didattica in evoluzione per la scuola primaria.
+Piattaforma didattica per la scuola primaria con prove digitali, consegne centralizzate e risultati separati per docente.
 
-## Obiettivo
-Trasformare verifiche ed esercitazioni in attività digitali semplici da svolgere per gli alunni e facili da gestire per i docenti.
-
-## Struttura attuale
+## Struttura
 - `/alunni/` → accesso alle prove;
-- `/docenti/` → area docenti dimostrativa;
-- `/classe4/` → attività di classe quarta;
-- `/classe5/` → area predisposta per classe quinta;
-- `/docente.html` → reindirizzamento alla nuova Area docenti.
+- `/docenti/` → Area docenti collegata a Supabase;
+- `/classe2/` → prove di Italiano di classe seconda;
+- `/classe4/` → prove di Matematica di classe quarta;
+- `/classe5/` → prove di Matematica di classe quinta;
+- `/docente.html` e `/docente-demo.html` → reindirizzamento alla nuova Area docenti.
 
-## Prima prova attiva
-Classe quarta → Matematica → Test d'ingresso.
+## Flusso operativo
+1. Il docente accede con email e password.
+2. Crea una classe.
+3. Inserisce gli alunni; a ciascuno viene associato un codice univoco.
+4. Attiva una delle prove pubblicate per quella classe.
+5. ClasseLab genera un link specifico con codice di assegnazione.
+6. L'alunno apre quel link, inserisce il proprio codice e svolge la prova.
+7. La consegna viene validata da una Supabase Edge Function e salvata nel database.
+8. Il docente autorizzato vede punteggio, dettaglio delle risposte e può esportare i risultati in CSV.
 
-## Regola fondamentale del progetto
-ClasseLab sarà multi-docente.
+## Prove collegate al database
+- Classe quarta · Matematica · Test d'ingresso;
+- Classe quinta · Matematica · Problemi e numeri;
+- Classe quinta · Matematica · Misure, geometria, relazioni;
+- Classe seconda · Italiano · Prova d'ascolto;
+- Classe seconda · Italiano · Scheda 1;
+- Classe seconda · Italiano · Scheda 2;
+- Classe seconda · Italiano · Scheda 3.
 
-Ogni docente dovrà avere un proprio account e potrà visualizzare solamente:
-- le classi assegnate;
-- le verifiche di cui è proprietario o per cui è autorizzato;
-- le risposte e i risultati relativi a quelle verifiche.
+Le consegne di queste prove non vengono più conservate nel solo browser: vengono registrate in Supabase.
 
-Un docente non deve poter visualizzare prove o risultati appartenenti a un altro docente.
+## Sicurezza e separazione dei dati
+ClasseLab è progettato come sistema multi-docente.
 
-Esempio:
-- Giusy → Matematica classe quarta + future prove comuni di Matematica classe quinta;
-- altro docente → Italiano classe seconda;
-- Giusy non vede le risposte di Italiano;
-- il docente di Italiano non vede i risultati di Matematica di Giusy.
+Ogni docente può visualizzare solamente:
+- le classi di cui è proprietario o a cui è assegnato;
+- le verifiche di cui è proprietario o per cui dispone di un permesso;
+- le consegne e i risultati delle verifiche per cui può vedere i risultati.
 
-## Evoluzione prevista
-- account personali dei docenti;
-- autorizzazioni per docente;
-- classi e discipline assegnate;
-- proprietà delle verifiche;
-- risultati filtrati per docente;
-- database centralizzato;
-- accesso da più dispositivi;
-- creazione e duplicazione di verifiche.
+La separazione è applicata nel database tramite Row Level Security (RLS), non soltanto nell'interfaccia.
 
-## Stato attuale
-Il front-end è pubblicato su GitHub Pages.
+Gli alunni non hanno accesso diretto alle tabelle del database. Le consegne passano attraverso la funzione server `submit-quiz`, che verifica:
+- codice dell'assegnazione;
+- prova corretta;
+- classe corretta;
+- codice alunno attivo;
+- eventuale finestra temporale della prova;
+- assenza di una consegna precedente per la stessa assegnazione.
 
-L'Area docenti è ora collegata a Supabase e supporta:
-- account docente con email e password;
-- classi salvate nel database;
-- verifiche salvate nel database;
-- risultati filtrati tramite Row Level Security.
+Le chiavi segrete Supabase restano esclusivamente lato server.
 
-Il test d'ingresso di matematica di classe quarta è ancora una prova statica pubblicata su GitHub Pages. Il prossimo passaggio è salvare anche le consegne degli alunni direttamente su Supabase, così i risultati saranno centralizzati e visibili solo al docente autorizzato.
+## Area docenti
+L'Area docenti supporta:
+- account personale con email e password;
+- recupero password e reinvio conferma email;
+- creazione classi;
+- gestione alunni e codici;
+- attivazione delle prove pubblicate;
+- generazione e copia dei link per gli alunni;
+- elenco delle prove attive;
+- visualizzazione di punteggi e dettagli delle risposte;
+- indicazione delle attività che richiedono anche correzione manuale;
+- esportazione risultati in CSV.
 
-Vedi anche:
+## Documentazione
 - `docs/ARCHITETTURA.md`
 - `docs/MODELLO-DATI.md`
