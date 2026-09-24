@@ -25,6 +25,7 @@ body{background:#f7f9fc}.wrap{max-width:980px}.q{margin:18px 0;padding:20px;back
 <div class="answer-grid">
 <label>Nome<input id="nome" required></label>
 <label>Cognome<input id="cognome" required></label>
+<label style="grid-column:1/-1">Codice alunno<input id="studentCode" required autocomplete="off" placeholder="Inserisci il codice ricevuto dall’insegnante"></label>
 </div>
 </section>
 
@@ -157,6 +158,7 @@ body{background:#f7f9fc}.wrap{max-width:980px}.q{margin:18px 0;padding:20px;back
 </form>
 <p><a href="../">← Torna a matematica classe quinta</a></p>
 </main>
+<script src="../../js/classelab-submit.js"></script>
 
 <script>
 (function(){
@@ -165,8 +167,8 @@ const norm=s=>String(s??'').toLowerCase().trim().replace(/\s+/g,' ').replace(','
 const digits=s=>norm(s).replace(/\s/g,'');
 const radio=n=>document.querySelector('input[name="'+n+'"]:checked')?.value||'';
 const eq=(id,ans)=>ans.includes(norm(document.getElementById(id).value));
-function save(rec){const a=JSON.parse(localStorage.getItem(K)||'[]');a.push(rec);localStorage.setItem(K,JSON.stringify(a))}
-document.getElementById('quiz').addEventListener('submit',function(e){
+async function save(rec){return window.ClasseLabSubmit.send('classe5-matematica-aritmetica-iniziale',rec)}
+document.getElementById('quiz').addEventListener('submit',async function(e){
 e.preventDefault();
 const nome=document.getElementById('nome').value.trim(),cognome=document.getElementById('cognome').value.trim();
 if(!nome||!cognome){document.getElementById('msg').textContent='Inserisci nome e cognome.';return}
@@ -180,7 +182,7 @@ const d8=norm(document.getElementById('q8d').value).replace(/[^0-9a-z]/g,''); ad
 add('q9a',['1.4','1,4'].includes(document.getElementById('q9a').value.trim().replace(',','.'))); add('q9b',norm(document.getElementById('q9b').value)==='2.56'); add('q9c',norm(document.getElementById('q9c').value)==='0.009');
 add('q10a',/25/.test(document.getElementById('q10a').value)); add('q10b',/4/.test(document.getElementById('q10b').value));
 add('q11a',/12|dodici/.test(norm(document.getElementById('q11a').value))); add('q11b',/13\s*[x×*]\s*12|12\s*[x×*]\s*13/.test(norm(document.getElementById('q11b').value))); add('q11c',/156/.test(document.getElementById('q11c').value));
-save({id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total,details});
+try{await save({id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total,details})}catch(error){document.getElementById('msg').textContent='Consegna non registrata: '+error.message;return}
 document.getElementById('msg').textContent='Verifica consegnata ✓';
 this.querySelectorAll('input,select,button').forEach(x=>x.disabled=true);
 });
