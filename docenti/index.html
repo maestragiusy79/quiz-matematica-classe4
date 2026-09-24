@@ -379,7 +379,7 @@ function renderResults(){
  el('resultBox').innerHTML=results.map(r=>{
   const name=r.students?.display_name||r.student_name_snapshot||'Alunno';
   const code=r.students?.student_code||'';
-  const score=(r.score==null||r.total==null)?'Da correggere':safe(r.score)+' / '+safe(r.total);
+  const score=(r.score==null||r.total==null)?'Da correggere':(r.details?.manualRequired?safe(r.score)+' / '+safe(r.total)+' automatici · correzione manuale':safe(r.score)+' / '+safe(r.total));
   const details=JSON.stringify(r.details||{},null,2);
   return '<div class="item"><div class="row"><div><h3>'+safe(name)+'</h3><div class="meta">'+safe(r.tests?.classes?.name||'Classe')+' · '+safe(r.tests?.title||'Verifica')+(code?' · '+safe(code):'')+' · '+safe(formatDate(r.submitted_at))+'</div></div><strong>'+score+'</strong></div>'+
    '<details><summary>Dettaglio risposte</summary><pre>'+safe(details)+'</pre></details></div>';
