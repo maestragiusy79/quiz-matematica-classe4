@@ -1,147 +1,155 @@
-# Modello dati previsto
+# Modello dati di ClasseLab
 
-Questo documento definisce la struttura logica prima del collegamento del database.
+Questo documento descrive il modello dati attualmente utilizzato da Supabase.
 
-## teachers
-Rappresenta i docenti.
+## profiles
+Profilo applicativo del docente collegato a `auth.users`.
 
-Campi previsti:
-- id
-- nome
-- cognome
-- email
-- ruolo
-- attivo
+Campi principali:
+- `id`
+- `display_name`
+- `email`
+- `role` (`teacher` o `admin`)
+- `active`
+- timestamp
+
+Un docente normale può modificare soltanto il proprio nome visualizzato; ruolo e stato attivo non sono modificabili dal client docente.
 
 ## classes
 Rappresenta le classi.
 
-Campi previsti:
-- id
-- nome
-- anno_scolastico
-- plesso
-- attiva
+Campi principali:
+- `id`
+- `name`
+- `school_year`
+- `campus`
+- `created_by`
+- `active`
+- `created_at`
 
 ## teacher_classes
 Collega docenti e classi.
 
-Campi previsti:
-- teacher_id
-- class_id
-- disciplina
-- ruolo
-
-Questo permette che più docenti lavorino sulla stessa classe ma con discipline diverse.
+Campi:
+- `teacher_id`
+- `class_id`
+- `subject`
+- `role`
+- `created_at`
 
 ## tests
-Rappresenta le verifiche.
+Rappresenta le prove.
 
-Campi previsti:
-- id
-- titolo
-- class_id
-- disciplina
-- teacher_owner_id
-- tipologia
-- stato
-- data_creazione
+Campi principali:
+- `id`
+- `title`
+- `class_id`
+- `subject`
+- `owner_id`
+- `test_type`
+- `description`
+- `status`
+- `external_key` — identifica una prova statica pubblicata;
+- `public_path` — percorso GitHub Pages della prova;
+- timestamp.
 
-Regola principale:
-`teacher_owner_id` determina il proprietario della verifica.
+## test_permissions
+Permessi aggiuntivi per condividere una prova con un altro docente.
 
-## questions
-Rappresenta gli esercizi di una verifica.
+Campi:
+- `test_id`
+- `teacher_id`
+- `can_edit`
+- `can_view_results`
 
-Campi previsti:
-- id
-- test_id
-- ordine
-- tipo
-- testo
-- configurazione
-- soluzione
+## questions e question_keys
+Struttura predisposta per future verifiche create dinamicamente nel database.
+
+`questions` contiene testo, tipo, ordine e configurazione della domanda.
+
+`question_keys` contiene soluzione e punteggio massimo ed è protetta separatamente.
 
 ## assignments
-Definisce a chi e quando viene assegnata una prova.
+Associa una prova a una classe e produce il codice presente nel link distribuito agli alunni.
 
-Campi previsti:
-- id
-- test_id
-- class_id
-- codice_accesso
-- data_apertura
-- data_chiusura
-- attiva
+Campi:
+- `id`
+- `test_id`
+- `class_id`
+- `access_code`
+- `opens_at`
+- `closes_at`
+- `active`
+- `created_at`
 
 ## students
-Per la prima fase è preferibile usare un identificativo minimo.
+Anagrafica minima degli alunni.
 
-Campi previsti:
-- id
-- codice_alunno
-- class_id
-- nome_visualizzato
+Campi:
+- `id`
+- `student_code`
+- `class_id`
+- `display_name`
+- `active`
+- `created_at`
 
-I dati personali dovranno essere ridotti al minimo necessario.
+Il codice è univoco all'interno della classe.
 
 ## submissions
 Rappresenta una consegna.
 
-Campi previsti:
-- id
-- test_id
-- student_id
-- started_at
-- submitted_at
-- punteggio
-- totale
-- stato
+Campi principali:
+- `id`
+- `test_id`
+- `student_id`
+- `assignment_id`
+- `student_name_snapshot`
+- `started_at`
+- `submitted_at`
+- `score`
+- `total`
+- `status`
+- `details` JSONB
+- `created_at`
+
+`details` contiene il dettaglio delle risposte delle prove statiche. Una combinazione assegnazione/alunno può produrre una sola consegna.
 
 ## answers
-Rappresenta le singole risposte.
+Tabella predisposta per le singole risposte delle prove dinamiche.
 
-Campi previsti:
-- id
-- submission_id
-- question_id
-- risposta
-- corretta
-- punteggio
+Campi:
+- `submission_id`
+- `question_id`
+- `answer`
+- `is_correct`
+- `points`
+- `created_at`
 
-## Regole di autorizzazione previste
+## Regole di autorizzazione
 
 ### Docente
-Può leggere una verifica solo se:
-- è il proprietario della verifica; oppure
-- esiste un'autorizzazione esplicita.
+Può accedere a una classe se:
+- ne è il creatore;
+- è associato tramite `teacher_classes`;
+- è un amministratore attivo.
 
-Può leggere una consegna solo se può leggere la verifica collegata.
+Può accedere a una prova se:
+- ne è il proprietario;
+- dispone di un record in `test_permissions`;
+- è un amministratore attivo.
+
+La lettura dei risultati richiede il permesso specifico previsto dal modello.
 
 ### Alunno
-Può:
-- aprire una prova assegnata;
-- inserire le proprie risposte;
-- consegnare.
+L'alunno non usa direttamente le API delle tabelle.
 
-Non può:
-- leggere le consegne altrui;
-- leggere le soluzioni;
-- consultare l'Area docenti.
+La consegna passa attraverso la Edge Function `submit-quiz`, che verifica contemporaneamente:
+- codice assegnazione;
+- prova;
+- classe;
+- codice alunno;
+- stato attivo;
+- eventuali date di apertura/chiusura;
+- eventuale consegna precedente.
 
-## Esempio iniziale
-
-### Utente Giusy
-Autorizzazioni:
-- Matematica classe quarta;
-- Matematica classe quinta.
-
-Verifiche iniziali:
-- Test d'ingresso di Matematica classe quarta;
-- future prove comuni di Matematica classe quinta.
-
-### Secondo docente
-Autorizzazioni:
-- Italiano classe seconda.
-
-Le rispettive verifiche e consegne rimangono separate.
+Solo dopo questi controlli viene creata la riga in `submissions`.
