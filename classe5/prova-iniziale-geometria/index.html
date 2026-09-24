@@ -78,7 +78,7 @@ body{background:#f7f9fc}.wrap{max-width:980px}.q{margin:18px 0;padding:20px;back
 
 <script>
 (function(){
-const K='quizMathClass5Geometria_v1'; const radio=n=>document.querySelector('input[name="'+n+'"]:checked')?.value||'';
+const radio=n=>document.querySelector('input[name="'+n+'"]:checked')?.value||'';
 async function save(rec){return window.ClasseLabSubmit.send('classe5-matematica-geometria-iniziale',rec)}
 document.getElementById('quiz').addEventListener('submit',async function(e){
 e.preventDefault();const nome=document.getElementById('nome').value.trim(),cognome=document.getElementById('cognome').value.trim();
