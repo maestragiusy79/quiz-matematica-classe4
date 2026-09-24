@@ -16,7 +16,7 @@ const checked=[...document.querySelectorAll('#words input:checked')].map(x=>x.va
 [...document.querySelectorAll('#words input')].forEach(x=>{if(meaningful.has(x.value)===checked.includes(x.value))score++});
 const ans=[...document.querySelectorAll('.animal')].map(x=>x.value.toUpperCase().trim());const uniq=new Set(ans.filter(x=>animals.has(x)));score+=uniq.size;
 const manual=[...document.querySelectorAll('.made')].map(x=>x.value.trim()).filter(Boolean);
-const details={animals:ans,manualWords:manual};
+const details={animals:ans,manualWords:manual,manualRequired:true};
  try{await window.ClasseLabSubmit.send('classe2-italiano-scheda1',{id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total,details})}
  catch(error){document.getElementById('msg').textContent='Consegna non registrata: '+error.message;return}
  document.getElementById('msg').textContent='Scheda consegnata ✓';document.querySelectorAll('input,button').forEach(x=>x.disabled=true);
