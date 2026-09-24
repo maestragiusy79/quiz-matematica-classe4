@@ -182,6 +182,15 @@ const d8=norm(document.getElementById('q8d').value).replace(/[^0-9a-z]/g,''); ad
 add('q9a',['1.4','1,4'].includes(document.getElementById('q9a').value.trim().replace(',','.'))); add('q9b',norm(document.getElementById('q9b').value)==='2.56'); add('q9c',norm(document.getElementById('q9c').value)==='0.009');
 add('q10a',/25/.test(document.getElementById('q10a').value)); add('q10b',/4/.test(document.getElementById('q10b').value));
 add('q11a',/12|dodici/.test(norm(document.getElementById('q11a').value))); add('q11b',/13\s*[x×*]\s*12|12\s*[x×*]\s*13/.test(norm(document.getElementById('q11b').value))); add('q11c',/156/.test(document.getElementById('q11c').value));
+details.responses={
+ q1:radio('q1'),q2:radio('q2'),q3:radio('q3'),q4:radio('q4'),q5:radio('q5'),
+ q6a:document.getElementById('q6a').value,q6b:document.getElementById('q6b').value,q6c:document.getElementById('q6c').value,
+ q7a:document.getElementById('q7a').value,q7b:document.getElementById('q7b').value,q7c:document.getElementById('q7c').value,q7d:document.getElementById('q7d').value,
+ q8a:document.getElementById('q8a').value,q8b:document.getElementById('q8b').value,q8c:document.getElementById('q8c').value,q8d:document.getElementById('q8d').value,
+ q9a:document.getElementById('q9a').value,q9b:document.getElementById('q9b').value,q9c:document.getElementById('q9c').value,
+ q10a:document.getElementById('q10a').value,q10b:document.getElementById('q10b').value,
+ q11a:document.getElementById('q11a').value,q11b:document.getElementById('q11b').value,q11c:document.getElementById('q11c').value
+};
 try{await save({id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total,details})}catch(error){document.getElementById('msg').textContent='Consegna non registrata: '+error.message;return}
 document.getElementById('msg').textContent='Verifica consegnata ✓';
 this.querySelectorAll('input,select,button').forEach(x=>x.disabled=true);
