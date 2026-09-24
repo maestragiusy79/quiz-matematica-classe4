@@ -10,7 +10,7 @@ Trasformare verifiche ed esercitazioni in attività digitali semplici da svolger
 - `/docenti/` → area docenti dimostrativa;
 - `/classe4/` → attività di classe quarta;
 - `/classe5/` → area predisposta per classe quinta;
-- `/docente.html` → risultati della versione pilota.
+- `/docente.html` → reindirizzamento alla nuova Area docenti.
 
 ## Prima prova attiva
 Classe quarta → Matematica → Test d'ingresso.

@@ -101,15 +101,16 @@ La piattaforma dovrà gestire:
 
 ---
 
-## 7. Stato della versione demo
+## 7. Stato attuale
 
-Al momento GitHub Pages ospita il front-end.
+GitHub Pages ospita il front-end e Supabase gestisce autenticazione e database dell'Area docenti.
 
-La versione demo usa ancora:
-- una password unica;
-- dati locali nel browser per alcune funzioni;
-- nessun database centralizzato.
+L'Area docenti usa:
+- account personali con email e password;
+- profili docente separati;
+- classi e verifiche nel database;
+- Row Level Security per separare dati, prove e risultati tra docenti.
 
-Questa modalità è utile per mostrare il progetto, ma non è il modello definitivo.
+Le vecchie pagine con password unica sono state dismesse e rimandano all'Area docenti principale.
 
-La fase successiva sarà collegare un sistema di autenticazione e database esterno.
+Resta da completare il collegamento delle prove svolte dagli alunni al database centrale e, per un uso esteso a più docenti, la configurazione affidabile dell'invio email di autenticazione.

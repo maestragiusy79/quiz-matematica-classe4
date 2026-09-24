@@ -59,10 +59,24 @@ body{background:#f7f9fc}
 <button id="loginBtn" class="btn primary" type="button">Accedi</button>
 <button id="signupBtn" class="btn" type="button">Crea account docente</button>
 <button id="resendBtn" class="btn" type="button">Reinvia email di conferma</button>
+<button id="resetBtn" class="btn" type="button">Password dimenticata?</button>
 <a class="btn" href="../">Torna alla home</a>
 </div>
 <p id="authStatus" class="status"></p>
-<p class="note">Per un nuovo account è richiesta la conferma dell'email. L'invio può richiedere alcuni minuti: controlla anche Spam/Posta indesiderata. Se non arriva, usa “Reinvia email di conferma”.</p>
+<p class="note">Per un nuovo account è richiesta la conferma dell'email. L'invio può richiedere alcuni minuti: controlla anche Spam/Posta indesiderata. Se non arriva, usa “Reinvia email di conferma”. Se il problema continua, va configurato il servizio email (SMTP) del progetto.</p>
+</section>
+
+<section id="recoveryBox" class="login" style="display:none">
+<h1>🔑 Nuova password</h1>
+<p>Inserisci una nuova password per il tuo account docente.</p>
+<label>Nuova password
+<input id="newPassword" type="password" autocomplete="new-password" placeholder="Almeno 6 caratteri">
+</label>
+<div class="row" style="margin-top:14px">
+<button id="updatePasswordBtn" class="btn primary" type="button">Salva nuova password</button>
+<a class="btn" href="./">Annulla</a>
+</div>
+<p id="recoveryStatus" class="status"></p>
 </section>
 
 <section id="dashboard" style="display:none">
@@ -175,7 +189,20 @@ const el=id=>document.getElementById(id);
 const safe=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let currentUser=null;
 let classes=[];
+let recovering=location.hash.includes('type=recovery');
 
+function canonicalRedirect(){
+  return window.location.href.split('#')[0].split('?')[0];
+}
+function friendlyAuthError(message){
+  const m=String(message||'');
+  if(/invalid login credentials/i.test(m)) return 'Email o password non corretti.';
+  if(/email not confirmed/i.test(m)) return 'Devi prima confermare l\'indirizzo email.';
+  if(/user already registered/i.test(m)) return 'Esiste già un account con questa email.';
+  if(/email rate limit/i.test(m)) return 'Sono state inviate troppe email in poco tempo. Riprova più tardi.';
+  if(/password should be at least/i.test(m)) return 'La password deve avere almeno 6 caratteri.';
+  return m;
+}
 function setAuthStatus(message,ok=false){
   el('authStatus').textContent=message||'';
   el('authStatus').className='status '+(message?(ok?'ok':'err'):'');
@@ -186,10 +213,17 @@ function setAppStatus(message,ok=true){
 }
 function showLogin(){
   el('loginBox').style.display='block';
+  el('recoveryBox').style.display='none';
+  el('dashboard').style.display='none';
+}
+function showRecovery(){
+  el('loginBox').style.display='none';
+  el('recoveryBox').style.display='block';
   el('dashboard').style.display='none';
 }
 function showDashboard(){
   el('loginBox').style.display='none';
+  el('recoveryBox').style.display='none';
   el('dashboard').style.display='block';
 }
 async function login(){
@@ -198,7 +232,7 @@ async function login(){
   if(!email||!password){setAuthStatus('Inserisci email e password.');return}
   setAuthStatus('Accesso in corso...',true);
   const {data,error}=await sb.auth.signInWithPassword({email,password});
-  if(error){setAuthStatus('Accesso non riuscito: '+error.message);return}
+  if(error){setAuthStatus('Accesso non riuscito: '+friendlyAuthError(error.message));return}
   currentUser=data.user;
   setAuthStatus('');
   await openDashboard();
@@ -216,10 +250,10 @@ async function signup(){
     password,
     options:{
       data:{display_name:displayName},
-      emailRedirectTo: window.location.href.split('#')[0].split('?')[0]
+      emailRedirectTo: canonicalRedirect()
     }
   });
-  if(error){setAuthStatus('Account non creato: '+error.message);return}
+  if(error){setAuthStatus('Account non creato: '+friendlyAuthError(error.message));return}
   if(data.session){
     currentUser=data.user;
     setAuthStatus('');
@@ -235,10 +269,40 @@ async function resendConfirmation(){
   const {error}=await sb.auth.resend({
     type:'signup',
     email,
-    options:{emailRedirectTo: window.location.href.split('#')[0].split('?')[0]}
+    options:{emailRedirectTo: canonicalRedirect()}
   });
-  if(error){setAuthStatus('Non sono riuscito a reinviare la mail: '+error.message);return}
+  if(error){setAuthStatus('Non sono riuscito a reinviare la mail: '+friendlyAuthError(error.message));return}
   setAuthStatus('Mail di conferma reinviata. Attendi qualche minuto e controlla anche Spam/Posta indesiderata.',true);
+}
+async function requestPasswordReset(){
+  const email=el('email').value.trim();
+  if(!email){setAuthStatus('Inserisci prima l\'email del docente.');return}
+  setAuthStatus('Invio del link per reimpostare la password...',true);
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:canonicalRedirect()});
+  if(error){setAuthStatus('Non sono riuscito a inviare il link: '+friendlyAuthError(error.message));return}
+  setAuthStatus('Link inviato. Controlla la posta e anche Spam/Posta indesiderata.',true);
+}
+async function updatePassword(){
+  const password=el('newPassword').value;
+  const status=el('recoveryStatus');
+  if(password.length<6){
+    status.textContent='La password deve avere almeno 6 caratteri.';
+    status.className='status err';
+    return;
+  }
+  status.textContent='Aggiornamento password...';
+  status.className='status ok';
+  const {error}=await sb.auth.updateUser({password});
+  if(error){
+    status.textContent='Password non aggiornata: '+friendlyAuthError(error.message);
+    status.className='status err';
+    return;
+  }
+  recovering=false;
+  history.replaceState(null,'',canonicalRedirect());
+  status.textContent='Password aggiornata.';
+  status.className='status ok';
+  await openDashboard();
 }
 async function logout(){
   await sb.auth.signOut();
@@ -253,8 +317,24 @@ async function openDashboard(){
   }
   if(!currentUser){showLogin();return}
   showDashboard();
-  const name=currentUser.user_metadata?.display_name||currentUser.email||'Docente';
-  el('userLabel').textContent=name;
+  const fallbackName=currentUser.user_metadata?.display_name||currentUser.email||'Docente';
+  const {data:profile,error:profileError}=await sb.from('profiles')
+    .select('display_name,role,active')
+    .eq('id',currentUser.id)
+    .maybeSingle();
+  if(profileError){
+    setAppStatus('Profilo docente non disponibile: '+profileError.message,false);
+  }
+  if(profile && profile.active===false){
+    await sb.auth.signOut();
+    currentUser=null;
+    showLogin();
+    setAuthStatus('Questo account docente non è attivo.');
+    return;
+  }
+  const name=profile?.display_name||fallbackName;
+  const role=profile?.role==='admin'?'Amministratore':'Docente';
+  el('userLabel').textContent=name+' · '+role;
   await renderAll();
 }
 async function renderAll(){
@@ -348,6 +428,8 @@ function copyTestLink(){
 el('loginBtn').onclick=login;
 el('signupBtn').onclick=signup;
 el('resendBtn').onclick=resendConfirmation;
+el('resetBtn').onclick=requestPasswordReset;
+el('updatePasswordBtn').onclick=updatePassword;
 el('logoutBtn').onclick=logout;
 el('refreshBtn').onclick=renderAll;
 el('copyTestLink').onclick=copyTestLink;
@@ -362,11 +444,21 @@ el('cancelTest').onclick=()=>el('testForm').classList.remove('show');
 el('saveTest').onclick=saveTest;
 
 sb.auth.onAuthStateChange((event,session)=>{
-  if(event==='SIGNED_OUT')showLogin();
+  if(event==='PASSWORD_RECOVERY'){
+    recovering=true;
+    if(session?.user) currentUser=session.user;
+    showRecovery();
+    return;
+  }
+  if(event==='SIGNED_OUT' && !recovering) showLogin();
   if(session?.user){currentUser=session.user}
 });
 
 (async function init(){
+  if(recovering){
+    showRecovery();
+    return;
+  }
   const {data}=await sb.auth.getSession();
   if(data.session?.user){
     currentUser=data.session.user;
