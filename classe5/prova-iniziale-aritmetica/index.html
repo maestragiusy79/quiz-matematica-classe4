@@ -172,7 +172,7 @@ document.getElementById('quiz').addEventListener('submit',async function(e){
 e.preventDefault();
 const nome=document.getElementById('nome').value.trim(),cognome=document.getElementById('cognome').value.trim();
 if(!nome||!cognome){document.getElementById('msg').textContent='Inserisci nome e cognome.';return}
-let score=0,total=31,details={};
+let score=0,total=24,details={};
 function add(k,ok){details[k]=ok;if(ok)score++}
 add('q1',radio('q1')==='b'); add('q2',radio('q2')==='d'); add('q3',radio('q3')==='b'); add('q4',radio('q4')==='b'); add('q5',radio('q5')==='d');
 add('q6a',document.getElementById('q6a').value==='<'); add('q6b',document.getElementById('q6b').value==='='); add('q6c',document.getElementById('q6c').value==='>');
