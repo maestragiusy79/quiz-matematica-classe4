@@ -74,7 +74,7 @@ function initBoard(name){
 }
 Object.keys(configs).forEach(initBoard);
 
-form.addEventListener('submit',e=>{
+form.addEventListener('submit',async e=>{
  e.preventDefault();
  const missing=[...form.querySelectorAll('[required]')].some(x=>String(x.value).trim()==='');
  if(missing||!Object.values(figureState).every(v=>v.complete)){alert('Completa tutti gli esercizi prima di consegnare.');return}
@@ -95,7 +95,15 @@ form.addEventListener('submit',e=>{
    createdAt:new Date().toISOString(),
    score,total,details
  };
- const rows=getResults();rows.push(result);saveResults(rows);
+ const submitButton=form.querySelector('button[type="submit"]');
+ if(submitButton)submitButton.disabled=true;
+ try{
+   await window.ClasseLabSubmit.send('classe4-matematica-ingresso',result);
+ }catch(error){
+   if(submitButton)submitButton.disabled=false;
+   alert('Consegna non registrata: '+error.message);
+   return;
+ }
  form.classList.add('hidden');document.getElementById('success').classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});
 });
 updateProgress();
