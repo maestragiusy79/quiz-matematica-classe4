@@ -13,7 +13,7 @@ body{background:#f7f9fc}.wrap{max-width:980px}.q{background:#fff;border:1px soli
 </head>
 <body><main class="wrap">
 <section class="hero"><h1>👂 Prova comune iniziale · Ascolto</h1><p>Italiano · Classe seconda</p></section>
-<section class="card"><label>Nome<input id="nome"></label><label>Cognome<input id="cognome"></label></section>
+<section class="card"><label>Nome<input id="nome"></label><label>Cognome<input id="cognome"></label><label>Codice alunno<input id="studentCode" required autocomplete="off" placeholder="Codice ricevuto dall’insegnante"></label></section>
 <section class="q">
 <h2>Ascolta la lettura dell'insegnante</h2>
 <p>L'insegnante leggerà il racconto due volte. Alla seconda lettura osserva le figure e seleziona solamente i personaggi e le cose che hai incontrato nel racconto.</p>
@@ -33,17 +33,19 @@ body{background:#f7f9fc}.wrap{max-width:980px}.q{background:#fff;border:1px soli
 <div class="submit"><span id="msg">Seleziona le figure che ricordi.</span><button id="send" class="primary-btn" type="button">Consegna</button></div>
 <p><a href="../">← Torna alle prove di italiano</a></p>
 </main>
+<script src="../../../js/classelab-submit.js"></script>
 <script>
 (function(){
 const correct=new Set(['topolino','mamma_papa','marmellata','letto','flauto','vicino','regalo']);
-document.getElementById('send').onclick=function(){
+document.getElementById('send').onclick=async function(){
  const nome=document.getElementById('nome').value.trim(),cognome=document.getElementById('cognome').value.trim();
  if(!nome||!cognome){document.getElementById('msg').textContent='Inserisci nome e cognome.';return}
  const chosen=[...document.querySelectorAll('input[type=checkbox]:checked')].map(x=>x.value);
  const all=[...document.querySelectorAll('input[type=checkbox]')].map(x=>x.value);
  let score=0; all.forEach(v=>{if(correct.has(v)===chosen.includes(v))score++});
- const key='italiano2_ascolto_v1',a=JSON.parse(localStorage.getItem(key)||'[]');
- a.push({id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total:all.length,chosen});localStorage.setItem(key,JSON.stringify(a));
+ const details={chosen};
+ try{await window.ClasseLabSubmit.send('classe2-italiano-ascolto',{id:Date.now(),nome,cognome,createdAt:new Date().toISOString(),score,total:all.length,details})}
+ catch(error){document.getElementById('msg').textContent='Consegna non registrata: '+error.message;return}
  document.getElementById('msg').textContent='Prova consegnata ✓';
  document.querySelectorAll('input,button').forEach(x=>x.disabled=true);
 };
