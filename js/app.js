@@ -30,8 +30,6 @@ const labels={
  q11_1:'11. Segmento più lungo',q11_2:'11. Segmento più corto',q11_3:'11. Segmenti sotto 5 quadretti',q11_4:'11. Lunghezza CD'
 };
 function norm(v){return String(v??'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,'').replace(/;/g,',').replace(/−/g,'-').trim()}
-function getResults(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]')}catch{return[]}}
-function saveResults(v){localStorage.setItem(STORAGE_KEY,JSON.stringify(v))}
 function updateProgress(){
  const required=[...form.querySelectorAll('input[required],select[required]')];
  const done=required.filter(x=>String(x.value).trim()!=='').length;
