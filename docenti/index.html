@@ -151,6 +151,7 @@ select,input{width:100%}
 (() => {
 const SUPABASE_URL='https://mfaiskfwdscbpjizehxl.supabase.co';
 const SUPABASE_KEY='sb_publishable_DQC8x1bRXI_CYUJj_KDY0Q_29gSBgXh';
+const AUTH_REDIRECT_URL='https://maestragiusy79.github.io/quiz-matematica-classe4/docenti/';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const el=id=>document.getElementById(id);
 const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -165,9 +166,11 @@ const CATALOG=[
 ];
 
 let currentUser=null, profile=null, classes=[], students=[], tests=[], assignments=[], results=[];
-let recovering=location.hash.includes('type=recovery');
+const authHashParams=new URLSearchParams(location.hash.replace(/^#/,''));
+const authHashType=authHashParams.get('type');
+let recovering=authHashType==='recovery';
 
-function canonicalRedirect(){return location.href.split('#')[0].split('?')[0]}
+function canonicalRedirect(){return AUTH_REDIRECT_URL}
 function authError(message){
  const m=String(message||'');
  if(/invalid login credentials/i.test(m)) return 'Email o password non corretti.';
@@ -429,7 +432,14 @@ sb.auth.onAuthStateChange((event,session)=>{
 (async()=>{
  if(recovering){showRecovery();return}
  const {data}=await sb.auth.getSession();
- if(data.session?.user){currentUser=data.session.user;await openDashboard()}else showLogin();
+ if(data.session?.user){
+  currentUser=data.session.user;
+  await openDashboard();
+  if(['signup','invite','email_change'].includes(authHashType)){
+   history.replaceState(null,'',AUTH_REDIRECT_URL);
+   setAppStatus('Email confermata con successo. Benvenuta in ClasseLab.',true);
+  }
+ }else showLogin();
 })();
 })();
 </script>
