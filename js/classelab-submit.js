@@ -28,6 +28,10 @@
     return (el?.value || '').trim().toUpperCase();
   }
 
+  function portalToken() {
+    return (params().get('p') || '').trim();
+  }
+
   function quizKeyFromPath() {
     const path = location.pathname.toLowerCase();
     return (QUIZ_KEYS.find(([part]) => path.includes(part)) || [])[1] || '';
@@ -71,30 +75,34 @@
   async function resolveStudent() {
     const aCode = assignmentCode();
     const sCode = studentCode();
+    const pToken = portalToken();
     const quizKey = quizKeyFromPath();
-    if (!aCode || !sCode || !quizKey) return null;
+    if (!aCode || (!sCode && !pToken) || !quizKey) return null;
     return call({
       action: 'resolve',
       assignmentCode: aCode,
       quizKey,
-      studentCode: sCode
+      studentCode: sCode || undefined,
+      portalToken: pToken || undefined
     });
   }
 
   async function send(quizKey, record) {
     const aCode = assignmentCode();
     const sCode = studentCode();
+    const pToken = portalToken();
     if (!aCode) {
-      throw new Error('Apri la prova dal link fornito dall’insegnante.');
+      throw new Error('Apri la prova dal tuo profilo ClasseLab.');
     }
-    if (!sCode) {
-      throw new Error('Apri il link personale ricevuto dall’insegnante.');
+    if (!sCode && !pToken) {
+      throw new Error('Apri la prova dal tuo profilo personale ClasseLab.');
     }
 
     return call({
       assignmentCode: aCode,
       quizKey,
-      studentCode: sCode,
+      studentCode: sCode || undefined,
+      portalToken: pToken || undefined,
       studentName: studentName(record),
       score: record.score,
       total: record.total,
@@ -149,7 +157,7 @@
 
   async function installGuard() {
     const input = document.getElementById('studentCode');
-    if (input && !params().get('s')) {
+    if (input && !params().get('s') && !params().get('p')) {
       input.autocomplete = 'off';
       input.spellcheck = false;
       input.addEventListener('input', () => {
@@ -162,7 +170,7 @@
       return;
     }
 
-    if (!params().get('s')) {
+    if (!params().get('s') && !params().get('p')) {
       return;
     }
 
@@ -176,7 +184,7 @@
     }
   }
 
-  window.ClasseLabSubmit = { send, assignmentCode, studentCode, resolveStudent };
+  window.ClasseLabSubmit = { send, assignmentCode, studentCode, portalToken, resolveStudent };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', installGuard);
   } else {
