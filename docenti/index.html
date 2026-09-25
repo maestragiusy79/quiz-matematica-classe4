@@ -100,14 +100,13 @@ select,input{width:100%}
 
 <section class="box">
 <div class="boxhead">
-<div><h2>👧👦 Alunni e codici</h2><p class="meta">Ogni alunno usa il proprio codice per consegnare una prova.</p></div>
+<div><h2>👧👦 Alunni</h2><p class="meta">Inserisci nome e cognome. ClasseLab crea automaticamente il collegamento personale alle prove.</p></div>
 <button id="showStudentForm" class="btn primary" type="button">+ Aggiungi alunno</button>
 </div>
 <div id="studentForm" class="form">
 <div class="grid">
 <label>Classe <select id="studentClass"></select></label>
-<label>Nome e cognome <input id="studentName" placeholder="Es. Mario Rossi"></label>
-<label class="full">Codice alunno <input id="studentCode" placeholder="Lascia vuoto per generarlo automaticamente"></label>
+<label class="full">Nome e cognome <input id="studentName" placeholder="Es. Mario Rossi"></label>
 </div>
 <div class="row" style="margin-top:12px;justify-content:flex-start">
 <button id="saveStudent" class="btn primary" type="button">Salva alunno</button>
@@ -215,9 +214,12 @@ function randomCode(prefix='A'){
 }
 function formatDate(v){if(!v)return '';try{return new Intl.DateTimeFormat('it-IT',{dateStyle:'short',timeStyle:'short'}).format(new Date(v))}catch{return v}}
 function assignmentFor(testId){return assignments.find(a=>a.test_id===testId&&a.active)||assignments.find(a=>a.test_id===testId)}
-function testLink(t){
+function testLink(t,student=null){
  const a=assignmentFor(t.id); if(!a?.access_code||!t.public_path)return '';
- const u=new URL(t.public_path,location.href);u.searchParams.set('a',a.access_code);return u.href;
+ const u=new URL(t.public_path,location.href);
+ u.searchParams.set('a',a.access_code);
+ if(student?.student_code)u.searchParams.set('s',student.student_code);
+ return u.href;
 }
 async function copyText(value){
  try{await navigator.clipboard.writeText(value)}catch{
@@ -329,17 +331,17 @@ function renderStudents(){
  const list=students.filter(s=>!filter||s.class_id===filter);
  el('studentList').innerHTML=list.length?list.map(s=>{
   const c=classes.find(x=>x.id===s.class_id);
-  return '<div class="item"><div class="row"><div><h3>'+safe(s.display_name||'Alunno')+'</h3><div class="meta">'+safe(c?.name||'Classe')+' · <code class="code">'+safe(s.student_code)+'</code> · '+(s.active?'attivo':'non attivo')+'</div></div><div class="row"><button class="btn small" data-copy-code="'+safe(s.student_code)+'">Copia codice</button><button class="btn small '+(s.active?'danger':'')+'" data-toggle-student="'+safe(s.id)+'">'+(s.active?'Disattiva':'Riattiva')+'</button></div></div></div>';
+  return '<div class="item"><div class="row"><div><h3>'+safe(s.display_name||'Alunno')+'</h3><div class="meta">'+safe(c?.name||'Classe')+' · '+(s.active?'attivo':'non attivo')+'</div></div><div class="row"><button class="btn small '+(s.active?'danger':'')+'" data-toggle-student="'+safe(s.id)+'">'+(s.active?'Disattiva':'Riattiva')+'</button></div></div></div>';
  }).join(''):'<div class="meta">Nessun alunno da mostrare.</div>';
 }
 async function saveStudent(){
  const classId=el('studentClass').value,name=el('studentName').value.trim();
  if(!classId){setAppStatus('Prima crea una classe.',false);return}
  if(!name){setAppStatus("Inserisci nome e cognome dell'alunno.",false);return}
- let code=normalizeCode(el('studentCode').value);if(!code)code=randomCode('AL');
+ const code=randomCode('AL');
  const {error}=await sb.from('students').insert({class_id:classId,display_name:name,student_code:code,active:true});
- if(error){setAppStatus('Alunno non salvato: '+(/duplicate/i.test(error.message)?'codice già usato nella classe.':error.message),false);return}
- el('studentName').value='';el('studentCode').value='';el('studentForm').classList.remove('show');await renderAll();setAppStatus('Alunno salvato. Codice: '+code,true);
+ if(error){setAppStatus('Alunno non salvato: '+error.message,false);return}
+ el('studentName').value='';el('studentForm').classList.remove('show');await renderAll();setAppStatus('Alunno salvato. I link personali saranno disponibili nelle prove attivate.',true);
 }
 async function toggleStudent(id){
  const s=students.find(x=>x.id===id);if(!s)return;
@@ -373,9 +375,9 @@ function renderCatalog(){
  hint.className='status ok';
  el('catalogList').innerHTML=CATALOG.map(q=>{
   const t=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
-  const link=t?testLink(t):'';
+  const active=Boolean(t&&assignmentFor(t.id));
   return '<div class="item"><h3>'+safe(q.classLabel)+' · '+safe(q.title)+'</h3><div class="meta">'+safe(q.subject)+'</div><div class="row" style="margin-top:10px;justify-content:flex-start">'+
-   (link?'<button class="btn primary" data-copy-link="'+safe(t.id)+'">Copia link alunni</button><a class="btn" target="_blank" rel="noopener" href="'+safe(link)+'">Apri</a><span class="badge">Attiva</span>':'<button class="btn primary" data-activate="'+safe(q.key)+'">Attiva per questa classe</button>')+
+   (active?'<span class="badge">Attiva · link personali disponibili sotto</span>':'<button class="btn primary" data-activate="'+safe(q.key)+'">Attiva per questa classe</button>')+
    '</div></div>';
  }).join('');
 }
@@ -399,18 +401,18 @@ async function activateQuiz(key,button){
    if(error)throw error;
   }
   await renderAll();
-  const fresh=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
-  const link=fresh?testLink(fresh):'';
-  if(link)await copyText(link);
+  setAppStatus('Prova attivata. Trovi i link personali degli alunni nella sezione “Le mie prove attivate”.',true);
  });
 }
 function renderTests(){
- const active=tests.filter(t=>t.external_key);
+ const active=tests.filter(t=>t.external_key&&assignmentFor(t.id));
  el('testList').innerHTML=active.length?active.map(t=>{
-  const link=testLink(t),a=assignmentFor(t.id);
-  return '<div class="item"><div class="row"><div><h3>'+safe(t.title)+'</h3><div class="meta">'+safe(t.classes?.name||'Classe')+' · '+safe(t.subject)+' · '+safe(t.status)+(a?.access_code?' · codice prova '+safe(a.access_code):'')+'</div></div><div class="row">'+
-   (link?'<button class="btn primary small" data-copy-link="'+safe(t.id)+'">Copia link</button><a class="btn small" target="_blank" rel="noopener" href="'+safe(link)+'">Apri prova</a>':'<span class="warn">Nessun link attivo</span>')+
-   '</div></div></div>';
+  const classStudents=students.filter(s=>s.class_id===t.class_id&&s.active);
+  const links=classStudents.length?classStudents.map(s=>{
+   const link=testLink(t,s);
+   return '<div class="row" style="padding:8px 0;border-top:1px solid var(--border)"><strong>'+safe(s.display_name||'Alunno')+'</strong><div class="row"><button class="btn primary small" data-copy-link="'+safe(t.id)+'" data-student="'+safe(s.id)+'">Copia link</button><a class="btn small" target="_blank" rel="noopener" href="'+safe(link)+'">Apri</a></div></div>';
+  }).join(''):'<p class="warn">Aggiungi prima gli alunni a questa classe per generare i link personali.</p>';
+  return '<div class="item"><h3>'+safe(t.title)+'</h3><div class="meta">'+safe(t.classes?.name||'Classe')+' · '+safe(t.subject)+'</div><details open><summary>Link personali alunni ('+classStudents.length+')</summary>'+links+'</details></div>';
  }).join(''):'<div class="meta">Non hai ancora attivato prove per le tue classi.</div>';
 }
 
@@ -424,17 +426,16 @@ function renderResults(){
  if(!results.length){el('resultBox').innerHTML='<div class="meta">Nessuna consegna ancora.</div>';return}
  el('resultBox').innerHTML=results.map(r=>{
   const name=r.students?.display_name||r.student_name_snapshot||'Alunno';
-  const code=r.students?.student_code||'';
   const score=(r.score==null||r.total==null)?'Da correggere':(r.details?.manualRequired?safe(r.score)+' / '+safe(r.total)+' automatici · correzione manuale':safe(r.score)+' / '+safe(r.total));
   const details=JSON.stringify(r.details||{},null,2);
-  return '<div class="item"><div class="row"><div><h3>'+safe(name)+'</h3><div class="meta">'+safe(r.tests?.classes?.name||'Classe')+' · '+safe(r.tests?.title||'Verifica')+(code?' · '+safe(code):'')+' · '+safe(formatDate(r.submitted_at))+'</div></div><strong>'+score+'</strong></div>'+
+  return '<div class="item"><div class="row"><div><h3>'+safe(name)+'</h3><div class="meta">'+safe(r.tests?.classes?.name||'Classe')+' · '+safe(r.tests?.title||'Verifica') + ' · '+safe(formatDate(r.submitted_at))+'</div></div><strong>'+score+'</strong></div>'+
    '<details><summary>Dettaglio risposte</summary><pre>'+safe(details)+'</pre></details></div>';
  }).join('');
 }
 function downloadCsv(){
  if(!results.length){setAppStatus('Non ci sono risultati da esportare.',false);return}
- const rows=[['Data','Classe','Prova','Disciplina','Alunno','Codice','Punteggio','Totale','Stato']];
- results.forEach(r=>rows.push([r.submitted_at||'',r.tests?.classes?.name||'',r.tests?.title||'',r.tests?.subject||'',r.students?.display_name||r.student_name_snapshot||'',r.students?.student_code||'',r.score??'',r.total??'',r.status||'']));
+ const rows=[['Data','Classe','Prova','Disciplina','Alunno','Punteggio','Totale','Stato']];
+ results.forEach(r=>rows.push([r.submitted_at||'',r.tests?.classes?.name||'',r.tests?.title||'',r.tests?.subject||'',r.students?.display_name||r.student_name_snapshot||'',r.score??'',r.total??'',r.status||'']));
  const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');
  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
  a.href=url;a.download='classelab-risultati.csv';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
@@ -460,10 +461,9 @@ el('studentFilter').onchange=renderStudents;
 el('catalogClass').onchange=renderCatalog;
 
 document.addEventListener('click',async e=>{
- const copyCode=e.target.closest('[data-copy-code]');if(copyCode){await copyText(copyCode.dataset.copyCode);return}
  const toggle=e.target.closest('[data-toggle-student]');if(toggle){await busy(toggle,()=>toggleStudent(toggle.dataset.toggleStudent));return}
  const activate=e.target.closest('[data-activate]');if(activate){try{await activateQuiz(activate.dataset.activate,activate)}catch(err){setAppStatus('Attivazione non riuscita: '+err.message,false)}return}
- const copy=e.target.closest('[data-copy-link]');if(copy){const t=tests.find(x=>x.id===copy.dataset.copyLink);const link=t?testLink(t):'';if(link)await copyText(link);else setAppStatus('Link non disponibile.',false)}
+ const copy=e.target.closest('[data-copy-link]');if(copy){const t=tests.find(x=>x.id===copy.dataset.copyLink);const s=students.find(x=>x.id===copy.dataset.student);const link=t&&s?testLink(t,s):'';if(link)await copyText(link);else setAppStatus('Link personale non disponibile.',false)}
 });
 
 sb.auth.onAuthStateChange((event,session)=>{
