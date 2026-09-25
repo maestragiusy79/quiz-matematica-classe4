@@ -32,12 +32,13 @@ p{color:var(--muted);font-size:1.08rem;line-height:1.55}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0"></script>
 <script>
-(() => {
+(async() => {
  const SUPABASE_URL='https://mfaiskfwdscbpjizehxl.supabase.co';
  const SUPABASE_KEY='sb_publishable_DQC8x1bRXI_CYUJj_KDY0Q_29gSBgXh';
  const CLEAN_URL='https://maestragiusy79.github.io/quiz-matematica-classe4/docenti/conferma-account/';
  try{
-  window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  await sb.auth.getSession();
   if(location.hash||location.search) history.replaceState(null,'',CLEAN_URL);
  }catch(error){
   console.error('Conferma account:',error);
