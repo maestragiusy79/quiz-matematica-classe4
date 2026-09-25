@@ -11,6 +11,13 @@ body{background:#f5f7fb}
 .profile{background:#fff;border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:var(--shadow);margin:18px 0}
 .profile h1{margin:0 0 8px}
 .meta{color:var(--muted)}
+.dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+.info-card{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.info-card h2{margin:0 0 8px;font-size:1.1rem}
+.info-card strong{display:block;font-size:1.2rem;margin-bottom:4px}
+.subject-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.subject-chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#eef2ff;padding:7px 10px;font-weight:700}
+.section-box{background:#fff;border:1px solid var(--border);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin:18px 0}
 .subject{margin:18px 0}
 .subject-title{display:flex;align-items:center;gap:8px;margin:0 0 10px}
 .tests{display:grid;gap:12px}
@@ -24,7 +31,7 @@ body{background:#f5f7fb}
 .status{padding:14px;border-radius:14px;background:#fff;border:1px solid var(--border);margin-top:14px}
 .err{color:#b42318}
 .hidden{display:none!important}
-@media(max-width:650px){.row{align-items:flex-start}.btn{width:100%}}
+@media(max-width:760px){.dashboard-grid{grid-template-columns:1fr}.row{align-items:flex-start}.btn{width:100%}}
 </style>
 </head>
 <body>
@@ -38,18 +45,39 @@ body{background:#f5f7fb}
 
 <section id="profile" class="profile" hidden>
 <h1 id="studentName"></h1>
-<p id="classInfo" class="meta"></p>
+<p class="meta">Questo è il tuo spazio personale in ClasseLab.</p>
 <div style="margin-top:14px"><a class="btn" href="../">Cambia alunno</a></div>
 </section>
 
-<section id="available" hidden>
-<h2>📚 Le tue materie e verifiche</h2>
+<section id="dashboardInfo" hidden>
+<div class="dashboard-grid">
+<article class="info-card">
+<h2>🏫 La mia classe</h2>
+<strong id="className"></strong>
+<span id="campusInfo" class="meta"></span>
+</article>
+<article class="info-card">
+<h2>📅 Anno scolastico</h2>
+<strong id="schoolYear"></strong>
+<span class="meta">Classe associata al tuo profilo</span>
+</article>
+<article class="info-card">
+<h2>📚 Le mie materie</h2>
+<div id="subjectOverview" class="subject-chips"></div>
+<p id="noSubjects" class="meta" hidden>Nessuna materia con attività pubblicate al momento.</p>
+</article>
+</div>
+</section>
+
+<section id="available" class="section-box" hidden>
+<h2>📝 Le mie verifiche</h2>
 <div id="subjects"></div>
 </section>
 
-<section id="empty" class="status" hidden>
+<section id="empty" class="section-box" hidden>
+<h2>📝 Le mie verifiche</h2>
 <strong>Nessuna verifica disponibile in questo momento.</strong>
-<p class="meta" style="margin-bottom:0">Quando l'insegnante attiverà una nuova prova per la tua classe, comparirà qui automaticamente.</p>
+<p class="meta" style="margin-bottom:0">La tua classe e il tuo profilo sono già attivi. Quando l'insegnante pubblicherà una nuova prova, comparirà qui automaticamente.</p>
 </section>
 
 <section id="error" class="status err" hidden></section>
@@ -69,6 +97,7 @@ body{background:#f5f7fb}
  function showError(message){
   el('loading').hidden=true;
   el('profile').hidden=true;
+  el('dashboardInfo').hidden=true;
   el('available').hidden=true;
   el('empty').hidden=true;
   el('error').hidden=false;
@@ -126,10 +155,24 @@ body{background:#f5f7fb}
 
    el('loading').hidden=true;
    el('profile').hidden=false;
+   el('dashboardInfo').hidden=false;
    el('studentName').textContent='👤 '+data.studentName;
-   el('classInfo').textContent=[data.className,data.campus,data.schoolYear].filter(Boolean).join(' · ');
+   el('className').textContent=data.className||'Classe';
+   el('campusInfo').textContent=data.campus?('Plesso: '+data.campus):'';
+   el('schoolYear').textContent=data.schoolYear||'—';
 
    const tests=Array.isArray(data.tests)?data.tests:[];
+   const subjects=[...new Set(tests.map(t=>t.subject).filter(Boolean))];
+   if(subjects.length){
+    el('subjectOverview').innerHTML=subjects.map(subject=>
+      '<span class="subject-chip">'+subjectIcon(subject)+' '+safe(subject)+'</span>'
+    ).join('');
+    el('noSubjects').hidden=true;
+   }else{
+    el('subjectOverview').innerHTML='';
+    el('noSubjects').hidden=false;
+   }
+
    if(!tests.length){el('empty').hidden=false;return}
 
    el('available').hidden=false;
