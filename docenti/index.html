@@ -177,11 +177,31 @@ function authError(message){
  if(/invalid login credentials/i.test(m)) return 'Email o password non corretti.';
  if(/email not confirmed/i.test(m)) return "Devi prima confermare l'indirizzo email.";
  if(/user already registered/i.test(m)) return 'Esiste già un account con questa email.';
- if(/email rate limit/i.test(m)) return 'Sono state inviate troppe email in poco tempo. Riprova più tardi.';
+ if(/email rate limit|only request this after|over_email_send_rate_limit/i.test(m)){
+  const sec=(m.match(/after\s+(\d+)\s+seconds?/i)||[])[1];
+  return sec?'Email già richiesta. Attendi circa '+sec+' secondi prima di riprovare.':'Email già richiesta. Attendi circa un minuto prima di riprovare.';
+ }
  if(/password should be at least/i.test(m)) return 'La password è troppo corta.';
  return m || 'Operazione non riuscita.';
 }
 function setAuthStatus(msg,ok=false){el('authStatus').textContent=msg||'';el('authStatus').className='status '+(msg?(ok?'ok':'err'):'')}
+function startEmailCooldown(seconds=60){
+ const signup=el('signupBtn'),resend=el('resendBtn');
+ const signupLabel='Crea account docente',resendLabel='Reinvia conferma';
+ let remaining=seconds;
+ signup.disabled=true;resend.disabled=true;
+ const tick=()=>{
+  signup.textContent=signupLabel+' ('+remaining+'s)';
+  resend.textContent=resendLabel+' ('+remaining+'s)';
+  if(remaining<=0){
+   signup.disabled=false;resend.disabled=false;
+   signup.textContent=signupLabel;resend.textContent=resendLabel;
+   return;
+  }
+  remaining-=1;setTimeout(tick,1000);
+ };
+ tick();
+}
 function setAppStatus(msg,ok=true){el('appStatus').textContent=msg||'';el('appStatus').className='status '+(msg?(ok?'ok':'err'):'')}
 function showLogin(){el('loginBox').classList.remove('hidden');el('recoveryBox').classList.add('hidden');el('dashboard').classList.add('hidden')}
 function showRecovery(){el('loginBox').classList.add('hidden');el('recoveryBox').classList.remove('hidden');el('dashboard').classList.add('hidden')}
@@ -226,13 +246,13 @@ async function signup(){
  const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:displayName},emailRedirectTo:ACCOUNT_CONFIRM_URL}});
  if(error){setAuthStatus('Account non creato: '+authError(error.message));return}
  if(data.session){currentUser=data.user;setAuthStatus('');await openDashboard()}
- else setAuthStatus('Account creato. Conferma l’email ricevuta prima di accedere.',true);
+ else {setAuthStatus('Account creato. Email di conferma inviata: controlla la posta e non ripetere subito la registrazione.',true);startEmailCooldown(60);}
 }
 async function resendConfirmation(){
  const email=el('email').value.trim();if(!email){setAuthStatus("Inserisci prima l'email.");return}
  const {error}=await sb.auth.resend({type:'signup',email,options:{emailRedirectTo:ACCOUNT_CONFIRM_URL}});
  if(error){setAuthStatus('Invio non riuscito: '+authError(error.message));return}
- setAuthStatus('Email di conferma reinviata. Controlla anche Spam.',true);
+ setAuthStatus('Email di conferma reinviata. Controlla anche Spam.',true);startEmailCooldown(60);
 }
 async function requestPasswordReset(){
  const email=el('email').value.trim();if(!email){setAuthStatus("Inserisci prima l'email.");return}
