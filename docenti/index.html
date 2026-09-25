@@ -152,6 +152,7 @@ select,input{width:100%}
 const SUPABASE_URL='https://mfaiskfwdscbpjizehxl.supabase.co';
 const SUPABASE_KEY='sb_publishable_DQC8x1bRXI_CYUJj_KDY0Q_29gSBgXh';
 const AUTH_REDIRECT_URL='https://maestragiusy79.github.io/quiz-matematica-classe4/docenti/';
+const ACCOUNT_CONFIRM_URL='https://maestragiusy79.github.io/quiz-matematica-classe4/docenti/conferma-account/';
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const el=id=>document.getElementById(id);
 const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -222,14 +223,14 @@ async function signup(){
  if(!email||!password){setAuthStatus('Inserisci email e password.');return}
  if(password.length<6){setAuthStatus('La password deve avere almeno 6 caratteri.');return}
  setAuthStatus('Creazione account...',true);
- const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:displayName},emailRedirectTo:canonicalRedirect()}});
+ const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:displayName},emailRedirectTo:ACCOUNT_CONFIRM_URL}});
  if(error){setAuthStatus('Account non creato: '+authError(error.message));return}
  if(data.session){currentUser=data.user;setAuthStatus('');await openDashboard()}
  else setAuthStatus('Account creato. Conferma l’email ricevuta prima di accedere.',true);
 }
 async function resendConfirmation(){
  const email=el('email').value.trim();if(!email){setAuthStatus("Inserisci prima l'email.");return}
- const {error}=await sb.auth.resend({type:'signup',email,options:{emailRedirectTo:canonicalRedirect()}});
+ const {error}=await sb.auth.resend({type:'signup',email,options:{emailRedirectTo:ACCOUNT_CONFIRM_URL}});
  if(error){setAuthStatus('Invio non riuscito: '+authError(error.message));return}
  setAuthStatus('Email di conferma reinviata. Controlla anche Spam.',true);
 }
