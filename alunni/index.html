@@ -1,25 +1,134 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Area alunni - ClasseLab</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClasseLab · Area alunni</title>
 <link rel="stylesheet" href="../css/stile.css">
 <style>
-.choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.choice-card{display:block;text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:20px;padding:24px;background:#fff;box-shadow:var(--shadow)}
-.choice-card:hover{border-color:#b8c4ef}
-@media(max-width:700px){.choice-grid{grid-template-columns:1fr}}
+body{background:#f5f7fb}
+.wrap{max-width:760px}
+.entry{background:#fff;border:1px solid var(--border);border-radius:22px;padding:24px;box-shadow:var(--shadow);margin:20px 0}
+.entry h2{margin-top:0}
+label{display:block;font-weight:700}
+input,select{width:100%;margin-top:8px;font-size:1.05rem}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--border);background:#fff;border-radius:12px;padding:11px 16px;cursor:pointer;font-weight:700;text-decoration:none;color:inherit}
+.btn.primary{background:#3456d1;border-color:#3456d1;color:#fff}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.status{margin-top:14px;min-height:1.4em}
+.err{color:#b42318}.ok{color:#1f8a5b}
+.hidden{display:none!important}
+.note{color:var(--muted);line-height:1.5}
 </style>
 </head>
 <body>
 <main class="wrap">
-<section class="hero"><h1>👧👦 Area alunni</h1><p>Scegli la classe e poi la prova assegnata dal tuo insegnante.</p></section>
-<section class="choice-grid">
-<a class="choice-card" href="../classe2/"><h2>📙 Classe seconda</h2><p>Accedi alle prove comuni iniziali di italiano.</p><strong>Apri →</strong></a>
-<a class="choice-card" href="../classe4/"><h2>📘 Classe quarta</h2><p>Accedi alle attività disponibili.</p><strong>Apri →</strong></a>
-<a class="choice-card" href="../classe5/"><h2>📗 Classe quinta</h2><p>Area predisposta per le prossime attività.</p><strong>Apri →</strong></a>
+<section class="hero">
+<h1>🎒 ClasseLab · Area alunni</h1>
+<p>Entra nel tuo spazio personale e trova le verifiche assegnate alla tua classe.</p>
 </section>
-<section class="card"><p><a href="../">← Torna alla pagina iniziale</a></p></section>
+
+<section class="entry">
+<h2>👤 Inserisci nome e cognome</h2>
+<p class="note">Scrivili per intero. Non serve scegliere la classe: ClasseLab la riconosce automaticamente.</p>
+
+<label>Nome e cognome
+<input id="fullName" autocomplete="name" placeholder="Es. Mario Rossi">
+</label>
+
+<div class="actions">
+<button id="enterBtn" class="btn primary" type="button">Entra nel mio profilo</button>
+</div>
+
+<div id="classChoice" class="hidden" style="margin-top:18px">
+<label>Abbiamo trovato più profili con questo nome. Scegli la tua classe:
+<select id="classSelect"></select>
+</label>
+<div class="actions">
+<button id="continueBtn" class="btn primary" type="button">Continua</button>
+</div>
+</div>
+
+<p id="status" class="status"></p>
+</section>
+
+<section class="card">
+<p class="note"><strong>Privacy:</strong> ClasseLab non mostra elenchi di alunni e non suggerisce nomi mentre scrivi. Il profilo viene aperto solo dopo una corrispondenza completa di nome e cognome.</p>
+<p><a href="../">← Torna alla pagina iniziale</a></p>
+</section>
 </main>
+
+<script>
+(() => {
+ const SUPABASE_URL='https://mfaiskfwdscbpjizehxl.supabase.co';
+ const SUPABASE_KEY='sb_publishable_DQC8x1bRXI_CYUJj_KDY0Q_29gSBgXh';
+ const ENDPOINT=SUPABASE_URL+'/functions/v1/submit-quiz';
+
+ const el=id=>document.getElementById(id);
+ let pendingName='';
+
+ function setStatus(message,ok=false){
+  el('status').textContent=message||'';
+  el('status').className='status '+(message?(ok?'ok':'err'):'');
+ }
+
+ async function lookup(classId=''){
+  const fullName=el('fullName').value.trim();
+  if(!fullName){
+   setStatus('Inserisci nome e cognome.');
+   return;
+  }
+  pendingName=fullName;
+  const button=classId?el('continueBtn'):el('enterBtn');
+  button.disabled=true;
+  setStatus('Cerco il tuo profilo...',true);
+
+  try{
+   const response=await fetch(ENDPOINT,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({action:'lookup_student',fullName,classId:classId||undefined})
+   });
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||!data.ok)throw new Error(data.error||'Profilo non trovato.');
+
+   if(data.needsClass){
+    const classes=Array.isArray(data.classes)?data.classes:[];
+    el('classSelect').innerHTML=classes.map(c=>
+      '<option value="'+escapeHtml(c.classId)+'">'+escapeHtml(c.className)+(c.campus?' · '+escapeHtml(c.campus):'')+'</option>'
+    ).join('');
+    el('classChoice').classList.remove('hidden');
+    setStatus('Scegli la tua classe per continuare.',true);
+    return;
+   }
+
+   if(!data.portalToken)throw new Error('Profilo non disponibile.');
+   const target=new URL('profilo/',location.href);
+   target.searchParams.set('p',data.portalToken);
+   location.href=target.href;
+  }catch(error){
+   el('classChoice').classList.add('hidden');
+   setStatus(error.message||'Non riesco a trovare il profilo.');
+  }finally{
+   button.disabled=false;
+  }
+ }
+
+ function escapeHtml(value){
+  return String(value??'').replace(/[&<>"']/g,c=>({
+   '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+ }
+
+ el('enterBtn').onclick=()=>lookup();
+ el('continueBtn').onclick=()=>lookup(el('classSelect').value);
+ el('fullName').addEventListener('keydown',e=>{if(e.key==='Enter')lookup()});
+ el('fullName').addEventListener('input',()=>{
+  el('classChoice').classList.add('hidden');
+  setStatus('');
+ });
+})();
+</script>
 </body>
 </html>
