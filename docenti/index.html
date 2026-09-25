@@ -100,7 +100,7 @@ select,input{width:100%}
 
 <section class="box">
 <div class="boxhead">
-<div><h2>👧👦 Alunni</h2><p class="meta">Inserisci nome e cognome. ClasseLab crea automaticamente il collegamento personale alle prove.</p></div>
+<div><h2>👧👦 Profili alunni</h2><p class="meta">Ogni alunno ha un unico profilo personale con la propria classe e le verifiche attive.</p></div>
 <button id="showStudentForm" class="btn primary" type="button">+ Aggiungi alunno</button>
 </div>
 <div id="studentForm" class="form">
@@ -119,7 +119,7 @@ select,input{width:100%}
 
 <section class="box">
 <div class="boxhead">
-<div><h2>📝 Prove pubblicate</h2><p class="meta">Scegli la classe, attiva una prova e usa il link generato per gli alunni.</p></div>
+<div><h2>📝 Prove pubblicate</h2><p class="meta">Scegli la classe e attiva una prova: comparirà automaticamente nei profili degli alunni.</p></div>
 </div>
 <label style="max-width:420px">Classe a cui assegnare la prova <select id="catalogClass"></select></label>
 <p id="catalogHint" class="status"></p>
@@ -128,7 +128,7 @@ select,input{width:100%}
 
 <section class="box">
 <div class="boxhead">
-<div><h2>🔗 Le mie prove attivate</h2><p class="meta">Qui trovi i link che registrano davvero le consegne nel database.</p></div>
+<div><h2>🔗 Le mie prove attivate</h2><p class="meta">Le prove attive sono disponibili automaticamente nei profili degli alunni della classe.</p></div>
 <button id="refreshBtn" class="btn" type="button">Aggiorna</button>
 </div>
 <div id="testList"></div>
@@ -218,7 +218,14 @@ function testLink(t,student=null){
  const a=assignmentFor(t.id); if(!a?.access_code||!t.public_path)return '';
  const u=new URL(t.public_path,location.href);
  u.searchParams.set('a',a.access_code);
- if(student?.student_code)u.searchParams.set('s',student.student_code);
+ if(student?.portal_token)u.searchParams.set('p',student.portal_token);
+ else if(student?.student_code)u.searchParams.set('s',student.student_code);
+ return u.href;
+}
+function profileLink(student){
+ if(!student?.portal_token)return '';
+ const u=new URL('../alunni/profilo/',location.href);
+ u.searchParams.set('p',student.portal_token);
  return u.href;
 }
 async function copyText(value){
@@ -323,7 +330,7 @@ async function saveClass(){
 
 async function loadStudents(){
  if(!classes.length){students=[];el('nAlunni').textContent='0';return}
- const {data,error}=await sb.from('students').select('id,student_code,class_id,display_name,active,created_at').in('class_id',classes.map(c=>c.id)).order('display_name');
+ const {data,error}=await sb.from('students').select('id,student_code,portal_token,class_id,display_name,active,created_at').in('class_id',classes.map(c=>c.id)).order('display_name');
  if(error)throw error;students=data||[];el('nAlunni').textContent=students.filter(s=>s.active).length;
 }
 function renderStudents(){
@@ -331,7 +338,10 @@ function renderStudents(){
  const list=students.filter(s=>!filter||s.class_id===filter);
  el('studentList').innerHTML=list.length?list.map(s=>{
   const c=classes.find(x=>x.id===s.class_id);
-  return '<div class="item"><div class="row"><div><h3>'+safe(s.display_name||'Alunno')+'</h3><div class="meta">'+safe(c?.name||'Classe')+' · '+(s.active?'attivo':'non attivo')+'</div></div><div class="row"><button class="btn small '+(s.active?'danger':'')+'" data-toggle-student="'+safe(s.id)+'">'+(s.active?'Disattiva':'Riattiva')+'</button></div></div></div>';
+  const pLink=profileLink(s);
+  return '<div class="item"><div class="row"><div><h3>'+safe(s.display_name||'Alunno')+'</h3><div class="meta">'+safe(c?.name||'Classe')+' · '+(s.active?'attivo':'non attivo')+'</div></div><div class="row">'+
+   (pLink?'<button class="btn primary small" data-copy-profile="'+safe(s.id)+'">Copia profilo</button><a class="btn small" target="_blank" rel="noopener" href="'+safe(pLink)+'">Apri profilo</a>':'')+
+   '<button class="btn small '+(s.active?'danger':'')+'" data-toggle-student="'+safe(s.id)+'">'+(s.active?'Disattiva':'Riattiva')+'</button></div></div></div>';
  }).join(''):'<div class="meta">Nessun alunno da mostrare.</div>';
 }
 async function saveStudent(){
@@ -341,7 +351,7 @@ async function saveStudent(){
  const code=randomCode('AL');
  const {error}=await sb.from('students').insert({class_id:classId,display_name:name,student_code:code,active:true});
  if(error){setAppStatus('Alunno non salvato: '+error.message,false);return}
- el('studentName').value='';el('studentForm').classList.remove('show');await renderAll();setAppStatus('Alunno salvato. I link personali saranno disponibili nelle prove attivate.',true);
+ el('studentName').value='';el('studentForm').classList.remove('show');await renderAll();setAppStatus('Profilo alunno creato. Puoi copiarne subito il link personale.',true);
 }
 async function toggleStudent(id){
  const s=students.find(x=>x.id===id);if(!s)return;
@@ -377,7 +387,7 @@ function renderCatalog(){
   const t=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
   const active=Boolean(t&&assignmentFor(t.id));
   return '<div class="item"><h3>'+safe(q.classLabel)+' · '+safe(q.title)+'</h3><div class="meta">'+safe(q.subject)+'</div><div class="row" style="margin-top:10px;justify-content:flex-start">'+
-   (active?'<span class="badge">Attiva · link personali disponibili sotto</span>':'<button class="btn primary" data-activate="'+safe(q.key)+'">Attiva per questa classe</button>')+
+   (active?'<span class="badge">Attiva · visibile nei profili degli alunni</span>':'<button class="btn primary" data-activate="'+safe(q.key)+'">Attiva per questa classe</button>')+
    '</div></div>';
  }).join('');
 }
@@ -401,18 +411,15 @@ async function activateQuiz(key,button){
    if(error)throw error;
   }
   await renderAll();
-  setAppStatus('Prova attivata. Trovi i link personali degli alunni nella sezione “Le mie prove attivate”.',true);
+  setAppStatus('Prova attivata. Da ora compare automaticamente nei profili degli alunni della classe.',true);
  });
 }
 function renderTests(){
  const active=tests.filter(t=>t.external_key&&assignmentFor(t.id));
  el('testList').innerHTML=active.length?active.map(t=>{
   const classStudents=students.filter(s=>s.class_id===t.class_id&&s.active);
-  const links=classStudents.length?classStudents.map(s=>{
-   const link=testLink(t,s);
-   return '<div class="row" style="padding:8px 0;border-top:1px solid var(--border)"><strong>'+safe(s.display_name||'Alunno')+'</strong><div class="row"><button class="btn primary small" data-copy-link="'+safe(t.id)+'" data-student="'+safe(s.id)+'">Copia link</button><a class="btn small" target="_blank" rel="noopener" href="'+safe(link)+'">Apri</a></div></div>';
-  }).join(''):'<p class="warn">Aggiungi prima gli alunni a questa classe per generare i link personali.</p>';
-  return '<div class="item"><h3>'+safe(t.title)+'</h3><div class="meta">'+safe(t.classes?.name||'Classe')+' · '+safe(t.subject)+'</div><details open><summary>Link personali alunni ('+classStudents.length+')</summary>'+links+'</details></div>';
+  return '<div class="item"><div class="row"><div><h3>'+safe(t.title)+'</h3><div class="meta">'+safe(t.classes?.name||'Classe')+' · '+safe(t.subject)+'</div></div><span class="badge">Attiva</span></div>'+
+   '<p class="meta" style="margin-bottom:0">La prova è disponibile automaticamente nei profili di '+classStudents.length+' alunni della classe.</p></div>';
  }).join(''):'<div class="meta">Non hai ancora attivato prove per le tue classi.</div>';
 }
 
@@ -461,9 +468,9 @@ el('studentFilter').onchange=renderStudents;
 el('catalogClass').onchange=renderCatalog;
 
 document.addEventListener('click',async e=>{
+ const profileCopy=e.target.closest('[data-copy-profile]');if(profileCopy){const s=students.find(x=>x.id===profileCopy.dataset.copyProfile);const link=s?profileLink(s):'';if(link)await copyText(link);else setAppStatus('Profilo alunno non disponibile.',false);return}
  const toggle=e.target.closest('[data-toggle-student]');if(toggle){await busy(toggle,()=>toggleStudent(toggle.dataset.toggleStudent));return}
  const activate=e.target.closest('[data-activate]');if(activate){try{await activateQuiz(activate.dataset.activate,activate)}catch(err){setAppStatus('Attivazione non riuscita: '+err.message,false)}return}
- const copy=e.target.closest('[data-copy-link]');if(copy){const t=tests.find(x=>x.id===copy.dataset.copyLink);const s=students.find(x=>x.id===copy.dataset.student);const link=t&&s?testLink(t,s):'';if(link)await copyText(link);else setAppStatus('Link personale non disponibile.',false)}
 });
 
 sb.auth.onAuthStateChange((event,session)=>{

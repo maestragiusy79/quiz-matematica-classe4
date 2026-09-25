@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClasseLab · Profilo alunno</title>
+<link rel="stylesheet" href="../../css/stile.css">
+<style>
+body{background:#f5f7fb}
+.wrap{max-width:900px}
+.profile{background:#fff;border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:var(--shadow);margin:18px 0}
+.profile h1{margin:0 0 8px}
+.meta{color:var(--muted)}
+.tests{display:grid;gap:14px;margin-top:18px}
+.test{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+.test h2{margin:0 0 6px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:11px 16px;text-decoration:none;font-weight:700;border:1px solid var(--border);color:inherit;background:#fff}
+.btn.primary{background:#3456d1;border-color:#3456d1;color:#fff}
+.badge{display:inline-flex;border-radius:999px;padding:5px 9px;background:#eef6f1;font-weight:700}
+.badge.done{background:#e8f7ee;color:#17663f}
+.status{padding:14px;border-radius:14px;background:#fff;border:1px solid var(--border);margin-top:14px}
+.err{color:#b42318}
+@media(max-width:650px){.row{align-items:flex-start}.btn{width:100%}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<section class="hero">
+<h1>🎒 ClasseLab</h1>
+<p>Il tuo spazio personale per le verifiche</p>
+</section>
+
+<section id="loading" class="status">Caricamento del profilo...</section>
+
+<section id="profile" class="profile" hidden>
+<h1 id="studentName"></h1>
+<p id="classInfo" class="meta"></p>
+</section>
+
+<section id="available" hidden>
+<h2>📝 Verifiche disponibili</h2>
+<div id="tests" class="tests"></div>
+</section>
+
+<section id="empty" class="status" hidden>
+<strong>Nessuna verifica disponibile in questo momento.</strong>
+<p class="meta" style="margin-bottom:0">Quando l'insegnante attiverà una nuova prova per la tua classe, comparirà qui automaticamente.</p>
+</section>
+
+<section id="error" class="status err" hidden></section>
+</main>
+
+<script>
+(() => {
+ const SUPABASE_URL='https://mfaiskfwdscbpjizehxl.supabase.co';
+ const SUPABASE_KEY='sb_publishable_DQC8x1bRXI_CYUJj_KDY0Q_29gSBgXh';
+ const ENDPOINT=SUPABASE_URL+'/functions/v1/submit-quiz';
+ const DOCENTI_BASE='https://maestragiusy79.github.io/quiz-matematica-classe4/docenti/';
+ const token=(new URLSearchParams(location.search).get('p')||'').trim();
+
+ const el=id=>document.getElementById(id);
+ const safe=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+ function showError(message){
+  el('loading').hidden=true;
+  el('profile').hidden=true;
+  el('available').hidden=true;
+  el('empty').hidden=true;
+  el('error').hidden=false;
+  el('error').textContent=message;
+ }
+
+ function testUrl(t){
+  const u=new URL(t.publicPath,DOCENTI_BASE);
+  u.searchParams.set('a',t.assignmentCode);
+  u.searchParams.set('p',token);
+  return u.href;
+ }
+
+ async function load(){
+  if(!token){showError('Questo link del profilo non è valido.');return}
+  try{
+   const response=await fetch(ENDPOINT,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},
+    body:JSON.stringify({action:'portal',portalToken:token})
+   });
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok||!data.ok)throw new Error(data.error||'Profilo non disponibile.');
+
+   el('loading').hidden=true;
+   el('profile').hidden=false;
+   el('studentName').textContent='👤 '+data.studentName;
+   el('classInfo').textContent=[data.className,data.campus,data.schoolYear].filter(Boolean).join(' · ');
+
+   const tests=Array.isArray(data.tests)?data.tests:[];
+   if(!tests.length){el('empty').hidden=false;return}
+
+   el('available').hidden=false;
+   el('tests').innerHTML=tests.map(t=>{
+    const done=Boolean(t.submittedAt);
+    return '<article class="test"><div class="row"><div><h2>'+safe(t.title)+'</h2><div class="meta">'+safe(t.subject||'')+'</div></div>'+
+      (done?'<span class="badge done">✅ Consegnata</span>':'<span class="badge">Da svolgere</span>')+
+      '</div><div style="margin-top:14px">'+
+      (done?'<span class="meta">La prova risulta già consegnata.</span>':'<a class="btn primary" href="'+safe(testUrl(t))+'">Apri verifica</a>')+
+      '</div></article>';
+   }).join('');
+  }catch(error){
+   showError(error.message||'Non riesco a caricare il profilo.');
+  }
+ }
+ load();
+})();
+</script>
+</body>
+</html>
