@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ClasseLab · Account confermato</title>
+<link rel="stylesheet" href="../../css/stile.css">
+<style>
+body{background:#f5f7fb;min-height:100vh;display:grid;place-items:center;margin:0;padding:24px}
+.confirm-card{width:min(620px,100%);background:#fff;border:1px solid var(--border);border-radius:24px;padding:34px;box-shadow:var(--shadow);text-align:center}
+.icon{font-size:4rem;line-height:1;margin-bottom:14px}
+h1{margin:0 0 12px}
+p{color:var(--muted);font-size:1.08rem;line-height:1.55}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;padding:12px 18px;font-weight:700;border:1px solid var(--border);color:inherit;background:#fff}
+.btn.primary{background:#3456d1;border-color:#3456d1;color:#fff}
+.note{font-size:.9rem;margin-top:22px}
+@media(max-width:560px){.confirm-card{padding:26px 20px}.actions{flex-direction:column}.btn{width:100%}}
+</style>
+</head>
+<body>
+<main class="confirm-card">
+<div class="icon">✅</div>
+<h1>Account creato con successo</h1>
+<p>La conferma dell’indirizzo email è andata a buon fine.</p>
+<div class="actions">
+<a class="btn primary" href="../">Vai al pannello docenti</a>
+<a class="btn" href="../../">Torna a ClasseLab</a>
+</div>
+<p class="note">Ora puoi utilizzare il tuo account docente per accedere a ClasseLab.</p>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.95.0"></script>
+<script>
+(() => {
+ const SUPABASE_URL='https://mfaiskfwdscbpjizehxl.supabase.co';
+ const SUPABASE_KEY='sb_publishable_DQC8x1bRXI_CYUJj_KDY0Q_29gSBgXh';
+ const CLEAN_URL='https://maestragiusy79.github.io/quiz-matematica-classe4/docenti/conferma-account/';
+ try{
+  window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  if(location.hash||location.search) history.replaceState(null,'',CLEAN_URL);
+ }catch(error){
+  console.error('Conferma account:',error);
+ }
+})();
+</script>
+</body>
+</html>
