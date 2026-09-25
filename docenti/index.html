@@ -79,7 +79,7 @@ select,input{width:100%}
 <div class="stat"><span>Consegne</span><strong id="nConsegne">0</strong></div>
 </div>
 
-<section class="box">
+<section id="classesSection" class="box">
 <div class="boxhead">
 <div><h2>🏫 Classi</h2><p class="meta">Crea una classe prima di aggiungere alunni o assegnare prove.</p></div>
 <button id="showClassForm" class="btn primary" type="button">+ Aggiungi classe</button>
@@ -123,6 +123,7 @@ select,input{width:100%}
 <div><h2>📝 Prove pubblicate</h2><p class="meta">Scegli la classe, attiva una prova e usa il link generato per gli alunni.</p></div>
 </div>
 <label style="max-width:420px">Classe a cui assegnare la prova <select id="catalogClass"></select></label>
+<p id="catalogHint" class="status"></p>
 <div id="catalogList" class="catalog" style="margin-top:14px"></div>
 </section>
 
@@ -299,14 +300,23 @@ async function loadClasses(){
  if(error)throw error;classes=data||[];el('nClassi').textContent=classes.length;
  el('classList').innerHTML=classes.length?classes.map(c=>'<div class="item"><h3>'+safe(c.name)+'</h3><div class="meta">'+safe(c.school_year||'')+(c.campus?' · '+safe(c.campus):'')+'</div></div>').join(''):'<div class="meta">Nessuna classe. Inizia da “Aggiungi classe”.</div>';
  const opts=classes.map(c=>'<option value="'+safe(c.id)+'">'+safe(c.name)+'</option>').join('');
- for(const id of ['studentClass','catalogClass'])el(id).innerHTML=opts;
+ el('studentClass').innerHTML=classes.length?opts:'<option value="">Nessuna classe disponibile</option>';
+ el('catalogClass').innerHTML=classes.length?opts:'<option value="">Prima crea una classe</option>';
+ el('studentClass').disabled=!classes.length;
+ el('catalogClass').disabled=!classes.length;
  el('studentFilter').innerHTML='<option value="">Tutte le classi</option>'+opts;
 }
 async function saveClass(){
  const name=el('className').value.trim();if(!name){setAppStatus('Inserisci il nome della classe.',false);return}
  const payload={name,school_year:el('classYear').value.trim(),campus:el('classCampus').value.trim(),created_by:currentUser.id};
- const {error}=await sb.from('classes').insert(payload);if(error){setAppStatus('Classe non salvata: '+error.message,false);return}
+ const {data,error}=await sb.from('classes').insert(payload).select('id').single();if(error){setAppStatus('Classe non salvata: '+error.message,false);return}
  el('className').value='';el('classForm').classList.remove('show');await renderAll();
+ if(data?.id){
+  el('studentClass').value=data.id;
+  el('catalogClass').value=data.id;
+  renderCatalog();
+ }
+ setAppStatus('Classe creata. Ora puoi aggiungere gli alunni e attivare una prova.',true);
 }
 
 async function loadStudents(){
@@ -349,6 +359,18 @@ async function loadAssignments(){
 }
 function renderCatalog(){
  const classId=el('catalogClass').value;
+ const hint=el('catalogHint');
+ if(!classId){
+  hint.textContent='Prima crea una classe nella sezione “Classi”. Poi torna qui e selezionala.';
+  hint.className='status err';
+  el('catalogList').innerHTML=CATALOG.map(q=>
+   '<div class="item"><h3>'+safe(q.classLabel)+' · '+safe(q.title)+'</h3><div class="meta">'+safe(q.subject)+'</div><div class="row" style="margin-top:10px;justify-content:flex-start"><button class="btn primary" disabled>Prima crea una classe</button></div></div>'
+  ).join('');
+  return;
+ }
+ const selectedClass=classes.find(c=>c.id===classId);
+ hint.textContent='Stai assegnando le prove a: '+(selectedClass?.name||'classe selezionata');
+ hint.className='status ok';
  el('catalogList').innerHTML=CATALOG.map(q=>{
   const t=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
   const link=t?testLink(t):'';
@@ -358,7 +380,7 @@ function renderCatalog(){
  }).join('');
 }
 async function activateQuiz(key,button){
- const classId=el('catalogClass').value;if(!classId){setAppStatus('Prima crea e seleziona una classe.',false);return}
+ const classId=el('catalogClass').value;if(!classId){setAppStatus('Prima crea una classe nella sezione Classi.',false);el('classesSection').scrollIntoView({behavior:'smooth',block:'start'});return}
  const q=CATALOG.find(x=>x.key===key);if(!q)return;
  await busy(button,async()=>{
   let t=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
