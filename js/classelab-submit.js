@@ -88,6 +88,9 @@
   }
 
   async function send(quizKey, record) {
+    if (params().get('preview') === '1') {
+      throw new Error('Sei in modalità anteprima docente: la consegna non viene registrata.');
+    }
     const aCode = assignmentCode();
     const sCode = studentCode();
     const pToken = portalToken();
@@ -156,6 +159,18 @@
   }
 
   async function installGuard() {
+    if (params().get('preview') === '1') {
+      const hero = document.querySelector('.hero');
+      if (hero) {
+        const note = document.createElement('section');
+        note.className = 'card';
+        note.style.border = '2px solid #3456d1';
+        note.style.background = '#f7f9ff';
+        note.innerHTML = '<strong>👩‍🏫 Modalità anteprima docente.</strong> Puoi vedere il test, ma la consegna non verrà registrata.';
+        hero.insertAdjacentElement('afterend', note);
+      }
+      return;
+    }
     const input = document.getElementById('studentCode');
     if (input && !params().get('s') && !params().get('p')) {
       input.autocomplete = 'off';
