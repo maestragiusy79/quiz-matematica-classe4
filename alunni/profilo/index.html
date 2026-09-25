@@ -11,9 +11,11 @@ body{background:#f5f7fb}
 .profile{background:#fff;border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:var(--shadow);margin:18px 0}
 .profile h1{margin:0 0 8px}
 .meta{color:var(--muted)}
-.tests{display:grid;gap:14px;margin-top:18px}
+.subject{margin:18px 0}
+.subject-title{display:flex;align-items:center;gap:8px;margin:0 0 10px}
+.tests{display:grid;gap:12px}
 .test{background:#fff;border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
-.test h2{margin:0 0 6px}
+.test h3{margin:0 0 6px}
 .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:11px 16px;text-decoration:none;font-weight:700;border:1px solid var(--border);color:inherit;background:#fff}
 .btn.primary{background:#3456d1;border-color:#3456d1;color:#fff}
@@ -21,6 +23,7 @@ body{background:#f5f7fb}
 .badge.done{background:#e8f7ee;color:#17663f}
 .status{padding:14px;border-radius:14px;background:#fff;border:1px solid var(--border);margin-top:14px}
 .err{color:#b42318}
+.hidden{display:none!important}
 @media(max-width:650px){.row{align-items:flex-start}.btn{width:100%}}
 </style>
 </head>
@@ -36,11 +39,12 @@ body{background:#f5f7fb}
 <section id="profile" class="profile" hidden>
 <h1 id="studentName"></h1>
 <p id="classInfo" class="meta"></p>
+<div style="margin-top:14px"><a class="btn" href="../">Cambia alunno</a></div>
 </section>
 
 <section id="available" hidden>
-<h2>📝 Verifiche disponibili</h2>
-<div id="tests" class="tests"></div>
+<h2>📚 Le tue materie e verifiche</h2>
+<div id="subjects"></div>
 </section>
 
 <section id="empty" class="status" hidden>
@@ -78,8 +82,39 @@ body{background:#f5f7fb}
   return u.href;
  }
 
+ function subjectIcon(subject){
+  const s=String(subject||'').toLowerCase();
+  if(s.includes('matemat'))return '📐';
+  if(s.includes('italian'))return '📚';
+  if(s.includes('scienz'))return '🔬';
+  if(s.includes('ingles'))return '🇬🇧';
+  return '📝';
+ }
+
+ function renderSubjects(tests){
+  const groups=new Map();
+  tests.forEach(t=>{
+   const subject=t.subject||'Altre prove';
+   if(!groups.has(subject))groups.set(subject,[]);
+   groups.get(subject).push(t);
+  });
+
+  el('subjects').innerHTML=[...groups.entries()].map(([subject,items])=>
+   '<section class="subject"><h2 class="subject-title">'+subjectIcon(subject)+' '+safe(subject)+'</h2><div class="tests">'+
+   items.map(t=>{
+    const done=Boolean(t.submittedAt);
+    return '<article class="test"><div class="row"><div><h3>'+safe(t.title)+'</h3></div>'+
+      (done?'<span class="badge done">✅ Consegnata</span>':'<span class="badge">Da svolgere</span>')+
+      '</div><div style="margin-top:14px">'+
+      (done?'<span class="meta">La prova risulta già consegnata.</span>':'<a class="btn primary" href="'+safe(testUrl(t))+'">Apri verifica</a>')+
+      '</div></article>';
+   }).join('')+
+   '</div></section>'
+  ).join('');
+ }
+
  async function load(){
-  if(!token){showError('Questo link del profilo non è valido.');return}
+  if(!token){showError('Questo profilo non è valido. Torna all’Area alunni e inserisci nome e cognome.');return}
   try{
    const response=await fetch(ENDPOINT,{
     method:'POST',
@@ -98,14 +133,7 @@ body{background:#f5f7fb}
    if(!tests.length){el('empty').hidden=false;return}
 
    el('available').hidden=false;
-   el('tests').innerHTML=tests.map(t=>{
-    const done=Boolean(t.submittedAt);
-    return '<article class="test"><div class="row"><div><h2>'+safe(t.title)+'</h2><div class="meta">'+safe(t.subject||'')+'</div></div>'+
-      (done?'<span class="badge done">✅ Consegnata</span>':'<span class="badge">Da svolgere</span>')+
-      '</div><div style="margin-top:14px">'+
-      (done?'<span class="meta">La prova risulta già consegnata.</span>':'<a class="btn primary" href="'+safe(testUrl(t))+'">Apri verifica</a>')+
-      '</div></article>';
-   }).join('');
+   renderSubjects(tests);
   }catch(error){
    showError(error.message||'Non riesco a caricare il profilo.');
   }
