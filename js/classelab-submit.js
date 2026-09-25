@@ -112,7 +112,7 @@
 
   function setIdentityFields(displayName) {
     const codeInput = document.getElementById('studentCode');
-    if (codeInput) codeInput.value = studentCode();
+    if (codeInput) codeInput.value = studentCode() || 'PROFILE';
 
     const nome = document.querySelector('[name="nome"], #nome');
     const cognome = document.querySelector('[name="cognome"], #cognome');
