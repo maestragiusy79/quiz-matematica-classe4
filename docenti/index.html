@@ -119,7 +119,7 @@ select,input{width:100%}
 
 <section class="box">
 <div class="boxhead">
-<div><h2>📝 Prove pubblicate</h2><p class="meta">Scegli la classe e attiva una prova: comparirà automaticamente nei profili degli alunni.</p></div>
+<div><h2>📝 Prove pubblicate</h2><p class="meta">Scegli la classe e attiva una prova: non serve inserire prima gli alunni. Puoi anche aprire sempre l’anteprima del test.</p></div>
 </div>
 <label style="max-width:420px">Classe a cui assegnare la prova <select id="catalogClass"></select></label>
 <p id="catalogHint" class="status"></p>
@@ -226,6 +226,11 @@ function profileLink(student){
  if(!student?.portal_token)return '';
  const u=new URL('../alunni/profilo/',location.href);
  u.searchParams.set('p',student.portal_token);
+ return u.href;
+}
+function previewLink(q){
+ const u=new URL(q.path,location.href);
+ u.searchParams.set('preview','1');
  return u.href;
 }
 async function copyText(value){
@@ -387,31 +392,29 @@ function renderCatalog(){
   const t=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
   const active=Boolean(t&&assignmentFor(t.id));
   return '<div class="item"><h3>'+safe(q.classLabel)+' · '+safe(q.title)+'</h3><div class="meta">'+safe(q.subject)+'</div><div class="row" style="margin-top:10px;justify-content:flex-start">'+
+   '<a class="btn small" target="_blank" rel="noopener" href="'+safe(previewLink(q))+'">Anteprima test</a>'+
    (active?'<span class="badge">Attiva · visibile nei profili degli alunni</span>':'<button class="btn primary" data-activate="'+safe(q.key)+'">Attiva per questa classe</button>')+
    '</div></div>';
  }).join('');
 }
 async function activateQuiz(key,button){
- const classId=el('catalogClass').value;if(!classId){setAppStatus('Prima crea una classe nella sezione Classi.',false);el('classesSection').scrollIntoView({behavior:'smooth',block:'start'});return}
+ const classId=el('catalogClass').value;
+ if(!classId){
+  setAppStatus('Prima seleziona una classe.',false);
+  el('classesSection').scrollIntoView({behavior:'smooth',block:'start'});
+  return;
+ }
  const q=CATALOG.find(x=>x.key===key);if(!q)return;
+ const selectedClass=classes.find(c=>c.id===classId);
+ setAppStatus('Attivazione in corso per '+(selectedClass?.name||'la classe')+'...',true);
  await busy(button,async()=>{
-  let t=tests.find(x=>x.class_id===classId&&x.external_key===q.key);
-  if(!t){
-   const {data,error}=await sb.from('tests').insert({
-    title:q.title,class_id:classId,subject:q.subject,owner_id:currentUser.id,test_type:q.type,
-    description:q.classLabel,status:'active',external_key:q.key,public_path:q.path
-   }).select('id,title,subject,test_type,description,status,class_id,external_key,public_path').single();
-   if(error)throw error;t=data;
-  }else if(t.status!=='active'){
-   const {error}=await sb.from('tests').update({status:'active',public_path:q.path}).eq('id',t.id);if(error)throw error;
-  }
-  let a=assignments.find(x=>x.test_id===t.id&&x.active);
-  if(!a){
-   const {error}=await sb.from('assignments').insert({test_id:t.id,class_id:classId,access_code:randomCode('PROVA'),active:true});
-   if(error)throw error;
-  }
+  const {data,error}=await sb.functions.invoke('teacher-actions',{
+   body:{action:'activate_test',classId,externalKey:key}
+  });
+  if(error)throw new Error(error.message||'Errore nella funzione di attivazione.');
+  if(!data?.ok)throw new Error(data?.error||'La prova non è stata attivata.');
   await renderAll();
-  setAppStatus('Prova attivata. Da ora compare automaticamente nei profili degli alunni della classe.',true);
+  setAppStatus('✅ Prova attivata per '+(selectedClass?.name||'la classe')+'. Ora è visibile nei profili degli alunni.',true);
  });
 }
 function renderTests(){
