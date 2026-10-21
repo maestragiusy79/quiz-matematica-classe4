@@ -23,6 +23,7 @@ code.code{font-size:1rem;background:#f1f3f7;padding:4px 7px;border-radius:8px;le
 pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f6f7fb;border-radius:12px;padding:12px;font-size:.84rem;max-height:340px;overflow:auto}
 details{margin-top:10px}summary{cursor:pointer;font-weight:700}
 .warn{color:var(--amber)}.hidden{display:none!important}
+.review-table{width:100%;border-collapse:collapse;margin-top:12px}.review-table th,.review-table td{padding:10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}.review-table th{background:#f7f8fb}.review-ok{color:var(--green);font-weight:700}.review-no{color:var(--red);font-weight:700}.review-manual{color:var(--amber);font-weight:700}.review-table select{min-width:130px}.review-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.review-summary{background:#f7f9ff;border:1px solid #dfe5ff;border-radius:12px;padding:10px 12px;margin-top:10px}
 select,input{width:100%}
 @media(max-width:780px){.grid,.catalog,.stats{grid-template-columns:1fr}.full{grid-column:auto}.topbar{align-items:flex-start}}
 </style>
@@ -428,19 +429,96 @@ function renderTests(){
 
 async function loadResults(){
  const {data,error}=await sb.from('submissions')
-  .select('id,score,total,status,submitted_at,test_id,assignment_id,student_name_snapshot,details,tests(title,subject,class_id,classes(name)),students(display_name,student_code)')
+  .select('id,score,total,status,submitted_at,test_id,assignment_id,student_name_snapshot,details,tests(title,subject,class_id,external_key,classes(name)),students(display_name,student_code)')
   .order('submitted_at',{ascending:false});
  if(error)throw error;results=data||[];el('nConsegne').textContent=results.length;
 }
+const REVIEW_META={
+ 'classe5-matematica-aritmetica-iniziale':{
+  q1:['1. Addizione che dà 826','b'],q2:['2. Operazione per 168 figurine, 8 per pagina','d'],q3:['3. Figura della frazione','b'],q4:['4. Figura della frazione equivalente','b'],q5:['5. Numeri decimali in ordine crescente','d'],
+  q6a:['6a. 4 h 7 u ? 470','<'],q6b:['6b. 666 ? 6 h 6 da 6 u','='],q6c:['6c. 3 k 4 h 21 u ? 1 412','>'],
+  q7a:['7a. 1 534 + 2 155','3689'],q7b:['7b. 3 815 − 1 702','2113'],q7c:['7c. 101 × 9','909'],q7d:['7d. 795 : 5','159'],
+  q8a:['8a. 5 093 + 4 117','9210'],q8b:['8b. 6 071 − 4 263','1808'],q8c:['8c. 152 × 38','5776'],q8d:['8d. 372 : 7','53 resto 1'],
+  q9a:['9a. 14/10','1,4'],q9b:['9b. 256/100','2,56'],q9c:['9c. 9/1000','0,009'],
+  q10a:['10a. Soldi dopo il regalo','25 euro'],q10b:['10b. Soldi rimasti dopo l’acquisto','4 euro'],
+  q11a:['11a. Dato nascosto','12'],q11b:['11b. Operazione','13 × 12'],q11c:['11c. Risposta','156 figurine']
+ },
+ 'classe5-matematica-geometria-iniziale':{
+  q1:['1. Primo angolo','piatto'],q2:['2. Secondo angolo','acuto'],q3:['3. Terzo angolo','retto'],q4:['4. Tempo trascorso','3 ore e mezza'],q5:['5. Numero da indovinare','162'],q6:['6. Sciarpa corretta','C'],
+  q7a:['7a. Bambini che preferiscono il gatto','Correzione docente'],q7b:['7b. Animali con lo stesso numero di preferenze','Correzione docente'],q7c:['7c. Totale bambini','Correzione docente'],
+  q8a:['8a. Impossibile pescare un gettone bianco','F'],q8b:['8b. I gettoni neri sono di più','V'],q8c:['8c. Non è probabile pescare un gettone nero','F'],q8d:['8d. Probabilità gettone bianco 3 su 8','V']
+ }
+};
+
+function reviewRows(r){
+ const d=r.details||{},meta=REVIEW_META[r.tests?.external_key]||{};
+ if(r.tests?.external_key==='classe5-matematica-geometria-iniziale'&&d.q7){
+  const base={...d.responses,q7a:d.q7.a||'',q7b:d.q7.b||'',q7c:d.q7.c||''};
+  return Object.entries(meta).map(([key,[label,correct]])=>({
+   key,label,answer:base[key]??'',correctAnswer:correct,
+   auto: key.startsWith('q7') ? null : (typeof d[key]==='boolean'?d[key]:null)
+  }));
+ }
+ if(d.responses&&Object.keys(d.responses).length){
+  return Object.entries(meta).map(([key,[label,correct]])=>({
+   key,label,answer:d.responses[key]??'',correctAnswer:correct,
+   auto:typeof d[key]==='boolean'?d[key]:null
+  }));
+ }
+ return Object.entries(d).filter(([k,v])=>v&&typeof v==='object'&&('answer'in v||'label'in v)).map(([key,v])=>({
+  key,label:v.label||key,answer:v.answer??'',correctAnswer:v.correctAnswer??'',auto:typeof v.ok==='boolean'?v.ok:null
+ }));
+}
+
+function reviewChoice(r,key,auto){
+ const saved=r.details?.teacherReview?.[key];
+ const value=saved===true?'correct':saved===false?'wrong':'auto';
+ return '<select data-review-choice="'+safe(r.id)+'" data-review-key="'+safe(key)+'">'+
+   '<option value="auto"'+(value==='auto'?' selected':'')+'>'+(auto===null?'Da correggere':'Automatico')+'</option>'+
+   '<option value="correct"'+(value==='correct'?' selected':'')+'>Corretta</option>'+
+   '<option value="wrong"'+(value==='wrong'?' selected':'')+'>Errata</option>'+
+ '</select>';
+}
+
 function renderResults(){
  if(!results.length){el('resultBox').innerHTML='<div class="meta">Nessuna consegna ancora.</div>';return}
  el('resultBox').innerHTML=results.map(r=>{
   const name=r.students?.display_name||r.student_name_snapshot||'Alunno';
-  const score=(r.score==null||r.total==null)?'Da correggere':(r.details?.manualRequired?safe(r.score)+' / '+safe(r.total)+' automatici · correzione manuale':safe(r.score)+' / '+safe(r.total));
-  const details=JSON.stringify(r.details||{},null,2);
-  return '<div class="item"><div class="row"><div><h3>'+safe(name)+'</h3><div class="meta">'+safe(r.tests?.classes?.name||'Classe')+' · '+safe(r.tests?.title||'Verifica') + ' · '+safe(formatDate(r.submitted_at))+'</div></div><strong>'+score+'</strong></div>'+
-   '<details><summary>Dettaglio risposte</summary><pre>'+safe(details)+'</pre></details></div>';
+  const rows=reviewRows(r);
+  const teacherReview=r.details?.teacherReview||{};
+  const effective=rows.map(x=>teacherReview[x.key]===true?true:teacherReview[x.key]===false?false:x.auto);
+  const correctCount=effective.filter(x=>x===true).length;
+  const reviewedCount=effective.filter(x=>x!==null).length;
+  const scoreLabel=rows.length?correctCount+' / '+rows.length:((r.score??'—')+' / '+(r.total??'—'));
+  const table=rows.length?'<table class="review-table"><thead><tr><th>Esercizio</th><th>Risposta alunno</th><th>Risposta corretta</th><th>Valutazione</th></tr></thead><tbody>'+
+   rows.map(x=>{
+    const eff=teacherReview[x.key]===true?true:teacherReview[x.key]===false?false:x.auto;
+    const status=eff===true?'<span class="review-ok">✓ Corretta</span>':eff===false?'<span class="review-no">✗ Errata</span>':'<span class="review-manual">Da correggere</span>';
+    return '<tr><td>'+safe(x.label)+'</td><td><strong>'+safe(x.answer||'—')+'</strong><br>'+status+'</td><td>'+safe(x.correctAnswer||'—')+'</td><td>'+reviewChoice(r,x.key,x.auto)+'</td></tr>';
+   }).join('')+'</tbody></table>':'<p class="meta">Dettaglio risposte non disponibile per questa consegna.</p>';
+  return '<div class="item"><div class="row"><div><h3>'+safe(name)+'</h3><div class="meta">'+safe(r.tests?.classes?.name||'Classe')+' · '+safe(r.tests?.title||'Verifica')+' · '+safe(formatDate(r.submitted_at))+'</div></div><strong>'+safe(scoreLabel)+'</strong></div>'+
+   '<details open><summary>Visualizza e correggi la prova</summary>'+table+
+   (rows.length?'<div class="review-summary">Corrette: <strong>'+correctCount+'</strong> su <strong>'+rows.length+'</strong> · Valutate: '+reviewedCount+' su '+rows.length+'</div><div class="review-actions"><button class="btn primary" type="button" data-save-review="'+safe(r.id)+'">Salva correzione</button><span class="meta">Puoi modificare la valutazione automatica esercizio per esercizio.</span></div>':'')+
+   '</details></div>';
  }).join('');
+}
+
+async function saveReview(submissionId,button){
+ const r=results.find(x=>x.id===submissionId);if(!r)return;
+ const rows=reviewRows(r);const review={...(r.details?.teacherReview||{})};
+ document.querySelectorAll('[data-review-choice="'+CSS.escape(submissionId)+'"]').forEach(sel=>{
+  const key=sel.dataset.reviewKey;
+  if(sel.value==='correct')review[key]=true;
+  else if(sel.value==='wrong')review[key]=false;
+  else delete review[key];
+ });
+ const effective=rows.map(x=>review[x.key]===true?true:review[x.key]===false?false:x.auto);
+ const score=effective.filter(x=>x===true).length,total=rows.length;
+ const details={...(r.details||{}),teacherReview:review,teacherCorrectedAt:new Date().toISOString()};
+ const {error}=await sb.from('submissions').update({score,total,status:'graded',details}).eq('id',submissionId);
+ if(error){setAppStatus('Correzione non salvata: '+error.message,false);return}
+ setAppStatus('✅ Correzione salvata per '+(r.students?.display_name||r.student_name_snapshot||'alunno')+'.',true);
+ await renderAll();
 }
 function downloadCsv(){
  if(!results.length){setAppStatus('Non ci sono risultati da esportare.',false);return}
@@ -474,6 +552,7 @@ document.addEventListener('click',async e=>{
  const profileCopy=e.target.closest('[data-copy-profile]');if(profileCopy){const s=students.find(x=>x.id===profileCopy.dataset.copyProfile);const link=s?profileLink(s):'';if(link)await copyText(link);else setAppStatus('Profilo alunno non disponibile.',false);return}
  const toggle=e.target.closest('[data-toggle-student]');if(toggle){await busy(toggle,()=>toggleStudent(toggle.dataset.toggleStudent));return}
  const activate=e.target.closest('[data-activate]');if(activate){try{await activateQuiz(activate.dataset.activate,activate)}catch(err){setAppStatus('Attivazione non riuscita: '+err.message,false)}return}
+ const saveReviewBtn=e.target.closest('[data-save-review]');if(saveReviewBtn){await busy(saveReviewBtn,()=>saveReview(saveReviewBtn.dataset.saveReview,saveReviewBtn));return}
 });
 
 sb.auth.onAuthStateChange((event,session)=>{
