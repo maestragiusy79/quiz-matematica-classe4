@@ -445,18 +445,25 @@ const CLASS4_GROUPS=[
 function class4GridSummary(r,rows,teacherReview){
  if(r.tests?.external_key!=='classe4-matematica-ingresso')return '';
  const rowMap=new Map(rows.map(x=>[x.key,x]));
- const cards=CLASS4_GROUPS.map(g=>{
+ const pointValue=(key,x,eff)=>{
+   if(key==='q1') return eff===true?9:0;
+   if(key==='q11_3') return eff===true?2:0;
+   return eff===true?1:0;
+ };
+ const groups=[
+  ...CLASS4_GROUPS,
+  {label:'ES. 9 + 10 + 11 · Rette, figure e segmenti',keys:['q9_1','q9_2','q9_3','q10_triangle','q10_square','q10_rectangle','q11_1','q11_2','q11_3','q11_4'],max:11,level:(n)=>n>=9?'AUTONOMO':n>=6?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 11–9; parzialmente autonomo 8–6; non autonomo 5 o meno.'}
+ ];
+ const cards=groups.map(g=>{
    let n=0;
    g.keys.forEach(k=>{
      const x=rowMap.get(k); if(!x)return;
      const eff=teacherReview[k]===true?true:teacherReview[k]===false?false:x.auto;
-     if(eff===true)n++;
+     n+=pointValue(k,x,eff);
    });
    return '<div class="item" style="margin:8px 0"><strong>'+safe(g.label)+'</strong><div style="margin-top:6px"><span class="badge">'+n+' / '+g.max+'</span> <strong>'+safe(g.level(n))+'</strong></div><div class="meta" style="margin-top:5px">'+safe(g.note)+'</div></div>';
  }).join('');
-
- const mismatch='<div class="item" style="border-color:#e5b454;background:#fffaf0"><strong>⚠️ Ultimo gruppo da allineare</strong><div class="meta" style="margin-top:6px">ES. 4 + 5 è ora allineato alla griglia: 8 risposte dell’ES. 4 + 5 gruppi corretti dell’ES. 5 = 13 punti. Resta da verificare ES. 9 + 10 + 11, perché la griglia prevede 3 + 3 + 5 risposte mentre il test digitale attuale ne registra 3 + 3 + 4.</div></div>';
- return '<div class="review-summary"><strong>Griglia di valutazione classe quarta</strong>'+cards+mismatch+'</div>';
+ return '<div class="review-summary"><strong>Griglia di valutazione classe quarta</strong>'+cards+'</div>';
 }
 
 const REVIEW_META={
@@ -513,9 +520,16 @@ function renderResults(){
   const rows=reviewRows(r);
   const teacherReview=r.details?.teacherReview||{};
   const effective=rows.map(x=>teacherReview[x.key]===true?true:teacherReview[x.key]===false?false:x.auto);
-  const correctCount=effective.filter(x=>x===true).length;
   const reviewedCount=effective.filter(x=>x!==null).length;
-  const scoreLabel=rows.length?correctCount+' / '+rows.length:((r.score??'—')+' / '+(r.total??'—'));
+  const weighted=rows.reduce((acc,x)=>{
+    const eff=teacherReview[x.key]===true?true:teacherReview[x.key]===false?false:x.auto;
+    const max=(r.tests?.external_key==='classe4-matematica-ingresso'&&x.key==='q1')?9:
+              (r.tests?.external_key==='classe4-matematica-ingresso'&&x.key==='q11_3')?2:
+              (Number(r.details?.[x.key]?.maxPoints)||1);
+    acc.total+=max;if(eff===true)acc.correct+=max;return acc;
+  },{correct:0,total:0});
+  const correctCount=weighted.correct;
+  const scoreLabel=rows.length?correctCount+' / '+weighted.total:((r.score??'—')+' / '+(r.total??'—'));
   const table=rows.length?'<table class="review-table"><thead><tr><th>Esercizio</th><th>Risposta alunno</th><th>Risposta corretta</th><th>Valutazione</th></tr></thead><tbody>'+
    rows.map(x=>{
     const eff=teacherReview[x.key]===true?true:teacherReview[x.key]===false?false:x.auto;
@@ -524,7 +538,7 @@ function renderResults(){
    }).join('')+'</tbody></table>':'<p class="meta">Dettaglio risposte non disponibile per questa consegna.</p>';
   return '<div class="item"><div class="row"><div><h3>'+safe(name)+'</h3><div class="meta">'+safe(r.tests?.classes?.name||'Classe')+' · '+safe(r.tests?.title||'Verifica')+' · '+safe(formatDate(r.submitted_at))+'</div></div><strong>'+safe(scoreLabel)+'</strong></div>'+
    '<details open><summary>Visualizza e correggi la prova</summary>'+table+
-   (rows.length?'<div class="review-summary">Corrette: <strong>'+correctCount+'</strong> su <strong>'+rows.length+'</strong> · Valutate: '+reviewedCount+' su '+rows.length+'</div>'+class4GridSummary(r,rows,teacherReview)+'<div class="review-actions"><button class="btn primary" type="button" data-save-review="'+safe(r.id)+'">Salva correzione</button><span class="meta">Puoi modificare la valutazione automatica esercizio per esercizio.</span></div>':'')+
+   (rows.length?'<div class="review-summary">Punti corretti: <strong>'+correctCount+'</strong> su <strong>'+weighted.total+'</strong> · Risposte valutate: '+reviewedCount+' su '+rows.length+'</div>'+class4GridSummary(r,rows,teacherReview)+'<div class="review-actions"><button class="btn primary" type="button" data-save-review="'+safe(r.id)+'">Salva correzione</button><span class="meta">Puoi modificare la valutazione automatica esercizio per esercizio.</span></div>':'')+
    '</details></div>';
  }).join('');
 }
