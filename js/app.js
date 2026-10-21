@@ -9,7 +9,6 @@ const answers={
  q3_1:'novecentottantasei',q3_2:'cinquecentosei',q3_3:'centottantasette',
  q3_4:'ottocentottantotto',q3_5:'quattrocentosettantacinque',q3_6:'duecentottantacinque',
  q4_1:'>',q4_2:'<',q4_3:'>',q4_4:'>',q4_5:'<',q4_6:'>',q4_7:'<',q4_8:'<',
- q5_1:'382',q5_2:'823',q5_3:'832',q5_4:'230',q5_5:'823',q5_6:'230',q5_7:'382',q5_8:'238',
  q6_1:'700 + 30 + 9',q6_2:'900 + 5',q6_3:'500 + 50 + 5',q6_4:'100 + 90 + 8',q6_5:'700 + 60 + 6',
  q7_1:'80+7',q7_2:'500+80+4',q7_3:'400+30+9',q7_4:'6',q7_5:'100+9',q7_6:'50+3',
  q8_1:'760',q8_2:'414',q8_3:'500',q8_4:'25',
@@ -21,7 +20,6 @@ const labels={
  q2_1:'2. Cinquecentoquaranta',q2_2:'2. Settecentoventi',q2_3:'2. Ottocentotredici',q2_4:'2. Trecentonovantaquattro',q2_5:'2. Settecentonovantacinque',q2_6:'2. Seicentotrentadue',
  q3_1:'3. 986 in lettere',q3_2:'3. 506 in lettere',q3_3:'3. 187 in lettere',q3_4:'3. 888 in lettere',q3_5:'3. 475 in lettere',q3_6:'3. 285 in lettere',
  q4_1:'4. 340 ? 234',q4_2:'4. 798 ? 897',q4_3:'4. 298 ? 289',q4_4:'4. 908 ? 809',q4_5:'4. 908 ? 1000',q4_6:'4. 655 ? 556',q4_7:'4. 498 ? 984',q4_8:'4. 623 ? 632',
- q5_1:'5. 3 h 8 da 2 u',q5_2:'5. 82 da 3 u',q5_3:'5. 8 h 32 u',q5_4:'5. 23 da',q5_5:'5. 8 h 2 da 3 u',q5_6:'5. 230 u',q5_7:'5. 38 da 2 u',q5_8:'5. 238 u',
  q6_1:'6. 739',q6_2:'6. 905',q6_3:'6. 555',q6_4:'6. 198',q6_5:'6. 766',
  q7_1:'7. 87',q7_2:'7. 584',q7_3:'7. 439',q7_4:'7. 6',q7_5:'7. 109',q7_6:'7. 53',
  q8_1:'8. 675 + 76 + 9',q8_2:'8. 503 − 89',q8_3:'8. 125 × 4',q8_4:'8. 125 : 5',
@@ -72,6 +70,50 @@ function initBoard(name){
 }
 Object.keys(configs).forEach(initBoard);
 
+const appleState={selectedColor:'1',colors:{}};
+const appleButtons=[...document.querySelectorAll('.apple-card')];
+const palette=[...document.querySelectorAll('[data-pick-color]')];
+const appleHidden=form.elements.q5_complete;
+function updateAppleStatus(){
+ const colored=appleButtons.filter(b=>appleState.colors[b.dataset.apple]).length;
+ if(appleHidden)appleHidden.value=colored===appleButtons.length?'ok':'';
+ const status=document.getElementById('appleStatus');
+ if(status)status.textContent=colored+' di '+appleButtons.length+' mele colorate';
+ updateProgress();
+}
+palette.forEach(btn=>btn.addEventListener('click',()=>{
+ appleState.selectedColor=btn.dataset.pickColor;
+ palette.forEach(x=>x.classList.toggle('active',x===btn));
+}));
+appleButtons.forEach(btn=>btn.addEventListener('click',()=>{
+ const color=appleState.selectedColor;
+ appleState.colors[btn.dataset.apple]=color;
+ btn.dataset.color=color;
+ updateAppleStatus();
+}));
+updateAppleStatus();
+
+function scoreAppleGroups(details){
+ const expectedGroups=['382','823','832','230','238'];
+ let points=0;
+ expectedGroups.forEach(group=>{
+  const members=appleButtons.filter(b=>b.dataset.group===group);
+  const colors=members.map(b=>appleState.colors[b.dataset.apple]).filter(Boolean);
+  const same=colors.length===members.length && new Set(colors).size===1;
+  const chosen=colors[0];
+  const noForeign=chosen && appleButtons.every(b=>b.dataset.group===group || appleState.colors[b.dataset.apple]!==chosen);
+  const ok=Boolean(same&&noForeign);
+  if(ok)points++;
+  details['q5_'+group]={
+   label:'5. Gruppo di quantità '+group,
+   answer:members.map(b=>({value:b.textContent.replace(/\s+/g,' ').trim(),color:appleState.colors[b.dataset.apple]||''})),
+   correctAnswer:'Tutte le mele equivalenti allo stesso colore, senza altre quantità nello stesso gruppo',
+   ok
+  };
+ });
+ return points;
+}
+
 form.addEventListener('submit',async e=>{
  e.preventDefault();
  const missing=[...form.querySelectorAll('[required]')].some(x=>String(x.value).trim()==='');
@@ -82,6 +124,7 @@ form.addEventListener('submit',async e=>{
   const el=form.elements[k];const given=el?el.value:'';const ok=norm(given)===norm(correct);if(ok)score++;total++;
   details[k]={label:labels[k],answer:given,correctAnswer:correct,ok};
  });
+ const applePoints=scoreAppleGroups(details);score+=applePoints;total+=5;
  Object.entries(figureState).forEach(([name,st])=>{
    const k='q10_'+name,ok=st.complete;if(ok)score++;total++;
    details[k]={label:labels[k],answer:ok?'Figura costruita correttamente':'Figura non corretta',correctAnswer:'Figura corretta',ok};
