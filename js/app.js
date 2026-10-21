@@ -70,6 +70,8 @@ function initBoard(name){
 }
 Object.keys(configs).forEach(initBoard);
 
+const APPLE_COLORS={'1':'#ffd9df','2':'#fff0b8','3':'#d9f3df','4':'#dce8ff','5':'#eadcff'};
+const APPLE_NAMES={'1':'ROSA','2':'GIALLO','3':'VERDE','4':'AZZURRO','5':'VIOLA'};
 const appleState={selectedColor:'1',colors:{}};
 const appleButtons=[...document.querySelectorAll('.apple-card')];
 const palette=[...document.querySelectorAll('[data-pick-color]')];
@@ -84,11 +86,25 @@ function updateAppleStatus(){
 palette.forEach(btn=>btn.addEventListener('click',()=>{
  appleState.selectedColor=btn.dataset.pickColor;
  palette.forEach(x=>x.classList.toggle('active',x===btn));
+ const label=document.getElementById('selectedAppleColor');
+ if(label)label.textContent='Colore selezionato: '+APPLE_NAMES[appleState.selectedColor];
 }));
 appleButtons.forEach(btn=>btn.addEventListener('click',()=>{
  const color=appleState.selectedColor;
  appleState.colors[btn.dataset.apple]=color;
  btn.dataset.color=color;
+ btn.style.backgroundColor=APPLE_COLORS[color];
+ btn.style.borderColor='#536174';
+ const old=btn.querySelector('.apple-check');
+ if(old)old.remove();
+ const mark=document.createElement('span');
+ mark.className='apple-check';
+ mark.textContent=' ✓';
+ mark.style.position='absolute';
+ mark.style.right='10px';
+ mark.style.bottom='8px';
+ mark.style.fontSize='1rem';
+ btn.appendChild(mark);
  updateAppleStatus();
 }));
 updateAppleStatus();
