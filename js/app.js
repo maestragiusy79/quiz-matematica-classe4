@@ -41,7 +41,7 @@ form.addEventListener('input',updateProgress);form.addEventListener('change',upd
 const figureState={triangle:{segments:[],complete:false},square:{segments:[],complete:false},rectangle:{segments:[],complete:false}};
 const configs={
  triangle:{base:[[1,3],[5,3]],expected:['1,3|3,1','3,1|5,3']},
- square:{base:[[1,4],[5,4]],expected:['1,0|1,4','1,0|5,0','5,0|5,4']},
+ square:{base:[[1,5],[5,5]],expected:['1,1|1,5','1,1|5,1','5,1|5,5']},
  rectangle:{base:[[1,4],[6,4]],expected:['1,1|1,4','1,1|6,1','6,1|6,4']}
 };
 function keySeg(a,b){const x=[a.join(','),b.join(',')].sort();return x.join('|')}
