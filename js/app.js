@@ -40,9 +40,29 @@ form.addEventListener('input',updateProgress);form.addEventListener('change',upd
 
 const figureState={triangle:{segments:[],complete:false},square:{segments:[],complete:false},rectangle:{segments:[],complete:false}};
 const configs={
- triangle:{base:[[1,3],[5,3]],expected:['1,3|3,1','3,1|5,3']},
- square:{base:[[1,5],[5,5]],expected:['1,1|1,5','1,1|5,1','5,1|5,5']},
- rectangle:{base:[[1,4],[6,4]],expected:['1,1|1,4','1,1|6,1','6,1|6,4']}
+ triangle:{
+  base:[[1,3],[5,3]],
+  sides:[
+   {full:[[1,3],[3,1]],units:[[[1,3],[2,2]],[[2,2],[3,1]]]},
+   {full:[[3,1],[5,3]],units:[[[3,1],[4,2]],[[4,2],[5,3]]]}
+  ]
+ },
+ square:{
+  base:[[1,5],[5,5]],
+  sides:[
+   {full:[[1,1],[1,5]],units:[[[1,1],[1,2]],[[1,2],[1,3]],[[1,3],[1,4]],[[1,4],[1,5]]]},
+   {full:[[1,1],[5,1]],units:[[[1,1],[2,1]],[[2,1],[3,1]],[[3,1],[4,1]],[[4,1],[5,1]]]},
+   {full:[[5,1],[5,5]],units:[[[5,1],[5,2]],[[5,2],[5,3]],[[5,3],[5,4]],[[5,4],[5,5]]]}
+  ]
+ },
+ rectangle:{
+  base:[[1,4],[6,4]],
+  sides:[
+   {full:[[1,1],[1,4]],units:[[[1,1],[1,2]],[[1,2],[1,3]],[[1,3],[1,4]]]},
+   {full:[[1,1],[6,1]],units:[[[1,1],[2,1]],[[2,1],[3,1]],[[3,1],[4,1]],[[4,1],[5,1]],[[5,1],[6,1]]]},
+   {full:[[6,1],[6,4]],units:[[[6,1],[6,2]],[[6,2],[6,3]],[[6,3],[6,4]]]}
+  ]
+ }
 };
 function keySeg(a,b){const x=[a.join(','),b.join(',')].sort();return x.join('|')}
 function initBoard(name){
@@ -64,7 +84,22 @@ function initBoard(name){
   if(k!==baseK&&!st.segments.some(s=>keySeg(...s)===k))st.segments.push([first,p]);
   first=null;check();redraw();updateProgress();
  }
- function check(){const got=st.segments.map(s=>keySeg(...s));st.complete=cfg.expected.every(k=>got.includes(k))&&got.length===cfg.expected.length;document.querySelector('[data-fig-status="'+name+'"]').textContent=st.complete?'Figura completata ✓':'Segmenti inseriti: '+st.segments.length}
+ function check(){
+  const got=new Set(st.segments.map(s=>keySeg(...s)));
+  const sideOk=side=>{
+   const fullKey=keySeg(...side.full);
+   if(got.has(fullKey))return true;
+   return side.units.every(seg=>got.has(keySeg(...seg)));
+  };
+  const allowed=new Set();
+  cfg.sides.forEach(side=>{
+   allowed.add(keySeg(...side.full));
+   side.units.forEach(seg=>allowed.add(keySeg(...seg)));
+  });
+  const noExtra=[...got].every(k=>allowed.has(k));
+  st.complete=cfg.sides.every(sideOk)&&noExtra;
+  document.querySelector('[data-fig-status="'+name+'"]').textContent=st.complete?'Figura completata ✓':'Segmenti inseriti: '+st.segments.length;
+ }
  document.querySelector('[data-reset-fig="'+name+'"]').addEventListener('click',()=>{st.segments=[];st.complete=false;first=null;check();redraw();updateProgress()});
  redraw();check();
 }
@@ -139,8 +174,13 @@ function scoreAppleGroups(details){
 form.addEventListener('submit',async e=>{
  e.preventDefault();
  const missing=[...form.querySelectorAll('[required]')].some(x=>String(x.value).trim()==='');
- if(missing||!Object.values(figureState).every(v=>v.complete)){alert('Completa tutti gli esercizi prima di consegnare.');return}
- if(!confirm('Vuoi consegnare la verifica? Dopo l’invio non potrai modificarla.'))return;
+ const incompleteFigures=!Object.values(figureState).every(v=>v.complete);
+ if(missing||incompleteFigures){
+   const ok=confirm('La prova non è completa. Vuoi consegnarla comunque? Dopo l’invio non potrai più modificarla.');
+   if(!ok)return;
+ }else{
+   if(!confirm('Vuoi consegnare la verifica? Dopo l’invio non potrai modificarla.'))return;
+ }
  const details={};let score=0,total=0;
  Object.entries(answers).forEach(([k,correct])=>{
   const el=form.elements[k];const given=el?el.value:'';const ok=norm(given)===norm(correct);if(ok)score++;total++;
@@ -166,7 +206,8 @@ form.addEventListener('submit',async e=>{
    nome:form.elements.nome.value.trim(),
    cognome:form.elements.cognome.value.trim(),
    createdAt:new Date().toISOString(),
-   score,total,details
+   score,total,details,
+   incomplete:missing||incompleteFigures
  };
  const submitButton=form.querySelector('button[type="submit"]');
  if(submitButton)submitButton.disabled=true;
