@@ -87,6 +87,37 @@
     });
   }
 
+  function lockQuiz(message='✅ Prova consegnata. Non è più possibile modificare le risposte.') {
+    document.querySelectorAll('form input, form select, form textarea, form button').forEach(el => {
+      el.disabled = true;
+    });
+    document.querySelectorAll('.submitbox, .actions').forEach(box => {
+      const btn = box.querySelector('button[type="submit"], .primary-btn');
+      if (btn) btn.style.display = 'none';
+    });
+
+    let notice = document.getElementById('submissionLockedNotice');
+    if (!notice) {
+      notice = document.createElement('section');
+      notice.id = 'submissionLockedNotice';
+      notice.className = 'card';
+      notice.style.border = '2px solid #1f8a5b';
+      notice.style.background = '#eefaf3';
+      notice.style.marginTop = '18px';
+      notice.innerHTML = '<h2 style="margin-top:0">✅ Prova consegnata</h2><p style="margin-bottom:0"><strong>La prova è stata registrata e non può più essere modificata.</strong></p>';
+      const form = document.querySelector('form');
+      if (form) form.insertAdjacentElement('afterend', notice);
+      else document.querySelector('main')?.appendChild(notice);
+    }
+
+    const msg = document.getElementById('msg');
+    if (msg) {
+      msg.textContent = message;
+      msg.style.color = '#17663f';
+      msg.style.fontWeight = '700';
+    }
+  }
+
   async function send(quizKey, record) {
     if (params().get('preview') === '1') {
       throw new Error('Sei in modalità anteprima docente: la consegna non viene registrata.');
@@ -101,7 +132,7 @@
       throw new Error('Apri la prova dal tuo profilo personale ClasseLab.');
     }
 
-    return call({
+    const data = await call({
       assignmentCode: aCode,
       quizKey,
       studentCode: sCode || undefined,
@@ -111,6 +142,10 @@
       total: record.total,
       details: record.details || {}
     });
+    lockQuiz(data?.alreadySubmitted
+      ? '✅ Questa prova risulta già consegnata e non può più essere modificata.'
+      : '✅ Prova consegnata. Non è più possibile modificare le risposte.');
+    return data;
   }
 
   function setIdentityFields(displayName) {
@@ -221,12 +256,15 @@
       if (!data) return;
       setIdentityFields(data.studentName || 'Alunno');
       showIdentity(data.studentName || 'Alunno', data.alreadySubmitted);
+      if (data.alreadySubmitted) {
+        lockQuiz('✅ Questa prova risulta già consegnata e non può più essere modificata.');
+      }
     } catch (error) {
       showWarning(error.message || 'Non riesco a riconoscere l’alunno da questo link.');
     }
   }
 
-  window.ClasseLabSubmit = { send, assignmentCode, studentCode, portalToken, resolveStudent };
+  window.ClasseLabSubmit = { send, assignmentCode, studentCode, portalToken, resolveStudent, lockQuiz };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', installGuard);
   } else {
