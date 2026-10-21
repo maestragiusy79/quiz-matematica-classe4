@@ -434,6 +434,30 @@ async function loadResults(){
  results=Array.isArray(data.results)?data.results:[];
  el('nConsegne').textContent=results.length;
 }
+const CLASS4_GROUPS=[
+ {label:'ES. 1 · Individuare l’ordine crescente',keys:['q1'],max:9,level:(n)=>n>=8?'AUTONOMO':n>=6?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 9–8; parzialmente autonomo 7–6; non autonomo 5 o meno.'},
+ {label:'ES. 2 + 3 · Scrivere numeri',keys:['q2_1','q2_2','q2_3','q2_4','q2_5','q2_6','q3_1','q3_2','q3_3','q3_4','q3_5','q3_6'],max:12,level:(n)=>n>=10?'AUTONOMO':n>=7?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 12–10; parzialmente autonomo 9–7; non autonomo 6 o meno. Gli errori ortografici non vanno considerati.'},
+ {label:'ES. 6 + 7 · Comporre e scomporre',keys:['q6_1','q6_2','q6_3','q6_4','q6_5','q7_1','q7_2','q7_3','q7_4','q7_5','q7_6'],max:11,level:(n)=>n===11?'AUTONOMO':n>=8?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 11; parzialmente autonomo 10–8; non autonomo 7 o meno.'},
+ {label:'ES. 8 · Eseguire operazioni',keys:['q8_1','q8_2','q8_3','q8_4'],max:4,level:(n)=>n===4?'AUTONOMO':n>=2?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 4; parzialmente autonomo 3–2; non autonomo 1–0.'}
+];
+
+function class4GridSummary(r,rows,teacherReview){
+ if(r.tests?.external_key!=='classe4-matematica-ingresso')return '';
+ const rowMap=new Map(rows.map(x=>[x.key,x]));
+ const cards=CLASS4_GROUPS.map(g=>{
+   let n=0;
+   g.keys.forEach(k=>{
+     const x=rowMap.get(k); if(!x)return;
+     const eff=teacherReview[k]===true?true:teacherReview[k]===false?false:x.auto;
+     if(eff===true)n++;
+   });
+   return '<div class="item" style="margin:8px 0"><strong>'+safe(g.label)+'</strong><div style="margin-top:6px"><span class="badge">'+n+' / '+g.max+'</span> <strong>'+safe(g.level(n))+'</strong></div><div class="meta" style="margin-top:5px">'+safe(g.note)+'</div></div>';
+ }).join('');
+
+ const mismatch='<div class="item" style="border-color:#e5b454;background:#fffaf0"><strong>⚠️ Da allineare alla griglia cartacea</strong><div class="meta" style="margin-top:6px">La griglia indica ES. 4 + 5 su 13 risposte (8 + 5) e ES. 9 + 10 + 11 su 11 risposte (3 + 3 + 5). Nel test digitale attuale l’ES. 5 contiene 8 risposte e l’ES. 11 ne contiene 4. Per questi due gruppi non assegno automaticamente il livello finché prova e griglia non sono perfettamente allineate.</div></div>';
+ return '<div class="review-summary"><strong>Griglia di valutazione classe quarta</strong>'+cards+mismatch+'</div>';
+}
+
 const REVIEW_META={
  'classe5-matematica-aritmetica-iniziale':{
   q1:['1. Addizione che dà 826','b'],q2:['2. Operazione per 168 figurine, 8 per pagina','d'],q3:['3. Figura della frazione','b'],q4:['4. Figura della frazione equivalente','b'],q5:['5. Numeri decimali in ordine crescente','d'],
@@ -499,7 +523,7 @@ function renderResults(){
    }).join('')+'</tbody></table>':'<p class="meta">Dettaglio risposte non disponibile per questa consegna.</p>';
   return '<div class="item"><div class="row"><div><h3>'+safe(name)+'</h3><div class="meta">'+safe(r.tests?.classes?.name||'Classe')+' · '+safe(r.tests?.title||'Verifica')+' · '+safe(formatDate(r.submitted_at))+'</div></div><strong>'+safe(scoreLabel)+'</strong></div>'+
    '<details open><summary>Visualizza e correggi la prova</summary>'+table+
-   (rows.length?'<div class="review-summary">Corrette: <strong>'+correctCount+'</strong> su <strong>'+rows.length+'</strong> · Valutate: '+reviewedCount+' su '+rows.length+'</div><div class="review-actions"><button class="btn primary" type="button" data-save-review="'+safe(r.id)+'">Salva correzione</button><span class="meta">Puoi modificare la valutazione automatica esercizio per esercizio.</span></div>':'')+
+   (rows.length?'<div class="review-summary">Corrette: <strong>'+correctCount+'</strong> su <strong>'+rows.length+'</strong> · Valutate: '+reviewedCount+' su '+rows.length+'</div>'+class4GridSummary(r,rows,teacherReview)+'<div class="review-actions"><button class="btn primary" type="button" data-save-review="'+safe(r.id)+'">Salva correzione</button><span class="meta">Puoi modificare la valutazione automatica esercizio per esercizio.</span></div>':'')+
    '</details></div>';
  }).join('');
 }
