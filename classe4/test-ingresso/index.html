@@ -51,15 +51,35 @@
 <div class="compare"><span>623</span><select name="q4_8" required><option value="">?</option><option value=">">&gt;</option><option value="<">&lt;</option><option value="=">=</option></select><span>632</span></div>
 </section>
 
-<section class="card"><h2><span class="section-number">5</span>Uguali quantità</h2><p>Per ogni quantità scegli il numero equivalente.</p>
-<label class="match-row"><span class="math-chip">3 h 8 da 2 u</span><select name="q5_1" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">82 da 3 u</span><select name="q5_2" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">8 h 32 u</span><select name="q5_3" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">23 da</span><select name="q5_4" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">8 h 2 da 3 u</span><select name="q5_5" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">230 u</span><select name="q5_6" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">38 da 2 u</span><select name="q5_7" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
-<label class="match-row"><span class="math-chip">238 u</span><select name="q5_8" required><option value="">Scegli...</option><option>230</option><option>238</option><option>382</option><option>823</option><option>832</option></select></label>
+<section class="card"><h2><span class="section-number">5</span>Uguali quantità</h2>
+<p><strong>Colora allo stesso modo le mele che contengono quantità uguali.</strong></p>
+<p class="small">Scegli un colore e poi clicca sulle mele che appartengono allo stesso gruppo. Ci sono 5 gruppi in tutto.</p>
+<style>
+.apple-palette{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.apple-color{width:42px;height:42px;border-radius:50%;border:3px solid transparent;cursor:pointer}.apple-color.active{outline:3px solid #263246;outline-offset:2px}.apple-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.apple-card{position:relative;min-height:112px;border:2px solid #cfd6e2;border-radius:46% 46% 44% 44% / 42% 42% 50% 50%;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px 10px 12px;font-weight:700;cursor:pointer;user-select:none;transition:.15s}.apple-card:before{content:"";position:absolute;top:-14px;left:50%;width:5px;height:20px;background:#6b4b2a;border-radius:4px;transform:translateX(-50%) rotate(7deg)}.apple-card:after{content:"";position:absolute;top:-9px;left:55%;width:20px;height:11px;border-radius:100% 0 100% 0;background:#6fa35d;transform:rotate(-15deg)}.apple-card[data-color="1"]{background:#ffd9df}.apple-card[data-color="2"]{background:#fff0b8}.apple-card[data-color="3"]{background:#d9f3df}.apple-card[data-color="4"]{background:#dce8ff}.apple-card[data-color="5"]{background:#eadcff}.apple-card:hover{transform:translateY(-1px)}@media(max-width:700px){.apple-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<div class="apple-palette" aria-label="Colori disponibili">
+<button type="button" class="apple-color active" data-pick-color="1" style="background:#ffd9df" title="Colore 1"></button>
+<button type="button" class="apple-color" data-pick-color="2" style="background:#fff0b8" title="Colore 2"></button>
+<button type="button" class="apple-color" data-pick-color="3" style="background:#d9f3df" title="Colore 3"></button>
+<button type="button" class="apple-color" data-pick-color="4" style="background:#dce8ff" title="Colore 4"></button>
+<button type="button" class="apple-color" data-pick-color="5" style="background:#eadcff" title="Colore 5"></button>
+</div>
+<div class="apple-grid" id="appleGrid">
+<button type="button" class="apple-card" data-apple="a1" data-group="382">3 h<br>8 da<br>2 u</button>
+<button type="button" class="apple-card" data-apple="a2" data-group="823">82 da<br>3 u</button>
+<button type="button" class="apple-card" data-apple="a3" data-group="832">8 h<br>32 u</button>
+<button type="button" class="apple-card" data-apple="a4" data-group="230">23 da</button>
+<button type="button" class="apple-card" data-apple="a5" data-group="823">823</button>
+<button type="button" class="apple-card" data-apple="a6" data-group="823">8 h<br>2 da<br>3 u</button>
+<button type="button" class="apple-card" data-apple="a7" data-group="832">832</button>
+<button type="button" class="apple-card" data-apple="a8" data-group="230">230 u</button>
+<button type="button" class="apple-card" data-apple="a9" data-group="382">38 da<br>2 u</button>
+<button type="button" class="apple-card" data-apple="a10" data-group="382">382</button>
+<button type="button" class="apple-card" data-apple="a11" data-group="238">238 u</button>
+<button type="button" class="apple-card" data-apple="a12" data-group="238">238</button>
+</div>
+<input type="hidden" name="q5_complete" required>
+<p id="appleStatus" class="small" style="margin-top:10px"></p>
 </section>
 
 <section class="card"><h2><span class="section-number">6</span>Composizione e scomposizione</h2><p>Abbina ogni numero alla sua scomposizione.</p>
