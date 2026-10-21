@@ -151,6 +151,16 @@ form.addEventListener('submit',async e=>{
    const k='q10_'+name,ok=st.complete;if(ok)score++;total++;
    details[k]={label:labels[k],answer:ok?'Figura costruita correttamente':'Figura non corretta',correctAnswer:'Figura corretta',ok};
  });
+ // ES. 11 vale 5 punti: la domanda sui segmenti sotto 5 quadretti vale 2 punti (AB + EF).
+ const q113=form.elements.q11_3?.value||'';
+ const q113Parts=q113==='AB e EF'?2:(q113.includes('AB')||q113.includes('EF')?1:0);
+ score+=q113Parts-((details.q11_3?.ok)?1:0);
+ total+=1;
+ if(details.q11_3){
+   details.q11_3.pointsAwarded=q113Parts;
+   details.q11_3.maxPoints=2;
+   details.q11_3.label='11. Segmenti sotto 5 quadretti (2 punti)';
+ }
  const result={
    id:Date.now()+'-'+Math.random().toString(36).slice(2,8),
    nome:form.elements.nome.value.trim(),
