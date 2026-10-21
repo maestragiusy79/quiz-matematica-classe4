@@ -110,20 +110,26 @@ appleButtons.forEach(btn=>btn.addEventListener('click',()=>{
 updateAppleStatus();
 
 function scoreAppleGroups(details){
- const expectedGroups=['382','823','832','230','238'];
+ const expectedGroups=[
+  {key:'382',label:'Gruppo 1',values:['3 h 8 da 2 u','38 da 2 u','382']},
+  {key:'823',label:'Gruppo 2',values:['82 da 3 u','8 h 2 da 3 u','823']},
+  {key:'832',label:'Gruppo 3',values:['8 h 32 u','832']},
+  {key:'230',label:'Gruppo 4',values:['23 da','230 u']},
+  {key:'238',label:'Gruppo 5',values:['238 u','238']}
+ ];
  let points=0;
  expectedGroups.forEach(group=>{
-  const members=appleButtons.filter(b=>b.dataset.group===group);
+  const members=appleButtons.filter(b=>b.dataset.group===group.key);
   const colors=members.map(b=>appleState.colors[b.dataset.apple]).filter(Boolean);
   const same=colors.length===members.length && new Set(colors).size===1;
   const chosen=colors[0];
-  const noForeign=chosen && appleButtons.every(b=>b.dataset.group===group || appleState.colors[b.dataset.apple]!==chosen);
+  const noForeign=chosen && appleButtons.every(b=>b.dataset.group===group.key || appleState.colors[b.dataset.apple]!==chosen);
   const ok=Boolean(same&&noForeign);
   if(ok)points++;
-  details['q5_'+group]={
-   label:'5. Gruppo di quantità '+group,
-   answer:members.map(b=>({value:b.textContent.replace(/\s+/g,' ').trim(),color:appleState.colors[b.dataset.apple]||''})),
-   correctAnswer:'Tutte le mele equivalenti allo stesso colore, senza altre quantità nello stesso gruppo',
+  details['q5_'+group.key]={
+   label:'5. '+group.label+' di quantità equivalenti',
+   answer:ok?'Raggruppamento corretto':'Raggruppamento non corretto',
+   correctAnswer:group.values.join(' = '),
    ok
   };
  });
