@@ -428,10 +428,11 @@ function renderTests(){
 }
 
 async function loadResults(){
- const {data,error}=await sb.from('submissions')
-  .select('id,score,total,status,submitted_at,test_id,assignment_id,student_name_snapshot,details,tests(title,subject,class_id,external_key,classes(name)),students(display_name,student_code)')
-  .order('submitted_at',{ascending:false});
- if(error)throw error;results=data||[];el('nConsegne').textContent=results.length;
+ const {data,error}=await sb.functions.invoke('teacher-actions',{body:{action:'get_results'}});
+ if(error)throw new Error(error.message||'Non riesco a caricare i risultati.');
+ if(!data?.ok)throw new Error(data?.error||'Non riesco a caricare i risultati.');
+ results=Array.isArray(data.results)?data.results:[];
+ el('nConsegne').textContent=results.length;
 }
 const REVIEW_META={
  'classe5-matematica-aritmetica-iniziale':{
@@ -515,8 +516,11 @@ async function saveReview(submissionId,button){
  const effective=rows.map(x=>review[x.key]===true?true:review[x.key]===false?false:x.auto);
  const score=effective.filter(x=>x===true).length,total=rows.length;
  const details={...(r.details||{}),teacherReview:review,teacherCorrectedAt:new Date().toISOString()};
- const {error}=await sb.from('submissions').update({score,total,status:'graded',details}).eq('id',submissionId);
+ const {data,error}=await sb.functions.invoke('teacher-actions',{
+  body:{action:'grade_submission',submissionId,score,total,details}
+ });
  if(error){setAppStatus('Correzione non salvata: '+error.message,false);return}
+ if(!data?.ok){setAppStatus('Correzione non salvata: '+(data?.error||'Operazione non riuscita.'),false);return}
  setAppStatus('✅ Correzione salvata per '+(r.students?.display_name||r.student_name_snapshot||'alunno')+'.',true);
  await renderAll();
 }
