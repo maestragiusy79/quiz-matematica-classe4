@@ -183,8 +183,11 @@ form.addEventListener('submit',async e=>{
  }
  const details={};let score=0,total=0;
  Object.entries(answers).forEach(([k,correct])=>{
-  const el=form.elements[k];const given=el?el.value:'';const ok=norm(given)===norm(correct);if(ok)score++;total++;
-  details[k]={label:labels[k],answer:given,correctAnswer:correct,ok};
+  const el=form.elements[k];const given=el?el.value:'';const ok=norm(given)===norm(correct);
+  const maxPoints=k==='q1'?9:1;
+  if(ok)score+=maxPoints;
+  total+=maxPoints;
+  details[k]={label:labels[k],answer:given,correctAnswer:correct,ok,pointsAwarded:ok?maxPoints:0,maxPoints};
  });
  const applePoints=scoreAppleGroups(details);score+=applePoints;total+=5;
  Object.entries(figureState).forEach(([name,st])=>{
