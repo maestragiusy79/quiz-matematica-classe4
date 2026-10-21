@@ -437,6 +437,7 @@ async function loadResults(){
 const CLASS4_GROUPS=[
  {label:'ES. 1 · Individuare l’ordine crescente',keys:['q1'],max:9,level:(n)=>n>=8?'AUTONOMO':n>=6?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 9–8; parzialmente autonomo 7–6; non autonomo 5 o meno.'},
  {label:'ES. 2 + 3 · Scrivere numeri',keys:['q2_1','q2_2','q2_3','q2_4','q2_5','q2_6','q3_1','q3_2','q3_3','q3_4','q3_5','q3_6'],max:12,level:(n)=>n>=10?'AUTONOMO':n>=7?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 12–10; parzialmente autonomo 9–7; non autonomo 6 o meno. Gli errori ortografici non vanno considerati.'},
+ {label:'ES. 4 + 5 · Confrontare le quantità',keys:['q4_1','q4_2','q4_3','q4_4','q4_5','q4_6','q4_7','q4_8','q5_382','q5_823','q5_832','q5_230','q5_238'],max:13,level:(n)=>n>=11?'AUTONOMO':n>=8?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 13–11; parzialmente autonomo 10–8; non autonomo 7 o meno.'},
  {label:'ES. 6 + 7 · Comporre e scomporre',keys:['q6_1','q6_2','q6_3','q6_4','q6_5','q7_1','q7_2','q7_3','q7_4','q7_5','q7_6'],max:11,level:(n)=>n===11?'AUTONOMO':n>=8?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 11; parzialmente autonomo 10–8; non autonomo 7 o meno.'},
  {label:'ES. 8 · Eseguire operazioni',keys:['q8_1','q8_2','q8_3','q8_4'],max:4,level:(n)=>n===4?'AUTONOMO':n>=2?'PARZIALMENTE AUTONOMO':'NON AUTONOMO',note:'Griglia: autonomo 4; parzialmente autonomo 3–2; non autonomo 1–0.'}
 ];
@@ -454,7 +455,7 @@ function class4GridSummary(r,rows,teacherReview){
    return '<div class="item" style="margin:8px 0"><strong>'+safe(g.label)+'</strong><div style="margin-top:6px"><span class="badge">'+n+' / '+g.max+'</span> <strong>'+safe(g.level(n))+'</strong></div><div class="meta" style="margin-top:5px">'+safe(g.note)+'</div></div>';
  }).join('');
 
- const mismatch='<div class="item" style="border-color:#e5b454;background:#fffaf0"><strong>⚠️ Da allineare alla griglia cartacea</strong><div class="meta" style="margin-top:6px">La griglia indica ES. 4 + 5 su 13 risposte (8 + 5) e ES. 9 + 10 + 11 su 11 risposte (3 + 3 + 5). Nel test digitale attuale l’ES. 5 contiene 8 risposte e l’ES. 11 ne contiene 4. Per questi due gruppi non assegno automaticamente il livello finché prova e griglia non sono perfettamente allineate.</div></div>';
+ const mismatch='<div class="item" style="border-color:#e5b454;background:#fffaf0"><strong>⚠️ Ultimo gruppo da allineare</strong><div class="meta" style="margin-top:6px">ES. 4 + 5 è ora allineato alla griglia: 8 risposte dell’ES. 4 + 5 gruppi corretti dell’ES. 5 = 13 punti. Resta da verificare ES. 9 + 10 + 11, perché la griglia prevede 3 + 3 + 5 risposte mentre il test digitale attuale ne registra 3 + 3 + 4.</div></div>';
  return '<div class="review-summary"><strong>Griglia di valutazione classe quarta</strong>'+cards+mismatch+'</div>';
 }
 
