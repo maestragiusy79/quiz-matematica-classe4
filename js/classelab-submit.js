@@ -115,15 +115,43 @@
 
   function setIdentityFields(displayName) {
     const codeInput = document.getElementById('studentCode');
-    if (codeInput) codeInput.value = studentCode() || 'PROFILE';
-
     const nome = document.querySelector('[name="nome"], #nome');
     const cognome = document.querySelector('[name="cognome"], #cognome');
-    if (nome) nome.value = displayName;
-    if (cognome) cognome.value = '-';
 
-    const identitySection = codeInput?.closest('section');
-    if (identitySection) identitySection.style.display = 'none';
+    if (codeInput) {
+      codeInput.value = studentCode() || 'PROFILE';
+      codeInput.required = false;
+    }
+    if (nome) {
+      nome.value = displayName || 'Alunno';
+      nome.required = false;
+    }
+    if (cognome) {
+      cognome.value = '-';
+      cognome.required = false;
+    }
+
+    const sections = new Set([
+      codeInput?.closest('section'),
+      nome?.closest('section'),
+      cognome?.closest('section')
+    ].filter(Boolean));
+    sections.forEach(section => section.style.display = 'none');
+  }
+
+  function hideIdentityFieldsImmediately() {
+    const codeInput = document.getElementById('studentCode');
+    const nome = document.querySelector('[name="nome"], #nome');
+    const cognome = document.querySelector('[name="cognome"], #cognome');
+    [codeInput, nome, cognome].forEach(input => {
+      if (input) input.required = false;
+    });
+    const sections = new Set([
+      codeInput?.closest('section'),
+      nome?.closest('section'),
+      cognome?.closest('section')
+    ].filter(Boolean));
+    sections.forEach(section => section.style.display = 'none');
   }
 
   function showIdentity(displayName, alreadySubmitted) {
@@ -159,6 +187,10 @@
   }
 
   async function installGuard() {
+    const pToken = portalToken();
+    if (pToken || params().get('preview') === '1') {
+      hideIdentityFieldsImmediately();
+    }
     if (params().get('preview') === '1') {
       const hero = document.querySelector('.hero');
       if (hero) {
@@ -172,20 +204,15 @@
       return;
     }
     const input = document.getElementById('studentCode');
-    if (input && !params().get('s') && !params().get('p')) {
-      input.autocomplete = 'off';
-      input.spellcheck = false;
-      input.addEventListener('input', () => {
-        input.value = input.value.toUpperCase().replace(/\s+/g, '');
-      });
-    }
 
     if (!assignmentCode()) {
       showWarning('Link non assegnato. Apri la prova dal link ricevuto dall’insegnante.');
       return;
     }
 
-    if (!params().get('s') && !params().get('p')) {
+    if (!params().get('p')) {
+      hideIdentityFieldsImmediately();
+      showWarning('Per svolgere la prova entra prima dal tuo profilo ClasseLab con nome e cognome.');
       return;
     }
 
